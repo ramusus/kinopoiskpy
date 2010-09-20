@@ -157,6 +157,10 @@ class Movie(KinopoiskObject):
     def __repr__(self):
         return '%s (%s), %s' % (self.title, self.title_original, self.year)
 
+    def get_posters(self):
+        title = self.title.replace(' ', '-') if self.title else 'Title'
+        return ['http://st3.kinopoisk.ru/im/poster/1/1/1/kinopoisk.ru-%s-%d.jpg' % (title, id) for id in self.posters]
+
 class MovieManager(Manager):
     '''
     >>> m = Movie.objects.search('Redacted')[0]
