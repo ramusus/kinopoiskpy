@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from parser import UrlRequest
-from BeautifulSoup import BeautifulSoup
+from beautifulsoup import BeautifulSoup
 import urllib
 import re
 import sys
