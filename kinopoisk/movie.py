@@ -97,9 +97,17 @@ class MoviePostersPage(KinopoiskPage):
 
     def get(self, object):
         content = UrlRequest(object.get_url('posters')).read()
+
+        # header with sign 'No posters'
+        if re.findall(r'<h1 class="main_title">', content):
+            return False
+
         soup_content = BeautifulSoup(content)
-        table = soup_content.findAll('table', attrs={'class': 'fotos'})
-        self.parse(object, unicode(table[0]))
+        table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
+        if table:
+            self.parse(object, unicode(table[0]))
+        else:
+            raise ValueError('Parse error. Do not found posters for movie %s' % (object.get_url('posters')))
 
     def parse(self, object, content):
         '''
