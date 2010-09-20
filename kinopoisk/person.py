@@ -7,10 +7,10 @@ class PersonLink(KinopoiskPage):
     '''
     Class for parsing person info from links
     '''
-    def parse_link(self, content):
+    def parse(self, object, content):
         '''
         >>> m = Person()
-        >>> m.parse_link(u'<td width=100% class="news"><a class="all" href="/level/4/people/24508/sr/1/">Name</a>,&nbsp;<a href="/level/10/act/birthday/view/year/year/1953/" class=orange>1953</a></td> </tr><tr><td></td><td><i class="search_rating"></i><font color="#999999">... John Malkovich</font></td> </tr>')
+        >>> m.parse('link', u'<td width=100% class="news"><a class="all" href="/level/4/people/24508/sr/1/">Name</a>,&nbsp;<a href="/level/10/act/birthday/view/year/year/1953/" class=orange>1953</a></td> </tr><tr><td></td><td><i class="search_rating"></i><font color="#999999">... John Malkovich</font></td> </tr>')
         >>> m.name
         u'Name'
         >>> m.id
@@ -22,27 +22,26 @@ class PersonLink(KinopoiskPage):
         '''
         link = re.compile(r'<a class="all" href="/level/4/people/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
-            self.id = self.prepare_int(link[0][0])
-            self.name = self.prepare_str(link[0][1])
+            object.id = self.prepare_int(link[0][0])
+            object.name = self.prepare_str(link[0][1])
 
         year = re.compile(r'<a href="/level/10/act/birthday/view/year/year/(\d{4})/"').findall(content)
         if year:
-            self.year_birth = self.prepare_int(year[0])
+            object.year_birth = self.prepare_int(year[0])
 
         otitle = re.compile(r'<font color="#999999">(.+?)</font>').findall(content)
         if otitle:
-            self.name_original = self.prepare_str(re.sub(r'^\.\.\. ', '', otitle[0]))
+            object.name_original = self.prepare_str(re.sub(r'^\.\.\. ', '', otitle[0]))
 
-        self.set_source('link')
+        object.set_source('link')
 
 class PersonMainPage(KinopoiskPage):
     '''
     Class for parsing main person page purpose
     '''
-    def __init__(self):
-        self.set_url('main_page', '/level/4/people/%d/')
+    url = '/level/4/people/%d/'
 
-    def parse_main_page(self, content):
+    def parse(self, object, content):
 #        '''
 #        >>> m = Person()
 #        >>> m.parse_main_page(u'<h1 style="margin: 0; padding: 0" class="moviename-big">Title</h1><span class="_reachbanner_">Description</span>')
@@ -73,12 +72,18 @@ class PersonMainPage(KinopoiskPage):
 
         self.set_source('main_page')
 
-class Person(KinopoiskObject, PersonLink, PersonMainPage):
+class Person(KinopoiskObject):
 
     name = None
     name_original = None
 
     year_birth = None
+
+    def __init__(self, **kwargs):
+        super(Person, self).__init__(**kwargs)
+        self.register_source('link', PersonLink)
+        self.register_source('main_page', PersonMainPage)
+        self.posters = self.audience = []
 
     def __repr__(self):
         return '%s (%s), %s' % (self.name, self.name_original, self.year_birth)

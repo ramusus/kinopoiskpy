@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from utils import KinopoiskObject, KinopoiskPage, Manager
+from parser import UrlRequest
+from BeautifulSoup import BeautifulSoup
 import re
 import sys
 
@@ -7,10 +9,10 @@ class MovieLink(KinopoiskPage):
     '''
     Class for parsing movie info from links
     '''
-    def parse_link(self, content):
+    def parse(self, object, content):
         '''
         >>> m = Movie()
-        >>> m.parse_link(u'<td width=100% class="news"><a class="all" href="/level/1/film/179805/">Title</a>,&nbsp;<a href="/level/10/m_act[year]/1952/" class=orange>1952</a></td></tr><tr><td></td><td><i class="search_rating"></i><font color="#999999">... 10 Days in a Nudist Camp</font></td>')
+        >>> m.parse('link', u'<td width=100% class="news"><a class="all" href="/level/1/film/179805/">Title</a>,&nbsp;<a href="/level/10/m_act[year]/1952/" class=orange>1952</a></td></tr><tr><td></td><td><i class="search_rating"></i><font color="#999999">... 10 Days in a Nudist Camp</font></td>')
         >>> m.title
         u'Title'
         >>> m.id
@@ -21,7 +23,7 @@ class MovieLink(KinopoiskPage):
         u'10 Days in a Nudist Camp'
 
         >>> m = Movie()
-        >>> m.parse_link(u'<td width=95% align=left class="news"><a class="all" href="/level/1/film/36620/sr/1">Title</a>,&nbsp;<a href="/level/10/m_act[year]/1991/" class="continue">1991</a></td> </tr> <tr><td></td><td><i class="search_rating">5.867</i><font color="#999999">100 Days</font><product></td>')
+        >>> m.parse('link', u'<td width=95% align=left class="news"><a class="all" href="/level/1/film/36620/sr/1">Title</a>,&nbsp;<a href="/level/10/m_act[year]/1991/" class="continue">1991</a></td> </tr> <tr><td></td><td><i class="search_rating">5.867</i><font color="#999999">100 Days</font><product></td>')
         >>> m.title
         u'Title'
         >>> m.id
@@ -33,30 +35,29 @@ class MovieLink(KinopoiskPage):
         '''
         link = re.compile(r'<a class="all" href="/level/1/film/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
-            self.id = self.prepare_int(link[0][0])
-            self.title = self.prepare_str(link[0][1])
+            object.id = self.prepare_int(link[0][0])
+            object.title = self.prepare_str(link[0][1])
 
         year = re.compile(r'<a href="/level/10/m_act\[year\]/(\d{4})/"').findall(content)
         if year:
-            self.year = self.prepare_int(year[0])
+            object.year = self.prepare_int(year[0])
 
         otitle = re.compile(r'<font color="#999999">(.+?)</font>').findall(content)
         if otitle:
-            self.title_original = self.prepare_str(re.sub(r'^\.\.\. ', '', otitle[0]))
+            object.title_original = self.prepare_str(re.sub(r'^\.\.\. ', '', otitle[0]))
 
-        self.set_source('link')
+        object.set_source('link')
 
 class MovieMainPage(KinopoiskPage):
     '''
     Class for parsing main movie page purpose
     '''
-    def __init__(self):
-        self.set_url('main_page', '/level/1/film/%d/')
+    url = '/level/1/film/%d/'
 
-    def parse_main_page(self, content):
+    def parse(self, object, content):
         '''
         >>> m = Movie()
-        >>> m.parse_main_page(u'<h1 style="margin: 0; padding: 0" class="moviename-big">Title</h1><span class="_reachbanner_">Description</span>')
+        >>> m.parse('main_page', u'<h1 style="margin: 0; padding: 0" class="moviename-big">Title</h1><span class="_reachbanner_">Description</span>')
         >>> m.title
         u'Title'
         >>> m.plot
@@ -64,27 +65,62 @@ class MovieMainPage(KinopoiskPage):
         '''
         title = re.compile(r'<h1 style="margin: 0; padding: 0" class="moviename-big">(.+?)</h1>').findall(content)
         if title:
-            self.title = self.prepare_str(title[0])
+            object.title = self.prepare_str(title[0])
 
         title_original = re.compile(r'<span style="color: #666; font-size: 13px">(.+?)</span>').findall(content)
         if title_original:
-            self.title_original = self.prepare_str(title_original[0])
+            object.title_original = self.prepare_str(title_original[0])
 
         plot = re.compile(r'<span class="_reachbanner_">(.+?)</span>').findall(content)
         if plot != []:
-            self.plot = self.prepare_str(plot[0])
+            object.plot = self.prepare_str(plot[0])
 
         content_info = content[content.find(u'<!-- инфа о фильме -->'):content.find(u'<!-- /инфа о фильме -->')]
         content_info = re.compile(r'<tr><td class="type">(.+?)</td><td[^>]*>(.+?)</td></tr>').findall(content_info)
         for name, value in content_info:
             if name == u'слоган':
-                self.tagline = self.prepare_str(value)
+                object.tagline = self.prepare_str(value)
             elif name == u'время':
-                self.runtime = self.prepare_str(value)
+                object.runtime = self.prepare_str(value)
 
-        self.set_source('main_page')
+        object.set_source('main_page')
 
-class Movie(KinopoiskObject, MovieLink, MovieMainPage):
+class MoviePostersPage(KinopoiskPage):
+    '''
+    Class for parsing movie's posters page purpose
+    >>> m = Movie(id=51319)
+    >>> m.get_content('posters')
+    >>> m.posters
+    [1207166, 1196342, 1151730, 1151729, 1151728, 1151727, 1151726, 1151725, 1143914, 1139214, 1128415, 1118895, 1114967, 1112313, 1112312, 1112310, 1106582, 1091867, 1074616, 1064821, 973448]
+    '''
+    url = '/level/17/film/%d/'
+
+    def get(self, object):
+        content = UrlRequest(object.get_url('posters')).read()
+        soup_content = BeautifulSoup(content)
+        table = soup_content.findAll('table', attrs={'class': 'fotos'})
+        self.parse(object, unicode(table[0]))
+
+    def parse(self, object, content):
+        '''
+        >>> m = Movie()
+        >>> m.parse('posters', u'<table class="fotos"><tr><td><a href="/picture/1207166/"><img  src="/images/poster/sm_1207166.jpg" width="170" height="244" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>800&times;1148</i><a href="/picture/1207166/" target="_blank" title="Открыть в новом окне"></a>598 Кб</b></td><td class="center"><a href="/picture/1196342/"><img  src="/images/poster/sm_1196342.jpg" width="170" height="238" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>394&times;552</i><a href="/picture/1196342/" target="_blank" title="Открыть в новом окне"></a>96 Кб</b></td><td><a href="/picture/1151730/"><img  src="/images/poster/sm_1151730.jpg" width="170" height="241" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>400&times;568</i><a href="/picture/1151730/" target="_blank" title="Открыть в новом окне"></a>43 Кб</b></td></tr></table>')
+        >>> m.posters
+        [1207166, 1196342, 1151730]
+        '''
+        links = BeautifulSoup(content).findAll('a')
+        for link in links:
+            id = re.compile(r'/picture/(\d+)/').findall(link['href'])
+            try:
+                id = int(id[0])
+                if id not in object.posters:
+                    object.posters += [id]
+            except:
+                pass
+
+        object.set_source('posters')
+
+class Movie(KinopoiskObject):
 
     title = None
     title_original = None
@@ -108,6 +144,15 @@ class Movie(KinopoiskObject, MovieLink, MovieMainPage):
 
     rating = None
     runtime = None
+
+    posters = []
+
+    def __init__(self, **kwargs):
+        super(Movie, self).__init__(**kwargs)
+        self.register_source('link', MovieLink)
+        self.register_source('main_page', MovieMainPage)
+        self.register_source('posters', MoviePostersPage)
+        self.posters = self.audience = []
 
     def __repr__(self):
         return '%s (%s), %s' % (self.title, self.title_original, self.year)
