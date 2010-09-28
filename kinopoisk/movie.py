@@ -63,6 +63,11 @@ class MovieMainPage(KinopoiskPage):
         >>> m.plot
         u'Description'
         '''
+
+        id = re.compile(r'<script type="text/javascript"> id_film = (\d+); </script>').findall(content)
+        if id:
+            object.id = self.prepare_int(id[0])
+
         title = re.compile(r'<h1 style="margin: 0; padding: 0" class="moviename-big">(.+?)</h1>').findall(content)
         if title:
             object.title = self.prepare_str(title[0])
@@ -82,6 +87,8 @@ class MovieMainPage(KinopoiskPage):
                 object.tagline = self.prepare_str(value)
             elif name == u'время':
                 object.runtime = self.prepare_str(value)
+            elif name == u'год':
+                object.year = self.prepare_int(value)
 
         object.set_source('main_page')
 
@@ -171,7 +178,14 @@ class Movie(KinopoiskObject):
 
 class MovieManager(Manager):
     '''
-    >>> m = Movie.objects.search('Redacted')[0]
+    >>> movies = Movie.objects.search('Redacted')
+    >>> len(movies) == 1
+    True
+    >>> m = movies[0]
+    >>> m.id
+    278229
+    >>> m.year
+    2007
     >>> m.title
     u'\u0411\u0435\u0437 \u0446\u0435\u043d\u0437\u0443\u0440\u044b'
     >>> m.title_original
@@ -187,6 +201,8 @@ class MovieManager(Manager):
     >>> len(movies) > 1
     True
     >>> m = movies[0]
+    >>> m.id
+    342
     >>> m.title
     u'\u041a\u0440\u0438\u043c\u0438\u043d\u0430\u043b\u044c\u043d\u043e\u0435 \u0447\u0442\u0438\u0432\u043e'
     >>> m.year

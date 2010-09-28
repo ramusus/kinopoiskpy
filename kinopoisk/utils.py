@@ -117,5 +117,8 @@ class KinopoiskPage(object):
         value = int(value)
         return value
 
+    def get(self, object):
+        raise NotImplementedError('This method must be implemented in subclass')
+
     def parse(self, object, content):
         raise NotImplementedError('You must implement KinopoiskPage.parse() method')
