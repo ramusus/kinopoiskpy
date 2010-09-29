@@ -88,7 +88,10 @@ class MovieMainPage(KinopoiskPage):
             elif name == u'время':
                 object.runtime = self.prepare_str(value)
             elif name == u'год':
-                object.year = self.prepare_int(value)
+                # <a href="/level/10/m_act%5Byear%5D/1960/">1960</a>&nbsp;<a href='/level/44/film/229562/' class='all'>(6 сезонов)</a>
+                year = re.compile(r'<a href="/level/10/m_act%5Byear%5D/\d{4}/">(\d{4})</a>').findall(value)
+                if year:
+                    object.year = self.prepare_int(year[0])
 
         object.set_source('main_page')
 
