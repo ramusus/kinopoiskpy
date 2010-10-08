@@ -20,7 +20,7 @@ class Manager(object):
             object.parse('main_page', content)
             return [object]
         else:
-            content_results = content[content.find(u'<!-- результаты поиска -->'):content.find(u'<!-- /результаты поиска -->')]
+            content_results = content[content.find('<table cellspacing=0 cellpadding=0 width=100% border=0>'):content.find('<div style="margin-left: -20px">')]
             if content_results:
                 soup_results = BeautifulSoup(content_results)
                 tds = soup_results.findAll('td', attrs={'class': 'news'})
