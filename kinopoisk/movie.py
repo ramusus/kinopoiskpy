@@ -63,7 +63,6 @@ class MovieMainPage(KinopoiskPage):
         >>> m.plot
         u'Description'
         '''
-
         id = re.compile(r'<script type="text/javascript"> id_film = (\d+); </script>').findall(content)
         if id:
             object.id = self.prepare_int(id[0])
