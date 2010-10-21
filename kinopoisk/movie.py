@@ -111,6 +111,8 @@ class MoviePostersPage(KinopoiskPage):
         if re.findall(r'<h1 class="main_title">', content):
             return False
 
+        content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
+
         soup_content = BeautifulSoup(content)
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
