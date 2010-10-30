@@ -20,6 +20,9 @@ class Manager(object):
             object.parse('main_page', content)
             return [object]
         else:
+            # <h2 class="textorangebig" style="font:100 18px">К сожалению, сервер недоступен...</h2>
+            if content.find('<h2 class="textorangebig" style="font:100 18px">') != -1:
+                return []
             content_results = content[content.find('<table cellspacing=0 cellpadding=0 width=100% border=0>'):content.find('<div style="margin-left: -20px">')]
             if content_results:
                 soup_results = BeautifulSoup(content_results)
