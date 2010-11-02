@@ -29,12 +29,12 @@ class UrlRequest(object):
     def __init__(self, url, params=None):
         self.url = url
         if isinstance(params, dict):
-            self.params = dict([(key, unicode(val).encode('windows-1251')) for key, val in params.items()])
+            self.params = dict([(key, unicode(val).encode('windows-1251', 'ignore')) for key, val in params.items()])
 
     def read(self):
         response = urllib2.urlopen(self._get_request())
         self.final_url = response.geturl()
-        return response.read().decode('windows-1251')
+        return response.read().decode('windows-1251', 'ignore')
 
     def _get_url(self):
         url = self.url
