@@ -12,28 +12,47 @@ class MovieLink(KinopoiskPage):
     def parse(self, object, content):
         '''
         >>> m = Movie()
-        >>> m.parse('link', u'<td width=100% class="news"><a class="all" href="/level/1/film/179805/">Title</a>,&nbsp;<a href="/level/10/m_act[year]/1952/" class=orange>1952</a></td></tr><tr><td></td><td><i class="search_rating"></i><font color="#999999">... 10 Days in a Nudist Camp</font></td>')
+        >>> m.parse('link', u'<div class="element width_2"> \
+            <p class="pic"><a href="/level/1/film/179805/sr/1/"><img src="/images/sm_film/6505.jpg" alt="Title" title="Title" /></a></p> \
+            <div class="info"> \
+            <p class="name"><a href="/level/1/film/179805/sr/1/">Title</a>, <span class="year"><a href="/level/10/m_act[year]/1952/">1952</a></span></p> \
+            <span class="gray">Title original original, 90 мин</span> \
+            <span class="gray">США, <i class="director">реж. <a class="lined" href="/level/4/people/28795/">Эрик Бросс</a></i> \
+                <br />(триллер, комедия) \
+            </span> \
+            <span class="gray"><a class="lined" href="/level/4/people/28798/">МакКензи Эстин</a>, <a class="lined" href="/level/4/people/3497/">Тодд Филд</a></span> \
+            </div>')
         >>> m.title
         u'Title'
         >>> m.id
         179805
+        >>> m.runtime
+        90
         >>> m.year
         1952
         >>> m.title_original
-        u'10 Days in a Nudist Camp'
-
+        u'Title original original'
         >>> m = Movie()
-        >>> m.parse('link', u'<td width=95% align=left class="news"><a class="all" href="/level/1/film/36620/sr/1">Title</a>,&nbsp;<a href="/level/10/m_act[year]/1991/" class="continue">1991</a></td> </tr> <tr><td></td><td><i class="search_rating">5.867</i><font color="#999999">100 Days</font><product></td>')
+        >>> m.parse('link', u'<div class="element width_2"> \
+            <p class="pic"><a href="/level/1/film/179805/sr/1/"><img src="/images/sm_film/6505.jpg" alt="Title" title="Title" /></a></p> \
+            <div class="info"> \
+            <p class="name"><a href="/level/1/film/179805/sr/1/">Title</a>, <span class="year"><a href="/level/10/m_act[year]/1952/">1952</a></span></p> \
+            <span class="gray"></span> \
+            <span class="gray">США, <i class="director">реж. <a class="lined" href="/level/4/people/28795/">Эрик Бросс</a></i> \
+                <br />(триллер, комедия) \
+            </span> \
+            <span class="gray"><a class="lined" href="/level/4/people/28798/">МакКензи Эстин</a>, <a class="lined" href="/level/4/people/3497/">Тодд Филд</a></span> \
+            </div>')
         >>> m.title
         u'Title'
         >>> m.id
-        36620
-        >>> m.year
-        1991
+        179805
+        >>> m.runtime
         >>> m.title_original
-        u'100 Days'
+        >>> m.year
+        1952
         '''
-        link = re.compile(r'<a class="all" href="/level/1/film/(\d+)/[^"]*">(.+?)</a>').findall(content)
+        link = re.compile(r'<p class="name"><a href="/level/1/film/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
             object.id = self.prepare_int(link[0][0])
             object.title = self.prepare_str(link[0][1])
@@ -42,9 +61,15 @@ class MovieLink(KinopoiskPage):
         if year:
             object.year = self.prepare_int(year[0])
 
-        otitle = re.compile(r'<font color="#999999">(.+?)</font>').findall(content)
-        if otitle:
-            object.title_original = self.prepare_str(re.sub(r'^\.\.\. ', '', otitle[0]))
+        otitle_runtime = re.compile(r'<span class="gray">(.*?)</span>').findall(content)
+        if otitle_runtime[0]:
+            otitle_runtime = otitle_runtime[0].split(', ')
+            otitle = ', '.join(otitle_runtime[:-1])
+            runtime = otitle_runtime[-1:][0]
+            if otitle:
+                object.title_original = self.prepare_str(otitle)
+            if runtime:
+                object.runtime = self.prepare_int(re.sub(r'^(\d+) .+$', r'\1', runtime))
 
         object.set_source('link')
 

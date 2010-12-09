@@ -10,7 +10,15 @@ class PersonLink(KinopoiskPage):
     def parse(self, object, content):
         '''
         >>> m = Person()
-        >>> m.parse('link', u'<td width=100% class="news"><a class="all" href="/level/4/people/24508/sr/1/">Name</a>,&nbsp;<a href="/level/10/act/birthday/view/year/year/1953/" class=orange>1953</a></td> </tr><tr><td></td><td><i class="search_rating"></i><font color="#999999">... John Malkovich</font></td> </tr>')
+        >>> m.parse('link', u'<div class="element most_wanted"> \
+            <p class="pic"><a href="/level/4/people/24508/sr/1/"><img src="/images/sm_actor/24508.jpg" alt="Name" title="Name" /></a></p> \
+            <div class="info"> \
+            <p class="name"><a href="/level/4/people/24508/sr/1/">Name</a>, <span class="year"><a href="/level/10/act/birthday/view/year/year/1953/">1953</a></span></p> \
+            <span class="gray">John Malkovich</span> \
+            <span class="gray"> \
+            </span> \
+            </div> \
+            </div>')
         >>> m.name
         u'Name'
         >>> m.id
@@ -20,7 +28,7 @@ class PersonLink(KinopoiskPage):
         >>> m.name_original
         u'John Malkovich'
         '''
-        link = re.compile(r'<a class="all" href="/level/4/people/(\d+)/[^"]*">(.+?)</a>').findall(content)
+        link = re.compile(r'<p class="name"><a href="/level/4/people/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
             object.id = self.prepare_int(link[0][0])
             object.name = self.prepare_str(link[0][1])
@@ -29,9 +37,9 @@ class PersonLink(KinopoiskPage):
         if year:
             object.year_birth = self.prepare_int(year[0])
 
-        otitle = re.compile(r'<font color="#999999">(.+?)</font>').findall(content)
+        otitle = re.compile(r'<span class="gray">(.*?)</span>').findall(content)
         if otitle:
-            object.name_original = self.prepare_str(re.sub(r'^\.\.\. ', '', otitle[0]))
+            object.name_original = self.prepare_str(otitle[0])
 
         object.set_source('link')
 
@@ -96,18 +104,18 @@ class PersonManager(Manager):
     >>> m.name_original
     u'Gualtiero Jacopetti'
 
-    >>> persons = Person.objects.search('malkovich')
-    >>> len(persons) > 1
-    True
-    >>> m = persons[0]
-    >>> m.id
-    24508
-    >>> m.name
-    u'\u0414\u0436\u043e\u043d \u041c\u0430\u043b\u043a\u043e\u0432\u0438\u0447'
-    >>> m.year_birth
-    1953
-    >>> m.name_original
-    u'John Malkovich'
+#    >>> persons = Person.objects.search('malkovich')
+#    >>> len(persons) > 1
+#    True
+#    >>> m = persons[0]
+#    >>> m.id
+#    24508
+#    >>> m.name
+#    u'\u0414\u0436\u043e\u043d \u041c\u0430\u043b\u043a\u043e\u0432\u0438\u0447'
+#    >>> m.year_birth
+#    1953
+#    >>> m.name_original
+#    u'John Malkovich'
     '''
     kinopoisk_object = Person
 

@@ -23,21 +23,22 @@ class Manager(object):
             # <h2 class="textorangebig" style="font:100 18px">К сожалению, сервер недоступен...</h2>
             if content.find('<h2 class="textorangebig" style="font:100 18px">') != -1:
                 return []
-            content_results = content[content.find('<table cellspacing=0 cellpadding=0 width=100% border=0>'):content.find('<div style="margin-left: -20px">')]
+            content_results = content[content.find('<div class="search_results">'):content.find('<div style="height: 40px"></div>')]
             if content_results:
                 soup_results = BeautifulSoup(content_results)
-                tds = soup_results.findAll('td', attrs={'class': 'news'})
-                if not tds:
+                # <div class="element width_2">
+                results = soup_results.findAll('div', attrs={'class': re.compile('element')})
+                if not results:
                     raise ValueError('No objects found in search results by request "%s"', request.url)
                 objects = []
-                for td in tds:
-                    link_str = unicode(td.parent) + unicode(td.parent.nextSibling.nextSibling)
+                for result in results:
                     object = self.kinopoisk_object()
-                    object.parse('link', link_str)
+                    object.parse('link', unicode(result))
                     if object.id:
                         objects += [object]
                 return objects
 
+            raise ValueError('No expected tags found by request "%s"', request.url)
 
     def get_url_with_params(self, query):
         return ('http://www.kinopoisk.ru/index.php', {'kp_query': query})
