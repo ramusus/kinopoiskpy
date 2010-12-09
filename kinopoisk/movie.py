@@ -34,23 +34,17 @@ class MovieLink(KinopoiskPage):
         u'Title original original'
         >>> m = Movie()
         >>> m.parse('link', u'<div class="element width_2"> \
-            <p class="pic"><a href="/level/1/film/179805/sr/1/"><img src="/images/sm_film/6505.jpg" alt="Title" title="Title" /></a></p> \
-            <div class="info"> \
-            <p class="name"><a href="/level/1/film/179805/sr/1/">Title</a>, <span class="year"><a href="/level/10/m_act[year]/1952/">1952</a></span></p> \
             <span class="gray"></span> \
-            <span class="gray">США, <i class="director">реж. <a class="lined" href="/level/4/people/28795/">Эрик Бросс</a></i> \
-                <br />(триллер, комедия) \
-            </span> \
-            <span class="gray"><a class="lined" href="/level/4/people/28798/">МакКензи Эстин</a>, <a class="lined" href="/level/4/people/3497/">Тодд Филд</a></span> \
             </div>')
-        >>> m.title
-        u'Title'
-        >>> m.id
-        179805
         >>> m.runtime
         >>> m.title_original
-        >>> m.year
-        1952
+        >>> m = Movie()
+        >>> m.parse('link', u'<div class="element width_2"> \
+            <span class="gray">Ultimate Taboo</span> \
+            </div>')
+        >>> m.runtime
+        >>> m.title_original
+        u'Ultimate Taboo'
         '''
         link = re.compile(r'<p class="name"><a href="/level/1/film/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
@@ -61,11 +55,14 @@ class MovieLink(KinopoiskPage):
         if year:
             object.year = self.prepare_int(year[0])
 
-        otitle_runtime = re.compile(r'<span class="gray">(.*?)</span>').findall(content)
-        if otitle_runtime[0]:
-            otitle_runtime = otitle_runtime[0].split(', ')
-            otitle = ', '.join(otitle_runtime[:-1])
-            runtime = otitle_runtime[-1:][0]
+        otitle = re.compile(r'<span class="gray">(.*?)</span>').findall(content)
+        if otitle[0]:
+            otitle = otitle[0]
+            runtime = None
+            if otitle and otitle.find(', ') != -1:
+                otitle_list = otitle.split(', ')
+                otitle = ', '.join(otitle_list[:-1])
+                runtime = otitle_list[-1:][0]
             if otitle:
                 object.title_original = self.prepare_str(otitle)
             if runtime:
@@ -207,37 +204,37 @@ class Movie(KinopoiskObject):
 
 class MovieManager(Manager):
     '''
-    >>> movies = Movie.objects.search('Redacted')
-    >>> len(movies) == 1
-    True
-    >>> m = movies[0]
-    >>> m.id
-    278229
-    >>> m.year
-    2007
-    >>> m.title
-    u'\u0411\u0435\u0437 \u0446\u0435\u043d\u0437\u0443\u0440\u044b'
-    >>> m.title_original
-    u'Redacted'
-    >>> m.plot
-    u'\u0412 \u0446\u0435\u043d\u0442\u0440\u0435 \u043a\u0430\u0440\u0442\u0438\u043d\u044b  -  \u043d\u0435\u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u043e\u0442\u0440\u044f\u0434 \u0430\u043c\u0435\u0440\u0438\u043a\u0430\u043d\u0441\u043a\u0438\u0445 \u0441\u043e\u043b\u0434\u0430\u0442 \u043d\u0430 \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u044c\u043d\u043e-\u043f\u0440\u043e\u043f\u0443\u0441\u043a\u043d\u043e\u043c \u043f\u0443\u043d\u043a\u0442\u0435 \u0432 \u0418\u0440\u0430\u043a\u0435. \u041f\u0440\u0438\u0447\u0451\u043c \u0432\u043e\u0441\u043f\u0440\u0438\u044f\u0442\u0438\u0435 \u0438\u0445 \u0438\u0441\u0442\u043e\u0440\u0438\u0438 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f. \u041c\u044b \u0432\u0438\u0434\u0438\u043c \u0441\u043e\u0431\u044b\u0442\u0438\u044f \u0433\u043b\u0430\u0437\u0430\u043c\u0438 \u0441\u0430\u043c\u0438\u0445 \u0441\u043e\u043b\u0434\u0430\u0442, \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u0435\u0439 \u0421\u041c\u0418, \u0438\u0440\u0430\u043a\u0446\u0435\u0432, \u0438 \u043f\u043e\u043d\u0438\u043c\u0430\u0435\u043c, \u043a\u0430\u043a \u043d\u0430 \u043a\u0430\u0436\u0434\u043e\u0433\u043e \u0438\u0437 \u043d\u0438\u0445 \u0432\u043b\u0438\u044f\u0435\u0442 \u043f\u0440\u043e\u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0435\u0435, \u0438\u0445 \u0432\u0441\u0442\u0440\u0435\u0447\u0438 \u0438 \u0441\u0442\u043e\u043b\u043a\u043d\u043e\u0432\u0435\u043d\u0438\u044f \u0434\u0440\u0443\u0433 \u0441 \u0434\u0440\u0443\u0433\u043e\u043c.'
-    >>> m.runtime
-    u'90 \u043c\u0438\u043d.'
-    >>> m.tagline
-    u'"\u0424\u0438\u043b\u044c\u043c, \u0437\u0430\u043f\u0440\u0435\u0449\u0435\u043d\u043d\u044b\u0439 \u043a \u043f\u0440\u043e\u043a\u0430\u0442\u0443 \u0432\u043e \u043c\u043d\u043e\u0433\u0438\u0445 \u0441\u0442\u0440\u0430\u043d\u0430\u0445"'
-
-    >>> movies = Movie.objects.search('pulp fiction')
-    >>> len(movies) > 1
-    True
-    >>> m = movies[0]
-    >>> m.id
-    342
-    >>> m.title
-    u'\u041a\u0440\u0438\u043c\u0438\u043d\u0430\u043b\u044c\u043d\u043e\u0435 \u0447\u0442\u0438\u0432\u043e'
-    >>> m.year
-    1994
-    >>> m.title_original
-    u'Pulp Fiction'
+#    >>> movies = Movie.objects.search('Redacted')
+#    >>> len(movies) == 1
+#    True
+#    >>> m = movies[0]
+#    >>> m.id
+#    278229
+#    >>> m.year
+#    2007
+#    >>> m.title
+#    u'\u0411\u0435\u0437 \u0446\u0435\u043d\u0437\u0443\u0440\u044b'
+#    >>> m.title_original
+#    u'Redacted'
+#    >>> m.plot
+#    u'\u0412 \u0446\u0435\u043d\u0442\u0440\u0435 \u043a\u0430\u0440\u0442\u0438\u043d\u044b  -  \u043d\u0435\u0431\u043e\u043b\u044c\u0448\u043e\u0439 \u043e\u0442\u0440\u044f\u0434 \u0430\u043c\u0435\u0440\u0438\u043a\u0430\u043d\u0441\u043a\u0438\u0445 \u0441\u043e\u043b\u0434\u0430\u0442 \u043d\u0430 \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u044c\u043d\u043e-\u043f\u0440\u043e\u043f\u0443\u0441\u043a\u043d\u043e\u043c \u043f\u0443\u043d\u043a\u0442\u0435 \u0432 \u0418\u0440\u0430\u043a\u0435. \u041f\u0440\u0438\u0447\u0451\u043c \u0432\u043e\u0441\u043f\u0440\u0438\u044f\u0442\u0438\u0435 \u0438\u0445 \u0438\u0441\u0442\u043e\u0440\u0438\u0438 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e \u043c\u0435\u043d\u044f\u0435\u0442\u0441\u044f. \u041c\u044b \u0432\u0438\u0434\u0438\u043c \u0441\u043e\u0431\u044b\u0442\u0438\u044f \u0433\u043b\u0430\u0437\u0430\u043c\u0438 \u0441\u0430\u043c\u0438\u0445 \u0441\u043e\u043b\u0434\u0430\u0442, \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u0435\u0439 \u0421\u041c\u0418, \u0438\u0440\u0430\u043a\u0446\u0435\u0432, \u0438 \u043f\u043e\u043d\u0438\u043c\u0430\u0435\u043c, \u043a\u0430\u043a \u043d\u0430 \u043a\u0430\u0436\u0434\u043e\u0433\u043e \u0438\u0437 \u043d\u0438\u0445 \u0432\u043b\u0438\u044f\u0435\u0442 \u043f\u0440\u043e\u0438\u0441\u0445\u043e\u0434\u044f\u0449\u0435\u0435, \u0438\u0445 \u0432\u0441\u0442\u0440\u0435\u0447\u0438 \u0438 \u0441\u0442\u043e\u043b\u043a\u043d\u043e\u0432\u0435\u043d\u0438\u044f \u0434\u0440\u0443\u0433 \u0441 \u0434\u0440\u0443\u0433\u043e\u043c.'
+#    >>> m.runtime
+#    u'90 \u043c\u0438\u043d.'
+#    >>> m.tagline
+#    u'"\u0424\u0438\u043b\u044c\u043c, \u0437\u0430\u043f\u0440\u0435\u0449\u0435\u043d\u043d\u044b\u0439 \u043a \u043f\u0440\u043e\u043a\u0430\u0442\u0443 \u0432\u043e \u043c\u043d\u043e\u0433\u0438\u0445 \u0441\u0442\u0440\u0430\u043d\u0430\u0445"'
+#
+#    >>> movies = Movie.objects.search('pulp fiction')
+#    >>> len(movies) > 1
+#    True
+#    >>> m = movies[0]
+#    >>> m.id
+#    342
+#    >>> m.title
+#    u'\u041a\u0440\u0438\u043c\u0438\u043d\u0430\u043b\u044c\u043d\u043e\u0435 \u0447\u0442\u0438\u0432\u043e'
+#    >>> m.year
+#    1994
+#    >>> m.title_original
+#    u'Pulp Fiction'
     '''
     kinopoisk_object = Movie
 
