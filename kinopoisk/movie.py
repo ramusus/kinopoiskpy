@@ -33,18 +33,14 @@ class MovieLink(KinopoiskPage):
         >>> m.title_original
         u'Title original original'
         >>> m = Movie()
-        >>> m.parse('link', u'<div class="element width_2"> \
-            <span class="gray"></span> \
-            </div>')
+        >>> m.parse('link', u'<div class="element width_2"><span class="gray"></span></div>')
         >>> m.runtime
         >>> m.title_original
         >>> m = Movie()
-        >>> m.parse('link', u'<div class="element width_2"> \
-            <span class="gray">Ultimate Taboo</span> \
-            </div>')
+        >>> m.parse('link', u'<div class="element width_2"><span class="gray">Zdar Buh, hosi!</span></div>')
         >>> m.runtime
         >>> m.title_original
-        u'Ultimate Taboo'
+        u'Zdar Buh, hosi!'
         '''
         link = re.compile(r'<p class="name"><a href="/level/1/film/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
@@ -55,18 +51,12 @@ class MovieLink(KinopoiskPage):
         if year:
             object.year = self.prepare_int(year[0])
 
-        otitle = re.compile(r'<span class="gray">(.*?)</span>').findall(content)
+        otitle = re.compile(r'<span class="gray">([^<]*?)(?:, (\d+) [^<]+)?</span>').findall(content)
         if otitle[0]:
-            otitle = otitle[0]
-            runtime = None
-            if otitle and otitle.find(', ') != -1:
-                otitle_list = otitle.split(', ')
-                otitle = ', '.join(otitle_list[:-1])
-                runtime = otitle_list[-1:][0]
-            if otitle:
-                object.title_original = self.prepare_str(otitle)
-            if runtime:
-                object.runtime = self.prepare_int(re.sub(r'^(\d+) .+$', r'\1', runtime))
+            if otitle[0][0]:
+                object.title_original = self.prepare_str(otitle[0][0])
+            if otitle[0][1]:
+                object.runtime = self.prepare_int(otitle[0][1])
 
         object.set_source('link')
 
