@@ -15,7 +15,7 @@ class MovieLink(KinopoiskPage):
         >>> m.parse('link', u'<div class="element width_2"> \
             <p class="pic"><a href="/level/1/film/179805/sr/1/"><img src="/images/sm_film/6505.jpg" alt="Title" title="Title" /></a></p> \
             <div class="info"> \
-            <p class="name"><a href="/level/1/film/179805/sr/1/">Title</a>, <span class="year"><a href="/level/10/m_act[year]/1952/">1952</a></span></p> \
+            <p class="name"><a href="/level/1/film/179805/sr/1/">Title</a>, <span class="year">1952</span></p> \
             <span class="gray">Title original original, 90 мин</span> \
             <span class="gray">США, <i class="director">реж. <a class="lined" href="/level/4/people/28795/">Эрик Бросс</a></i> \
                 <br />(триллер, комедия) \
@@ -47,7 +47,8 @@ class MovieLink(KinopoiskPage):
             object.id = self.prepare_int(link[0][0])
             object.title = self.prepare_str(link[0][1])
 
-        year = re.compile(r'<a href="/level/10/m_act\[year\]/(\d{4})/"').findall(content)
+#        year = re.compile(r'<a href="/level/10/m_act\[year\]/(\d{4})/"').findall(content)
+        year = re.compile(r'<span class="year">(\d{4})</span>').findall(content)
         if year:
             object.year = self.prepare_int(year[0])
 
