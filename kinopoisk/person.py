@@ -11,9 +11,9 @@ class PersonLink(KinopoiskPage):
         '''
         >>> m = Person()
         >>> m.parse('link', u'<div class="element most_wanted"> \
-            <p class="pic"><a href="/level/4/people/24508/sr/1/"><img src="/images/sm_actor/24508.jpg" alt="Name" title="Name" /></a></p> \
+            <p class="pic"><a href="http://www.kinopoisk.ru/level/4/people/24508/sr/1/"><img src="/images/sm_actor/24508.jpg" alt="Name" title="Name" /></a></p> \
             <div class="info"> \
-            <p class="name"><a href="/level/4/people/24508/sr/1/">Name</a>, <span class="year"><a href="/level/10/act/birthday/view/year/year/1953/">1953</a></span></p> \
+            <p class="name"><a href="http://www.kinopoisk.ru/level/4/people/24508/sr/1/">Name</a>, <span class="year">1953</span></p> \
             <span class="gray">John Malkovich</span> \
             <span class="gray"> \
             </span> \
@@ -28,12 +28,12 @@ class PersonLink(KinopoiskPage):
         >>> m.name_original
         u'John Malkovich'
         '''
-        link = re.compile(r'<p class="name"><a href="/level/4/people/(\d+)/[^"]*">(.+?)</a>').findall(content)
+        link = re.compile(r'<p class="name"><a href="http://www.kinopoisk.ru/level/4/people/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
             object.id = self.prepare_int(link[0][0])
             object.name = self.prepare_str(link[0][1])
 
-        year = re.compile(r'<a href="/level/10/act/birthday/view/year/year/(\d{4})/"').findall(content)
+        year = re.compile(r'<span class="year">(\d{4})</span>').findall(content)
         if year:
             object.year_birth = self.prepare_int(year[0])
 
@@ -51,7 +51,7 @@ class PersonMainPage(KinopoiskPage):
 
     def parse(self, object, content):
 
-        id = re.compile(r"<script>stars\('id_actor','(\d+)'\);</script>").findall(content)
+        id = re.compile(r"pageUrl:'http://www.kinopoisk.ru/level/4/people/(\d+)/vk/2/'").findall(content)
         if id:
             object.id = self.prepare_int(id[0])
 
@@ -64,7 +64,7 @@ class PersonMainPage(KinopoiskPage):
             object.name_original = self.prepare_str(name_original[0])
 
         content_info = content[content.find(u'<!-- инфа об актере -->'):content.find(u'<!-- /инфа об актере -->')]
-        content_info = re.compile(r'<tr><td class="type">(.+?)</td><td[^>]*>(.+?)</td></tr>').findall(content_info)
+        content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(content_info)
         for name, value in content_info:
             if name == u'дата рождения':
                 year_birth = re.compile(r'<a href="/level/10/m_act\[birthday\]\[year\]/\d{4}/">(\d{4})</a>').findall(value)
@@ -104,18 +104,18 @@ class PersonManager(Manager):
     >>> m.name_original
     u'Gualtiero Jacopetti'
 
-#    >>> persons = Person.objects.search('malkovich')
-#    >>> len(persons) > 1
-#    True
-#    >>> m = persons[0]
-#    >>> m.id
-#    24508
-#    >>> m.name
-#    u'\u0414\u0436\u043e\u043d \u041c\u0430\u043b\u043a\u043e\u0432\u0438\u0447'
-#    >>> m.year_birth
-#    1953
-#    >>> m.name_original
-#    u'John Malkovich'
+    >>> persons = Person.objects.search('malkovich')
+    >>> len(persons) > 1
+    True
+    >>> m = persons[0]
+    >>> m.id
+    24508
+    >>> m.name
+    u'\u0414\u0436\u043e\u043d \u041c\u0430\u043b\u043a\u043e\u0432\u0438\u0447'
+    >>> m.year_birth
+    1953
+    >>> m.name_original
+    u'John Malkovich'
     '''
     kinopoisk_object = Person
 

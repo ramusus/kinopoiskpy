@@ -9,18 +9,19 @@ class MovieLink(KinopoiskPage):
     '''
     Class for parsing movie info from links
     '''
+
     def parse(self, object, content):
         '''
         >>> m = Movie()
         >>> m.parse('link', u'<div class="element width_2"> \
-            <p class="pic"><a href="/level/1/film/179805/sr/1/"><img src="/images/sm_film/6505.jpg" alt="Title" title="Title" /></a></p> \
+            <p class="pic"><a href="http://www.kinopoisk.ru/level/1/film/179805/sr/1/"><img src="/images/sm_film/6505.jpg" alt="Title" title="Title" /></a></p> \
             <div class="info"> \
-            <p class="name"><a href="/level/1/film/179805/sr/1/">Title</a>, <span class="year">1952</span></p> \
+            <p class="name"><a href="http://www.kinopoisk.ru/level/1/film/179805/sr/1/">Title</a>, <span class="year">1952</span></p> \
             <span class="gray">Title original original, 90 мин</span> \
-            <span class="gray">США, <i class="director">реж. <a class="lined" href="/level/4/people/28795/">Эрик Бросс</a></i> \
+            <span class="gray">США, <i class="director">реж. <a class="lined" href="http://www.kinopoisk.ru/level/4/people/28795/">Эрик Бросс</a></i> \
                 <br />(триллер, комедия) \
             </span> \
-            <span class="gray"><a class="lined" href="/level/4/people/28798/">МакКензи Эстин</a>, <a class="lined" href="/level/4/people/3497/">Тодд Филд</a></span> \
+            <span class="gray"><a class="lined" href="http://www.kinopoisk.ru/level/4/people/28798/">МакКензи Эстин</a>, <a class="lined" href="http://www.kinopoisk.ru/level/4/people/3497/">Тодд Филд</a></span> \
             </div>')
         >>> m.title
         u'Title'
@@ -42,12 +43,12 @@ class MovieLink(KinopoiskPage):
         >>> m.title_original
         u'Zdar Buh, hosi!'
         '''
-        link = re.compile(r'<p class="name"><a href="/level/1/film/(\d+)/[^"]*">(.+?)</a>').findall(content)
+        link = re.compile(r'<p class="name"><a href="http://www.kinopoisk.ru/level/1/film/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
             object.id = self.prepare_int(link[0][0])
             object.title = self.prepare_str(link[0][1])
 
-#        year = re.compile(r'<a href="/level/10/m_act\[year\]/(\d{4})/"').findall(content)
+#        year = re.compile(r'<a href="http://www.kinopoisk.ru/level/10/m_act\[year\]/(\d{4})/"').findall(content)
         year = re.compile(r'<span class="year">(\d{4})</span>').findall(content)
         if year:
             object.year = self.prepare_int(year[0])
@@ -93,7 +94,7 @@ class MovieMainPage(KinopoiskPage):
             object.plot = self.prepare_str(plot[0])
 
         content_info = content[content.find(u'<!-- инфа о фильме -->'):content.find(u'<!-- /инфа о фильме -->')]
-        content_info = re.compile(r'<tr><td class="type">(.+?)</td><td[^>]*>(.+?)</td></tr>').findall(content_info)
+        content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(content_info)
         for name, value in content_info:
             if name == u'слоган':
                 object.tagline = self.prepare_str(value)
