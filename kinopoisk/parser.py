@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import urllib, urllib2
-from urlparse import urlparse
+import urllib2
+import urllib
+import urlparse
 import sys
 
 class UrlRequest(object):
@@ -24,12 +25,12 @@ class UrlRequest(object):
 
     @property
     def is_redirected(self):
-        return urlparse(self.url).path != urlparse(self.final_url).path
+        return urlparse.urlparse(self.url).path != urlparse.urlparse(self.final_url).path
 
     def __init__(self, url, params=None):
         self.url = url
         if isinstance(params, dict):
-            self.params = dict([(key, unicode(val).encode('windows-1251', 'ignore')) for key, val in params.items()])
+            self.params = params
 
     def read(self):
         response = urllib2.urlopen(self._get_request())
@@ -39,8 +40,28 @@ class UrlRequest(object):
     def _get_url(self):
         url = self.url
         if self.params:
-            url += '?' + urllib.urlencode(self.params)
+            url += '?' + '&'.join(['%s=%s' % (key, val) for key, val in self.params.items()])
+        url = url_fix(url)
         return url
 
     def _get_request(self):
         return urllib2.Request(url=self._get_url(), headers = self._headers)
+
+def url_fix(s, charset='utf-8'):
+    """Sometimes you get an URL by a user that just isn't a real
+    URL because it contains unsafe characters like ' ' and so on.  This
+    function can fix some of the problems in a similar way browsers
+    handle data entered by the user:
+
+    >>> url_fix(u'http://de.wikipedia.org/wiki/Elf (Begriffsklärung)')
+    'http://de.wikipedia.org/wiki/Elf%20%28Begriffskl%C3%A4rung%29'
+
+    :param charset: The target charset for the URL if the url was
+                    given as unicode string.
+    """
+    if isinstance(s, unicode):
+        s = s.encode(charset, 'ignore')
+    scheme, netloc, path, qs, anchor = urlparse.urlsplit(s)
+    path = urllib.quote(path, '/%')
+    qs = urllib.quote_plus(qs, ':&=')
+    return urlparse.urlunsplit((scheme, netloc, path, qs, anchor))
