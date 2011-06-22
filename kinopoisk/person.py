@@ -51,7 +51,7 @@ class PersonMainPage(KinopoiskPage):
 
     def parse(self, object, content):
 
-        id = re.compile(r"pageUrl:'http://www.kinopoisk.ru/level/4/people/(\d+)/vk/2/'").findall(content)
+        id = re.compile(r"pageUrl:'http://www.kinopoisk.ru/level/4/people/(\d+)/vk/3/'").findall(content)
         if id:
             object.id = self.prepare_int(id[0])
 
@@ -67,7 +67,8 @@ class PersonMainPage(KinopoiskPage):
         content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(content_info)
         for name, value in content_info:
             if name == u'дата рождения':
-                year_birth = re.compile(r'<a href="/level/10/m_act\[birthday\]\[year\]/\d{4}/">(\d{4})</a>').findall(value)
+                year_birth = re.compile(r'<a href="/level/10/m_act%5Bbirthday%5D%5Byear%5D/\d{4}/">(\d{4})</a>').findall(value)
+#                year_birth = re.compile(r'<a href="/level/10/m_act\[birthday\]\[year\]/\d{4}/">(\d{4})</a>').findall(value)
                 if year_birth:
                     object.year_birth = self.prepare_int(year_birth[0])
 

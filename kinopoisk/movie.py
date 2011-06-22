@@ -76,6 +76,22 @@ class MovieMainPage(KinopoiskPage):
         u'Title'
         >>> m.plot
         u'Description'
+
+        >>> m = Movie()
+        >>> m.parse('main_page', u'<tr> \
+                <td class="type"   >\u0433\u043e\u0434</td> \
+                <td class=""   > \
+                    <div style="position: relative"> \
+                        <a href="/level/10/m_act%5Byear%5D/2007/" title="">2007</a> \
+                \
+                    </div>\
+                </td>\
+            </tr> \
+                <tr><td class="type">\u0441\u043b\u043e\u0433\u0430\u043d</td><td style="color: #555">qwerty</td></tr>')
+        >>> m.year
+        2007
+        >>> m.tagline
+        u'qwerty'
         '''
         id = re.compile(r'<script type="text/javascript"> id_film = (\d+); </script>').findall(content)
         if id:
@@ -93,8 +109,8 @@ class MovieMainPage(KinopoiskPage):
         if plot != []:
             object.plot = self.prepare_str(plot[0])
 
-        content_info = content[content.find(u'<!-- инфа о фильме -->'):content.find(u'<!-- /инфа о фильме -->')]
-        content_info = re.compile(r'<tr\s*>\s*<td class="type"[^>]*>(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(content_info)
+        content_info = self.cut_from_to(content, u'<!-- инфа о фильме -->', u'<!-- /инфа о фильме -->')
+        content_info = re.compile(r'<tr[^>]*>\s*<td class="type"[^>]*>(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(content_info)
         for name, value in content_info:
             if name == u'слоган':
                 object.tagline = self.prepare_str(value)

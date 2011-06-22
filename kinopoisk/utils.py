@@ -14,7 +14,7 @@ class Manager(object):
         url, params = self.get_url_with_params(query)
         request = UrlRequest(url, params)
         content = request.read()
-        # request is redirected to main page of objec
+        # request is redirected to main page of object
         if request.is_redirected:
             object = self.kinopoisk_object()
             object.parse('main_page', content)
@@ -29,7 +29,7 @@ class Manager(object):
                 # <div class="element width_2">
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})
                 if not results:
-                    raise ValueError('No objects found in search results by request "%s"', request.url)
+                    raise ValueError('No objects found in search results by request "%s"' % request.url)
                 objects = []
                 for result in results:
                     object = self.kinopoisk_object()
@@ -38,7 +38,7 @@ class Manager(object):
                         objects += [object]
                 return objects
 
-            raise ValueError('No expected tags found by request "%s"', request.url)
+            raise ValueError('Unknown html layout found by request "%s"' % request.url)
 
     def get_url_with_params(self, query):
         return ('http://www.kinopoisk.ru/index.php', {'kp_query': query})
@@ -120,6 +120,13 @@ class KinopoiskPage(object):
         value = self.prepare_str(value)
         value = int(value)
         return value
+
+    def cut_from_to(self, content, after, before):
+        start = content.find(after)
+        end = content.find(before)
+        if start != -1 and end != -1:
+            content = content[start:end]
+        return content
 
     def get(self, object):
         raise NotImplementedError('This method must be implemented in subclass')
