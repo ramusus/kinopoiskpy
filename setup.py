@@ -13,6 +13,9 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False, # because we're including media that Django needs
+    install_requires=[
+        'beautifulsoup',
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
