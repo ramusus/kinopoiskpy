@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='kinopoiskpy',
-    version=__import__('utils').__version__,
+    version=__import__('kinopoisk').__version__,
     description='Python API to kinopoisk.ru',
     long_description=open('README').read(),
     author='ramusus',
