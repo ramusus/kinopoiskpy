@@ -11,7 +11,7 @@ This package is pythonic API to kinopoisk.ru website.
 >>> movie_list = Movie.objects.search('Redacted')
 >>> len(movie_list)
 1
->>> print m[0].title
+>>> print movie_list[0].title
 Без цензуры
 ```
 #### Installation:
