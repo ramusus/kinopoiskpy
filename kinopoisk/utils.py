@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from parser import UrlRequest
-from BeautifulSoup import BeautifulSoup
 import re
 
 class Manager(object):
@@ -23,6 +22,7 @@ class Manager(object):
                 return []
             content_results = content[content.find('<div class="search_results">'):content.find('<div style="height: 40px"></div>')]
             if content_results:
+                from BeautifulSoup import BeautifulSoup # import here for successful installing via pip
                 soup_results = BeautifulSoup(content_results)
                 # <div class="element width_2">
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})

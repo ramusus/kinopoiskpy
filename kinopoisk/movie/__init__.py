@@ -30,7 +30,7 @@ class Movie(KinopoiskObject):
 
     def __init__(self, **kwargs):
         super(Movie, self).__init__(**kwargs)
-        from sources import MovieLink, MovieMainPage, MoviePostersPage
+        from sources import MovieLink, MovieMainPage, MoviePostersPage # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('main_page', MovieMainPage)
         self.register_source('posters', MoviePostersPage)
