@@ -4,7 +4,7 @@ This package is pythonic API to kinopoisk.ru website.
 
 #### Example usage:
 
-## Search movies:
+##### Search movies:
 
 ```
 >>> from kinopoisk import Movie
