@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from parser import UrlRequest
 from BeautifulSoup import BeautifulSoup
-import urllib
 import re
-import sys
 
 class Manager(object):
 
@@ -16,9 +14,9 @@ class Manager(object):
         content = request.read()
         # request is redirected to main page of object
         if request.is_redirected:
-            object = self.kinopoisk_object()
-            object.parse('main_page', content)
-            return [object]
+            instance = self.kinopoisk_object()
+            instance.parse('main_page', content)
+            return [instance]
         else:
             # <h2 class="textorangebig" style="font:100 18px">К сожалению, сервер недоступен...</h2>
             if content.find('<h2 class="textorangebig" style="font:100 18px">') != -1:
@@ -30,13 +28,13 @@ class Manager(object):
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})
                 if not results:
                     raise ValueError('No objects found in search results by request "%s"' % request.url)
-                objects = []
+                instances = []
                 for result in results:
-                    object = self.kinopoisk_object()
-                    object.parse('link', unicode(result))
-                    if object.id:
-                        objects += [object]
-                return objects
+                    instance = self.kinopoisk_object()
+                    instance.parse('link', unicode(result))
+                    if instance.id:
+                        instances += [instance]
+                return instances
 
             raise ValueError('Unknown html layout found by request "%s"' % request.url)
 
@@ -128,8 +126,8 @@ class KinopoiskPage(object):
             content = content[start:end]
         return content
 
-    def get(self, object):
+    def get(self, instance):
         raise NotImplementedError('This method must be implemented in subclass')
 
-    def parse(self, object, content):
+    def parse(self, instance, content):
         raise NotImplementedError('You must implement KinopoiskPage.parse() method')
