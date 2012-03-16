@@ -70,9 +70,7 @@ class MovieMainPage(KinopoiskPage):
                 if name == u'слоган':
                     instance.tagline = self.prepare_str(value)
                 elif name == u'время':
-                    instance.runtime = self.prepare_str(value)
-                    if '/' in instance.runtime:
-                         instance.runtime = instance.runtime.split('/')[0]
+                    instance.runtime = self.prepare_int(value.split(' ')[0])
                 elif name == u'год':
                     instance.year = self.prepare_int(value)
 

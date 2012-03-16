@@ -72,7 +72,7 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.title, u'Без цензуры')
         self.assertEqual(m.title_original, u'Redacted')
         self.assertEqual(m.plot, u'В центре картины  -  небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
-        self.assertEqual(m.runtime, u'90 мин.')
+        self.assertEqual(m.runtime, 90)
         self.assertEqual(m.tagline, u'"Фильм, запрещенный к прокату во многих странах"')
 
         movies = Movie.objects.search('pulp fiction')
@@ -84,11 +84,13 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, u'Pulp Fiction')
 
+class PersonTest(unittest.TestCase):
+
     def test_person(self):
         '''
         Test of person manager
         '''
-        persons = Person.objects.search(u'\u0413\u0443\u0430\u043b\u044c\u0442\u0438\u0435\u0440\u043e \u042f\u043a\u043e\u043f\u0435\u0442\u0442\u0438')
+        persons = Person.objects.search(u'Гуальтиеро Якопетти')
         self.assertTrue(len(persons) == 1)
 
         m = persons[0]
