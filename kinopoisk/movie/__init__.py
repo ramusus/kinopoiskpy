@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from kinopoisk.utils import KinopoiskObject, Manager
+from kinopoisk.utils import KinopoiskObject, Manager, get_request
 
 class Movie(KinopoiskObject):
 
@@ -25,13 +25,15 @@ class Movie(KinopoiskObject):
 
     rating = None
     runtime = None
+    release = None
 
     posters = []
 
     def __init__(self, **kwargs):
         super(Movie, self).__init__(**kwargs)
-        from sources import MovieLink, MovieMainPage, MoviePostersPage # import here for successful installing via pip
+        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage # import here for successful installing via pip
         self.register_source('link', MovieLink)
+        self.register_source('premier_link', MoviePremierLink)
         self.register_source('main_page', MovieMainPage)
         self.register_source('posters', MoviePostersPage)
         self.posters = []
@@ -68,4 +70,28 @@ class MovieManager(Manager):
             'show': 'all',
         })
 
+class MoviePremiersManager(Manager):
+
+    kinopoisk_object = Movie
+
+    def get_url_with_params(self):
+        return ('http://www.kinopoisk.ru/level/8/view/prem/', {})
+
+    def all(self):
+        from BeautifulSoup import BeautifulSoup
+
+        url, params = self.get_url_with_params()
+        response = get_request(url, params=params)
+        content = response.content.decode('windows-1251', 'ignore')
+
+        content_soup = BeautifulSoup(content)
+        instances = []
+        for premier in content_soup.findAll('div', {'class': 'premier_item'}):
+            instance = self.kinopoisk_object()
+            instance.parse('premier_link', premier)
+            instances += [instance]
+
+        return instances
+
 Movie.objects = MovieManager()
+Movie.premiers = MoviePremiersManager()

@@ -1,7 +1,41 @@
 # -*- coding: utf-8 -*-
-from BeautifulSoup import BeautifulSoup
+from BeautifulSoup import BeautifulSoup, Tag
 from kinopoisk.utils import KinopoiskPage, get_request
+from dateutil import parser
 import re
+
+class MoviePremierLink(KinopoiskPage):
+    '''
+    Parser movie info from premiers links
+    '''
+    def parse(self, instance, content):
+        if isinstance(content, Tag):
+            premier_soup = content
+        else:
+            content_soup = BeautifulSoup(content)
+            premier_soup = content_soup.find('div', {'class': 'premier_item'})
+
+        title_soup = premier_soup.find('span', {'class': 'name_big'}) or premier_soup.find('span', {'class': 'name'})
+
+        instance.id = self.prepare_int(premier_soup['id'])
+        instance.title = self.prepare_str(title_soup.find('a').contents[0])
+        date = premier_soup.find('meta', {'itemprop': 'startDate'})['content']
+        try:
+            instance.release = parser.parse(date)
+        except:
+            pass
+
+        match = re.findall(r'^(.+) \((\d{4})\)$', title_soup.nextSibling.nextSibling.contents[0])
+        if len(match):
+            instance.title_original = self.prepare_str(match[0][0].strip())
+            instance.year = self.prepare_int(match[0][1])
+
+        try:
+            instance.plot = self.prepare_str(premier_soup.find('span', {'class': 'sinopsys'}).contents[0])
+        except:
+            pass
+
+        instance.set_source('premier_link')
 
 class MovieLink(KinopoiskPage):
     '''

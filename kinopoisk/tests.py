@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+from datetime import datetime
 from kinopoisk import Movie, Person
 
 class MovieTest(unittest.TestCase):
@@ -58,6 +59,82 @@ class MovieTest(unittest.TestCase):
         m = Movie(id=51319)
         m.get_content('posters')
         self.assertEqual(m.posters, [1207166, 1196342, 1151730, 1151729, 1151728, 1151727, 1151726, 1151725, 1143914, 1139214, 1128415, 1118895, 1114967, 1112313, 1112312, 1112310, 1106582, 1091867, 1074616, 1064821, 973448])
+
+    def test_movie_premier_link_source(self):
+
+        m = Movie()
+        m.parse('premier_link', u'''<div class="premier_item" id="544226" style="z-index:999;" itemscope="" itemtype="http://schema.org/Event">
+   <meta itemprop="startDate" content="2012-03-15">
+   <meta itemprop="image" content="http://st.kinopoisk.ru/images/sm_film/544226.jpg">
+   <div class="image">
+      <a href="/level/1/film/544226/" itemprop="url"><img src="http://st.kinopoisk.ru/images/sm_film/544226.jpg" class="" title="" style="width: 52px; border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-top-color: rgb(255, 102, 0); border-right-color: rgb(255, 102, 0); border-bottom-color: rgb(255, 102, 0); border-left-color: rgb(255, 102, 0); border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-image: initial; display: block; margin-top: 5px; margin-right: 0px; margin-bottom: 5px; margin-left: 0px; opacity: 1; " alt="Белоснежка: Месть гномов" id="FlappImg_1"></a>
+   </div>
+   <div class="text">
+      <div class="textBlock">
+         <span class="name_big" itemprop="name"><a href="/level/1/film/544226/">Белоснежка: Месть гномов</a></span>
+         <span> Mirror Mirror  (2012)</span>
+         <span style="margin: 0">
+            США,
+            <i>реж. <a class="lined" href="/level/4/people/8764/">Тарсем Синх</a></i>
+         </span>
+         <span>(фэнтези, драма, комедия...)</span>
+         <span><a class="lined" href="/level/4/people/16564/">Джулия Робертс</a>, <a class="lined" href="/level/4/people/1801793/">Лили Коллинз</a></span>
+      </div>
+      <span class="sinopsys" itemprop="description">Злая Королева, мечтающая выйти замуж за красивого и богатого Принца, хитростью выдворяет из дворца Белоснежку и берет власть в свои руки. Но милая девушка не погибла в темном дремучем лесу, а связалась с бандой гномов-разбойников. Вместе они отомстят Злодейке!</span>
+   </div>
+   <div class="prem_day">
+      <div class="day"><div><img src="http://st.kinopoisk.ru/images/dates/1g.gif" width="28" height="40"><img src="http://st.kinopoisk.ru/images/dates/5g.gif" width="28" height="40"><br><img src="http://st.kinopoisk.ru/images/dates/month_03g.gif" vspace="6"><br></div></div>
+          <s class="company"><a href="/level/8/view/prem/company/4/">Парадиз</a></s>
+      <div class="limited"></div>
+   </div>
+   <div class="clear"></div>
+   <span id="ur_rating_544226" class="ajax_rating"><i>Рейтинг фильма:<u>6.68 &nbsp; <b>329</b></u></i></span>
+   <div class="my_mark" id="my_vote_544226" title="Моя оценка"></div>
+   <div class="MyKP_Folder_Select shortselect" id="MyKP_Folder_544226" type="film"><div class="select" id="select_544226"><span class="title" onclick="ClickFolders(this)">Мои фильмы <b></b></span><div class="list_div"></div></div></div>
+</div>''')
+        self.assertEqual(m.id, 544226)
+        self.assertEqual(m.title, u'Белоснежка: Месть гномов')
+        self.assertEqual(m.title_original, 'Mirror Mirror')
+        self.assertEqual(m.year, 2012)
+        self.assertEqual(m.release, datetime(2012,3,15))
+        self.assertEqual(m.plot, u'Злая Королева, мечтающая выйти замуж за красивого и богатого Принца, хитростью выдворяет из дворца Белоснежку и берет власть в свои руки. Но милая девушка не погибла в темном дремучем лесу, а связалась с бандой гномов-разбойников. Вместе они отомстят Злодейке!')
+
+        m = Movie()
+        m.parse('premier_link', u'''<div class="premier_item" id="2360" style="z-index:992;" itemscope="" itemtype="http://schema.org/Event">
+   <meta itemprop="startDate" content="2012-03-22">
+   <meta itemprop="image" content="http://st.kinopoisk.ru/images/sm_film/2360.jpg">
+   <div class="image gray">
+      <a href="/level/1/film/2360/" itemprop="url"><img src="http://st.kinopoisk.ru/images/sm_film/2360.jpg" class="" title="" style="width: 52px; border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-top-color: rgb(255, 102, 0); border-right-color: rgb(255, 102, 0); border-bottom-color: rgb(255, 102, 0); border-left-color: rgb(255, 102, 0); border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-image: initial; display: block; margin-top: 5px; margin-right: 0px; margin-bottom: 5px; margin-left: 0px; opacity: 1; " alt="Король Лев" id="FlappImg_8"></a>
+          <b><a href="/level/8/view/prem/only3d/yes/">3D</a></b>
+   </div>
+   <div class="text">
+      <div class="textBlock">
+         <span class="name" itemprop="name"><a href="/level/1/film/2360/">Король Лев</a></span>
+         <span> The Lion King  (1994)</span>
+         <span style="margin: 0">
+            США,
+            <i>реж. <a class="lined" href="/level/4/people/7313/">Роджер Аллерс</a>...</i>
+         </span>
+         <span>(мультфильм, мюзикл, драма...)</span>
+         <span><a class="lined" href="/level/4/people/33061/">Джереми Айронс</a>, <a class="lined" href="/level/4/people/10968/">Мэттью Бродерик</a></span>
+      </div>
+   </div>
+   <div class="prem_day">
+      <div class="day"><div><img src="http://st.kinopoisk.ru/images/dates/2.gif" width="28" height="40"><img src="http://st.kinopoisk.ru/images/dates/2.gif" width="28" height="40"><br><img src="http://st.kinopoisk.ru/images/dates/month_03.gif" vspace="6"><br></div></div>
+          <s class="company"><a href="/level/8/view/prem/company/184/">WDSSPR</a></s>
+      <div class="limited"></div>
+   </div>
+   <div class="clear"></div>
+   <span id="ur_rating_2360" class="ajax_rating"><i>Рейтинг фильма:<u>8.78 &nbsp; <b>91558</b></u></i></span>
+   <div class="my_mark" id="my_vote_2360" title="Моя оценка"></div>
+   <div class="MyKP_Folder_Select shortselect" id="MyKP_Folder_2360" type="film"><div class="select" id="select_2360"><span class="title" onclick="ClickFolders(this)">Мои фильмы <b></b></span><div class="list_div"></div></div></div>
+</div>''')
+
+        self.assertEqual(m.id, 2360)
+        self.assertEqual(m.title, u'Король Лев')
+        self.assertEqual(m.title_original, 'The Lion King')
+        self.assertEqual(m.year, 1994)
+        self.assertEqual(m.release, datetime(2012,3,22))
 
     def test_movie(self):
         '''
