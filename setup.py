@@ -15,6 +15,7 @@ setup(
     zip_safe=False, # because we're including media that Django needs
     install_requires=[
         'beautifulsoup',
+        'requests',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

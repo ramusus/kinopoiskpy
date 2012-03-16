@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from BeautifulSoup import BeautifulSoup
-from kinopoisk.utils import KinopoiskPage
-from kinopoisk.parser import UrlRequest
+from kinopoisk.utils import KinopoiskPage, get_request
 import re
 
 class MovieLink(KinopoiskPage):
@@ -72,6 +71,8 @@ class MovieMainPage(KinopoiskPage):
                     instance.tagline = self.prepare_str(value)
                 elif name == u'время':
                     instance.runtime = self.prepare_str(value)
+                    if '/' in instance.runtime:
+                         instance.runtime = instance.runtime.split('/')[0]
                 elif name == u'год':
                     instance.year = self.prepare_int(value)
 
@@ -84,7 +85,8 @@ class MoviePostersPage(KinopoiskPage):
     url = '/level/17/film/%d/'
 
     def get(self, instance):
-        content = UrlRequest(instance.get_url('posters')).read()
+        response = get_request(instance.get_url('posters'))
+        content = response.content.decode('windows-1251', 'ignore')
 
         # header with sign 'No posters'
         if re.findall(r'<h1 class="main_title">', content):

@@ -93,7 +93,7 @@ class MovieTest(unittest.TestCase):
 
         m = persons[0]
         self.assertEqual(m.id, 351549)
-        self.assertEqual(m.name, u'Джуальтеро Якопетти')
+        self.assertEqual(m.name, u'Гуалтьеро Якопетти')
         self.assertEqual(m.year_birth, 1919)
         self.assertEqual(m.name_original, u'Gualtiero Jacopetti')
 
