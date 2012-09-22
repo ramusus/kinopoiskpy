@@ -106,7 +106,7 @@ class MovieMainPage(KinopoiskPage):
                 elif name == u'время':
                     instance.runtime = self.prepare_int(value.split(' ')[0])
                 elif name == u'год':
-                    instance.year = self.prepare_int(value)
+                    instance.year = self.prepare_int(value[0:4])
 
         instance.set_source('main_page')
 
