@@ -7,8 +7,8 @@ class PersonLink(KinopoiskPage):
     Parser person info from links
     '''
     def parse(self, instance, content):
-
         link = re.compile(r'<p class="name"><a href="http://www.kinopoisk.ru/level/4/people/(\d+)/[^"]*">(.+?)</a>').findall(content)
+
         if link:
             instance.id = self.prepare_int(link[0][0])
             instance.name = self.prepare_str(link[0][1])
@@ -30,8 +30,7 @@ class PersonMainPage(KinopoiskPage):
     url = '/level/4/people/%d/'
 
     def parse(self, instance, content):
-
-        id = re.compile(r"pageUrl:'http://www.kinopoisk.ru/level/4/people/(\d+)/vk/3/'").findall(content)
+        id = re.compile(r"<link rel=\"canonical\" href=\"http://www.kinopoisk.ru/level/4/people/(\d+)/\" />").findall(content)
         if id:
             instance.id = self.prepare_int(id[0])
 
