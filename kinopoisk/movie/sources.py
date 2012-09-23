@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from BeautifulSoup import BeautifulSoup, Tag
-from kinopoisk.utils import KinopoiskPage, get_request
+from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage, get_request
 from dateutil import parser
 import re
 
@@ -110,42 +110,10 @@ class MovieMainPage(KinopoiskPage):
 
         instance.set_source('main_page')
 
-class MoviePostersPage(KinopoiskPage):
+class MoviePostersPage(KinopoiskImagesPage):
     '''
     Parser of movie posters page
     '''
     url = '/level/17/film/%d/'
-
-    def get(self, instance):
-        response = get_request(instance.get_url('posters'))
-        content = response.content.decode('windows-1251', 'ignore')
-
-        # header with sign 'No posters'
-        if re.findall(r'<h1 class="main_title">', content):
-            return False
-
-        content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
-
-        soup_content = BeautifulSoup(content)
-        table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
-        if table:
-            self.parse(instance, unicode(table[0]))
-        else:
-            raise ValueError('Parse error. Do not found posters for movie %s' % (instance.get_url('posters')))
-
-    def parse(self, instance, content):
-        links = BeautifulSoup(content).findAll('a')
-        for link in links:
-            img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
-            try:
-                img_id = int(img_id[0])
-                if img_id not in instance.posters:
-                    instance.posters += [img_id]
-            except:
-                pass
-
-        instance.set_source('posters')
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod(verbose=False)
+    field_name = 'posters'
+    content_name = 'posters'

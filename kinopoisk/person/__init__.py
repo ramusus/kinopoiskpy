@@ -8,11 +8,14 @@ class Person(KinopoiskObject):
 
     year_birth = None
 
+    photos = []
+
     def __init__(self, **kwargs):
         super(Person, self).__init__(**kwargs)
-        from sources import PersonLink, PersonMainPage # import here for successful installing via pip
+        from sources import PersonLink, PersonMainPage, PersonPhotosPage # import here for successful installing via pip
         self.register_source('link', PersonLink)
         self.register_source('main_page', PersonMainPage)
+        self.register_source('photos', PersonPhotosPage)
         self.posters = self.audience = []
 
     def __repr__(self):

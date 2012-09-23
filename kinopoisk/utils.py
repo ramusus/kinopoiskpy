@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from BeautifulSoup import BeautifulSoup
 import re
 
 def get_request(url, params=None):
@@ -97,13 +98,13 @@ class KinopoiskObject(object):
     def set_url(self, name, url):
         self._urls[name] = url
 
-    def get_url(self, name):
+    def get_url(self, name, postfix=''):
         url = self._urls.get(name)
         if not url:
             raise ValueError('There is no urlpage with name "%s"' % name)
         if not self.id:
             raise ValueError('ID of object is empty')
-        return 'http://www.kinopoisk.ru' + url % self.id
+        return 'http://www.kinopoisk.ru' + url % self.id + postfix
 
     def set_source(self, name):
         if name not in self._sources:
@@ -144,3 +145,46 @@ class KinopoiskPage(object):
 
     def parse(self, instance, content):
         raise NotImplementedError('You must implement KinopoiskPage.parse() method')
+
+class KinopoiskImagesPage(KinopoiskPage):
+    '''
+    Parser of kinopoisk images page
+    '''
+    field_name = None
+    content_name = None
+
+    def get(self, instance, page=1):
+        response = get_request(instance.get_url(self.content_name, postfix='/page/%d/' % page))
+        content = response.content.decode('windows-1251', 'ignore')
+
+        # header with sign 'No posters'
+        if re.findall(r'<h1 class="main_title">', content):
+            return False
+
+        content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
+
+        soup_content = BeautifulSoup(content)
+        table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
+        if table:
+            self.parse(instance, unicode(table[0]))
+            # may be there is more pages?
+            if len(getattr(instance, self.field_name)) % 21 == 0:
+                try:
+                    self.get(instance, page+1)
+                except ValueError:
+                    return
+        else:
+            raise ValueError('Parse error. Do not found posters for movie %s' % (instance.get_url('posters')))
+
+    def parse(self, instance, content):
+        links = BeautifulSoup(content).findAll('a')
+        for link in links:
+            img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
+            try:
+                img_id = int(img_id[0])
+                if img_id not in getattr(instance, self.field_name):
+                    setattr(instance, self.field_name, getattr(instance, self.field_name) + [img_id])
+            except:
+                pass
+
+        instance.set_source(self.content_name)

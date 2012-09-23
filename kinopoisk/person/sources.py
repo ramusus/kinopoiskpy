@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from kinopoisk.utils import KinopoiskPage
+from BeautifulSoup import BeautifulSoup, Tag
+from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage, get_request
 import re
 
 class PersonLink(KinopoiskPage):
@@ -52,3 +53,11 @@ class PersonMainPage(KinopoiskPage):
                     instance.year_birth = self.prepare_int(year_birth[0])
 
         instance.set_source('main_page')
+
+class PersonPhotosPage(KinopoiskImagesPage):
+    '''
+    Parser of person photos page
+    '''
+    url = '/name/%d/photos/'
+    field_name = 'photos'
+    content_name = 'photos'

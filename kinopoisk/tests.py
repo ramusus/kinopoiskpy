@@ -54,7 +54,7 @@ class MovieTest(unittest.TestCase):
         '''
         m = Movie()
         m.parse('posters', u'<table class="fotos"><tr><td><a href="/picture/1207166/"><img  src="/images/poster/sm_1207166.jpg" width="170" height="244" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>800&times;1148</i><a href="/picture/1207166/" target="_blank" title="Открыть в новом окне"></a>598 Кб</b></td><td class="center"><a href="/picture/1196342/"><img  src="/images/poster/sm_1196342.jpg" width="170" height="238" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>394&times;552</i><a href="/picture/1196342/" target="_blank" title="Открыть в новом окне"></a>96 Кб</b></td><td><a href="/picture/1151730/"><img  src="/images/poster/sm_1151730.jpg" width="170" height="241" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>400&times;568</i><a href="/picture/1151730/" target="_blank" title="Открыть в новом окне"></a>43 Кб</b></td></tr></table>')
-        self.assertTrue(len(m.posters) >= 3)
+        self.assertTrue(len(m.posters) == 3)
 
         m = Movie(id=51319)
         m.get_content('posters')
@@ -203,6 +203,18 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(m.id, 24508)
         self.assertEqual(m.year_birth, 1953)
         self.assertEqual(m.name_original, u'John Malkovich')
+
+    def test_person_photos_page_source(self):
+        '''
+        Test of parsing person photos
+        '''
+        m = Person()
+        m.parse('photos', u'<table class="fotos"><tr><td><a href="/picture/1294472/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
+        self.assertTrue(len(m.photos) == 2)
+
+        m = Person(id=6245)
+        m.get_content('photos')
+        self.assertTrue(len(m.photos) > 21)
 
 if __name__ == '__main__':
     unittest.main()
