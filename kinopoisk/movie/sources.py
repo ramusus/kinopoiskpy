@@ -116,4 +116,3 @@ class MoviePostersPage(KinopoiskImagesPage):
     '''
     url = '/level/17/film/%d/'
     field_name = 'posters'
-    content_name = 'posters'

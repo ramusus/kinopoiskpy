@@ -185,6 +185,14 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(m.year_birth, 1953)
         self.assertEqual(m.name_original, u'John Malkovich')
 
+        m = Person(id=6245)
+        m.get_content('main_page')
+        self.assertEqual(m.id, 6245)
+        self.assertEqual(m.name, u'Джонни Депп')
+        self.assertEqual(m.year_birth, 1963)
+        self.assertEqual(m.name_original, u'Johnny Depp')
+        self.assertTrue(len(m.information) > 50)
+
     def test_person_link_source(self):
         '''
         Test of parsing person link in search results

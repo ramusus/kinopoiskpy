@@ -5,6 +5,7 @@ class Person(KinopoiskObject):
 
     name = ''
     name_original = ''
+    information = ''
 
     year_birth = None
 
@@ -17,6 +18,8 @@ class Person(KinopoiskObject):
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)
         self.posters = self.audience = []
+
+        self.set_url('info', '/handler_info.php?obj_type=actor&obj_id=%d')
 
     def __repr__(self):
         return '%s (%s), %s' % (self.name, self.name_original, self.year_birth)

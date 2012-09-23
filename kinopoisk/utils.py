@@ -114,9 +114,11 @@ class KinopoiskObject(object):
         class_name = self._source_classes.get(name)
         if not class_name:
             raise ValueError('There is no source with name "%s"' % name)
-        return class_name()
+        return class_name(content_name = name)
 
 class KinopoiskPage(object):
+
+    content_name = None
 
     def prepare_str(self, value):
         value = re.compile(r"&nbsp;").sub(" ", value)
@@ -141,6 +143,12 @@ class KinopoiskPage(object):
         return content
 
     def get(self, instance):
+        if instance.id:
+            response = get_request(instance.get_url(self.content_name))
+            content = response.content.decode('windows-1251', 'ignore')
+#            content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
+            self.parse(instance, content)
+            return
         raise NotImplementedError('This method must be implemented in subclass')
 
     def parse(self, instance, content):
@@ -151,7 +159,6 @@ class KinopoiskImagesPage(KinopoiskPage):
     Parser of kinopoisk images page
     '''
     field_name = None
-    content_name = None
 
     def get(self, instance, page=1):
         response = get_request(instance.get_url(self.content_name, postfix='/page/%d/' % page))

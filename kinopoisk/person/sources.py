@@ -52,6 +52,11 @@ class PersonMainPage(KinopoiskPage):
                 if year_birth:
                     instance.year_birth = self.prepare_int(year_birth[0])
 
+        if instance.id:
+            response = get_request(instance.get_url('info'))
+            if response.content:
+                instance.information = self.prepare_str(response.content.decode('windows-1251', 'ignore'))
+
         instance.set_source('main_page')
 
 class PersonPhotosPage(KinopoiskImagesPage):
@@ -60,4 +65,3 @@ class PersonPhotosPage(KinopoiskImagesPage):
     '''
     url = '/name/%d/photos/'
     field_name = 'photos'
-    content_name = 'photos'
