@@ -114,7 +114,9 @@ class KinopoiskObject(object):
         class_name = self._source_classes.get(name)
         if not class_name:
             raise ValueError('There is no source with name "%s"' % name)
-        return class_name(content_name = name)
+        instance = class_name()
+        instance.content_name = name
+        return instance
 
 class KinopoiskPage(object):
 
