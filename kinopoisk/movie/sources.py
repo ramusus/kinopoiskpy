@@ -100,6 +100,8 @@ class MovieMainPage(KinopoiskPage):
                 tds = tr.findAll('td')
                 name = tds[0].text
                 value = tds[1].text
+                if value == '-':
+                    continue
 
                 if name == u'слоган':
                     instance.tagline = self.prepare_str(value)
