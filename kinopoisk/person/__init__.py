@@ -24,6 +24,10 @@ class Person(KinopoiskObject):
     def __repr__(self):
         return '%s (%s), %s' % (self.name, self.name_original, self.year_birth)
 
+    def get_photos(self):
+        title = self.name_original.replace(' ', '-') if self.name_original else 'Name'
+        return ['http://st.kinopoisk.ru/im/kadr/1/6/6/kinopoisk.ru-%s-%d.jpg' % (title, img_id) for img_id in self.photos]
+
 class PersonManager(Manager):
     '''
     Person manager
