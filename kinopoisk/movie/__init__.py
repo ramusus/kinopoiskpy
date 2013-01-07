@@ -43,8 +43,7 @@ class Movie(KinopoiskObject):
         return '%s (%s), %s' % (self.title, self.title_original, self.year)
 
     def get_posters(self):
-        title = self.title.replace(' ', '-') if self.title else 'Title'
-        return ['http://st3.kinopoisk.ru/im/poster/1/1/1/kinopoisk.ru-%s-%d.jpg' % (title, img_id) for img_id in self.posters]
+        return self.posters
 
 class MovieManager(Manager):
     '''

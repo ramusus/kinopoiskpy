@@ -118,6 +118,15 @@ class KinopoiskObject(object):
         instance.content_name = name
         return instance
 
+class KinopoiskImage(KinopoiskObject):
+
+    def __init__(self, id=None):
+        super(KinopoiskImage, self).__init__(id)
+        self.set_url('picture', '/picture/%d/')
+
+    def get_url(self, name='picture', postfix=''):
+        return super(KinopoiskImage, self).get_url(name, postfix)
+
 class KinopoiskPage(object):
 
     content_name = None
@@ -163,7 +172,7 @@ class KinopoiskImagesPage(KinopoiskPage):
     field_name = None
 
     def get(self, instance, page=1):
-        response = get_request(instance.get_url(self.content_name, postfix='/page/%d/' % page))
+        response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page))
         content = response.content.decode('windows-1251', 'ignore')
 
         # header with sign 'No posters'
@@ -186,14 +195,21 @@ class KinopoiskImagesPage(KinopoiskPage):
             raise ValueError('Parse error. Do not found posters for movie %s' % (instance.get_url('posters')))
 
     def parse(self, instance, content):
+        urls = getattr(instance, self.field_name, [])
+
         links = BeautifulSoup(content).findAll('a')
         for link in links:
-            img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
-            try:
-                img_id = int(img_id[0])
-                if img_id not in getattr(instance, self.field_name):
-                    setattr(instance, self.field_name, getattr(instance, self.field_name) + [img_id])
-            except:
-                pass
 
+            img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
+            picture = KinopoiskImage(int(img_id[0]))
+
+            response = get_request(picture.get_url())
+            content = response.content.decode('windows-1251', 'ignore')
+            img = BeautifulSoup(content).find('img', attrs={'id': 'image'})
+            if img:
+                img_url = img['src']
+                if img_url not in urls:
+                    urls.append(img_url)
+
+        setattr(instance, self.field_name, urls)
         instance.set_source(self.content_name)

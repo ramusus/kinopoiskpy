@@ -219,10 +219,11 @@ class PersonTest(unittest.TestCase):
         m = Person()
         m.parse('photos', u'<table class="fotos"><tr><td><a href="/picture/1294472/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
         self.assertTrue(len(m.photos) == 2)
+        self.assertTrue(m.photos[0] == 'http://st.kinopoisk.ru/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
 
-        m = Person(id=6245)
+        m = Person(id=8217)
         m.get_content('photos')
-        self.assertTrue(len(m.photos) > 21)
+        self.assertTrue(len(m.photos) > 10)
 
 if __name__ == '__main__':
     unittest.main()

@@ -9,6 +9,7 @@ class MoviePremierLink(KinopoiskPage):
     Parser movie info from premiers links
     '''
     def parse(self, instance, content):
+
         if isinstance(content, Tag):
             premier_soup = content
         else:
@@ -77,6 +78,7 @@ class MovieMainPage(KinopoiskPage):
     url = '/level/1/film/%d/'
 
     def parse(self, instance, content):
+
         instance_id = re.compile(r'<script type="text/javascript"> id_film = (\d+); </script>').findall(content)
         if instance_id:
             instance.id = self.prepare_int(instance_id[0])
