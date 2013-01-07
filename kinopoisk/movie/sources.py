@@ -56,7 +56,8 @@ class MovieLink(KinopoiskPage):
         if year:
             year = year.find('span', {'class': 'year'})
             if year:
-                instance.year = self.prepare_int(year.text)
+                # '1998 &ndash; 2009'
+                instance.year = self.prepare_int(year.text[:4])
 
         otitle = content_soup.find('span', {'class': 'gray'})
         if otitle:
@@ -108,7 +109,7 @@ class MovieMainPage(KinopoiskPage):
                 elif name == u'время':
                     instance.runtime = self.prepare_int(value.split(' ')[0])
                 elif name == u'год':
-                    instance.year = self.prepare_int(value[0:4])
+                    instance.year = self.prepare_int(value[:4])
 
         instance.set_source('main_page')
 
