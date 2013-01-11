@@ -21,3 +21,7 @@ To install the latest version using pip:
 ```
 $ pip install kinopoiskpy
 ```
+
+#### Contributors:
+
+[Alex Rembish](http://github.com/rembish)

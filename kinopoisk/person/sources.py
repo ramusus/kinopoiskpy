@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from BeautifulSoup import BeautifulSoup, Tag
-from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage, get_request
 import re
+
+from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage, get_request
 
 class PersonLink(KinopoiskPage):
     '''
