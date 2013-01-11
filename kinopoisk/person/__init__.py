@@ -22,7 +22,7 @@ class Person(KinopoiskObject):
         self.set_url('info', '/handler_info.php?obj_type=actor&obj_id=%d')
 
     def __repr__(self):
-        return '%s (%s), %s' % (self.name, self.name_original, self.year_birth)
+        return ('<%s (%s), %s>' % (self.name, self.name_original, self.year_birth)).encode('utf-8')
 
     def get_photos(self):
         return self.photos
