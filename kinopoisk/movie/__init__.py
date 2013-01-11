@@ -40,7 +40,7 @@ class Movie(KinopoiskObject):
         self.audience = []
 
     def __repr__(self):
-        return ('<%s (%s), %s>' % (self.title, self.title_original, self.year)).encode('utf-8')
+        return ('<%s (%s), %s>' % (self.title, self.title_original, self.year or '-')).encode('utf-8')
 
     def get_posters(self):
         return self.posters

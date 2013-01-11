@@ -162,6 +162,12 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, u'Pulp Fiction')
 
+    def test_movie_repr(self):
+        self.assertEqual(
+            repr(Movie.objects.search(u'Молчание ягнят')[0]),
+            '<Молчание ягнят (The Silence of the Lambs), 1990>'
+        )
+
 class PersonTest(unittest.TestCase):
 
     def test_person(self):
@@ -225,6 +231,12 @@ class PersonTest(unittest.TestCase):
         m = Person(id=8217)
         m.get_content('photos')
         self.assertTrue(len(m.photos) > 10)
+
+    def test_person_repr(self):
+        self.assertEqual(
+            repr(Person.objects.search(u'Чарльз Чаплин')[0]),
+            '<Чарльз Чаплин (Charles Chaplin), ->'
+        )
 
 if __name__ == '__main__':
     unittest.main()
