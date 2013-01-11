@@ -27,4 +27,5 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
+    test_suite='kinopoisk.tests',
 )
