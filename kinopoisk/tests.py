@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+
 from datetime import datetime
 from kinopoisk import Movie, Person
 
