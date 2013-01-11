@@ -16,6 +16,7 @@ setup(
     install_requires=[
         'beautifulsoup',
         'requests',
+        'python-dateutil'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
