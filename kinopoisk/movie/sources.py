@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from BeautifulSoup import BeautifulSoup, Tag
-from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage, get_request
-from dateutil import parser
 import re
+
+from BeautifulSoup import BeautifulSoup, Tag
+from dateutil import parser
+
+from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage
 
 class MoviePremierLink(KinopoiskPage):
     '''

@@ -16,6 +16,7 @@ setup(
     install_requires=[
         'beautifulsoup',
         'requests',
+        'python-dateutil'
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -26,4 +27,5 @@ setup(
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
+    test_suite='kinopoisk.tests',
 )
