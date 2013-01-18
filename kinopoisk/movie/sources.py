@@ -88,6 +88,10 @@ class MovieLink(KinopoiskPage):
             else:
                 instance.title_original = self.prepare_str(otitle.text)
 
+        rating = content_soup.find('div', attrs={'class': 'rating'})
+        if rating:
+            instance.rating = str(rating['title'].split(' ')[0])
+
         instance.set_source('link')
 
         if instance.series:
@@ -159,6 +163,10 @@ class MovieMainPage(KinopoiskPage):
                 elif name == u'год':
                     instance.year = self.prepare_int(value[:4])
                     instance.series = u'сезон' in value
+
+        rating = content_info.find('span', attrs={'class': 'rating_ball'})
+        if rating:
+            instance.rating = str(rating.string)
 
         if instance.series:
             instance.register_source('series', MovieSeries)

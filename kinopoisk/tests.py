@@ -192,6 +192,17 @@ class MovieTest(unittest.TestCase):
         m.get_content('main_page')
         self.assertTrue(m.series)
 
+    def test_movie_rating(self):
+        movies = Movie.objects.search('the big bang theory')
+        self.assertGreaterEqual(len(movies), 1)
+
+        m = movies[0] # The Big Bang Theory Series
+        self.assertGreaterEqual(float(m.rating), 8.5)
+
+        m = Movie(id=306084)
+        m.get_content('main_page')
+        self.assertGreaterEqual(float(m.rating), 8.5)
+
 
 class PersonTest(unittest.TestCase):
 
