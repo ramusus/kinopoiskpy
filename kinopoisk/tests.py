@@ -197,11 +197,11 @@ class MovieTest(unittest.TestCase):
         self.assertGreaterEqual(len(movies), 1)
 
         m = movies[0] # The Big Bang Theory Series
-        self.assertGreaterEqual(float(m.rating), 8.5)
+        self.assertGreaterEqual(m.rating, 8.5)
 
-        m = Movie(id=306084)
+        m = Movie(id=306084) # same
         m.get_content('main_page')
-        self.assertGreaterEqual(float(m.rating), 8.5)
+        self.assertGreaterEqual(m.rating, 8.5)
 
 
 class PersonTest(unittest.TestCase):

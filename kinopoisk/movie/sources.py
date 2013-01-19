@@ -90,7 +90,7 @@ class MovieLink(KinopoiskPage):
 
         rating = content_soup.find('div', attrs={'class': 'rating'})
         if rating:
-            instance.rating = str(rating['title'].split(' ')[0])
+            instance.rating = float(str(rating['title'].split(' ')[0]))
 
         instance.set_source('link')
 
@@ -166,7 +166,7 @@ class MovieMainPage(KinopoiskPage):
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
         if rating:
-            instance.rating = str(rating.string)
+            instance.rating = float(str(rating.string))
 
         if instance.series:
             instance.register_source('series', MovieSeries)
