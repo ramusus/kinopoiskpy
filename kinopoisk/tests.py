@@ -183,6 +183,11 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(e.title, 'Vitamin D')
         self.assertEqual(e.release_date, datetime(2009, 10, 7).date())
 
+        ls = m.seasons[-1]
+        le = ls.episodes[-1]
+        self.assertIsNone(le.title)
+        self.assertIsNone(le.release_date)
+
         m = Movie(id=419200) # Kick-Ass / Пипец
         m.get_content('main_page')
         self.assertFalse(m.series)

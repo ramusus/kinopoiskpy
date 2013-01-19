@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 import re
 from BeautifulSoup import BeautifulSoup, Tag
-from datetime import date
 from dateutil import parser
 
 from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage
 
 class SeriesEpisode(object):
-    def __init__(self, title, release_date=None):
+    def __init__(self, title=None, release_date=None):
         self.title = title
         self.release_date = release_date
 
     def __repr__(self):
-        return '<%s "%s", %s>' % (self.__class__.__name__, self.title.encode('utf-8'), self.release_date or '-')
+        return '<%s "%s", %s>' % (
+            self.__class__.__name__,
+            self.title.encode('utf-8') if self.title else '???',
+            self.release_date or '-'
+        )
 
 class SeriesSeason(object):
     def __init__(self, year, episodes=[]):
@@ -115,8 +118,10 @@ class MovieSeries(KinopoiskPage):
 
                 raw_date = tr.find('td', attrs={'width': '20%'}).string
                 normalized_date = self.prepare_date(raw_date)
-                if normalized_date and normalized_date <= date.today():
-                    episodes.append(SeriesEpisode(tr.find('h1').b.string, normalized_date))
+                title = tr.find('h1').b.string
+                if title.startswith(u'Эпизод #'):
+                    title = None
+                episodes.append(SeriesEpisode(title, normalized_date))
 
             if episodes:
                 instance.seasons.append(SeriesSeason(year, episodes))
