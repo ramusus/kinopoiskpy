@@ -168,6 +168,47 @@ class MovieTest(unittest.TestCase):
             '<Молчание ягнят (The Silence of the Lambs), 1990>'
         )
 
+    def test_movie_series(self):
+        movies = Movie.objects.search('glee')
+        self.assertGreaterEqual(len(movies), 1)
+
+        m = movies[0] # Glee / Хор / Лузеры
+        self.assertTrue(m.series)
+        m.get_content('series')
+        self.assertGreaterEqual(len(m.seasons), 4)
+        f = m.seasons[0]
+        self.assertEqual(len(f.episodes), 22)
+        self.assertEqual(f.year, 2009)
+        e = m.seasons[0].episodes[5]
+        self.assertEqual(e.title, 'Vitamin D')
+        self.assertEqual(e.release_date, datetime(2009, 10, 7).date())
+
+        ls = m.seasons[-1]
+        le = ls.episodes[-1]
+        self.assertIsNone(le.title)
+        self.assertIsNone(le.release_date)
+
+        m = Movie(id=419200) # Kick-Ass / Пипец
+        m.get_content('main_page')
+        self.assertFalse(m.series)
+        self.assertRaises(ValueError, m.get_content, ('series', ))
+
+        m = Movie(id=306084) # The Big Bang Theory / Теория большого взрыва
+        m.get_content('main_page')
+        self.assertTrue(m.series)
+
+    def test_movie_rating(self):
+        movies = Movie.objects.search('the big bang theory')
+        self.assertGreaterEqual(len(movies), 1)
+
+        m = movies[0] # The Big Bang Theory Series
+        self.assertGreaterEqual(m.rating, 8.5)
+
+        m = Movie(id=306084) # same
+        m.get_content('main_page')
+        self.assertGreaterEqual(m.rating, 8.5)
+
+
 class PersonTest(unittest.TestCase):
 
     def test_person(self):
