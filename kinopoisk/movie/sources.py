@@ -118,8 +118,7 @@ class MovieMainPage(KinopoiskPage):
 
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         if len(trailers):
-            from kinopoisk import Trailer
-            instance.trailers += [Trailer(json.loads(trailers[0]))]
+            instance.add_trailer(json.loads(trailers[0].replace("'",'"')))
 
         instance.set_source('main_page')
 
@@ -137,12 +136,8 @@ class MovieTrailersPage(KinopoiskPage):
     url = '/film/%d/video/'
 
     def parse(self, instance, content):
-        from kinopoisk import Trailer
-
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         for trailer in trailers:
-            trailer = Trailer(json.loads(trailer.replace("'",'"')))
-            if trailer.id not in [tr.id for tr in instance.trailers]:
-                instance.trailers += [trailer]
+            instance.add_trailer(json.loads(trailer.replace("'",'"')))
 
         instance.set_source(self.content_name)

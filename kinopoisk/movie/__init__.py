@@ -48,6 +48,11 @@ class Movie(KinopoiskObject):
     def get_posters(self):
         return self.posters
 
+    def add_trailer(self, trailer_params):
+        trailer = Trailer(trailer_params)
+        if trailer.id not in [tr.id for tr in self.trailers]:
+            self.trailers += [trailer]
+
 class Trailer(object):
     id = None
     width = None
@@ -61,18 +66,18 @@ class Trailer(object):
     preview_width = None
     preview_heigth = None
 
-    def __init__(self, data):
-        self.id = data['trailerId'].replace('top','')
-        self.width = data['trailerW']
-        self.heigth = data['trailerH']
-        self.file = data['trailerFile']
-        self.dom = data['trailerDom']
-        self.advsys = data['trailerAdvsys']
-        self.sbt = data['trailerSbt']
-        self.genres = data['genres']
-        self.preview_file = data['previewFile']
-        self.preview_width = data['previewW']
-        self.preview_heigth = data['previewH']
+    def __init__(self, params):
+        self.id = params['trailerId'].replace('top','')
+        self.width = params['trailerW']
+        self.heigth = params['trailerH']
+        self.file = params['trailerFile']
+        self.dom = params['trailerDom']
+        self.advsys = params['trailerAdvsys']
+        self.sbt = params['trailerSbt']
+        self.genres = params['genres']
+        self.preview_file = params['previewFile']
+        self.preview_width = params['previewW']
+        self.preview_heigth = params['previewH']
 
 class MovieManager(Manager):
     '''
