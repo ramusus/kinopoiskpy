@@ -28,15 +28,18 @@ class Movie(KinopoiskObject):
     release = None
 
     posters = []
+    trailers = []
 
-    def __init__(self, **kwargs):
-        super(Movie, self).__init__(**kwargs)
-        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage # import here for successful installing via pip
+    def __init__(self, *args, **kwargs):
+        super(Movie, self).__init__(*args, **kwargs)
+        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
         self.register_source('main_page', MovieMainPage)
         self.register_source('posters', MoviePostersPage)
+        self.register_source('trailers', MovieTrailersPage)
         self.posters = []
+        self.trailers = []
         self.audience = []
 
     def __repr__(self):
@@ -44,6 +47,32 @@ class Movie(KinopoiskObject):
 
     def get_posters(self):
         return self.posters
+
+class Trailer(object):
+    id = None
+    width = None
+    heigth = None
+    file = None
+    dom = 'tr'
+    advsys = "rutube"
+    sbt = ""
+    genres = None
+    preview_file = None
+    preview_width = None
+    preview_heigth = None
+
+    def __init__(self, data):
+        self.id = data['trailerId'].replace('top','')
+        self.width = data['trailerW']
+        self.heigth = data['trailerH']
+        self.file = data['trailerFile']
+        self.dom = data['trailerDom']
+        self.advsys = data['trailerAdvsys']
+        self.sbt = data['trailerSbt']
+        self.genres = data['genres']
+        self.preview_file = data['previewFile']
+        self.preview_width = data['previewW']
+        self.preview_heigth = data['previewH']
 
 class MovieManager(Manager):
     '''

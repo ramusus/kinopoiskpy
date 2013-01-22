@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import simplejson as json
 import re
 
 from BeautifulSoup import BeautifulSoup, Tag
@@ -77,7 +78,7 @@ class MovieMainPage(KinopoiskPage):
     '''
     Parser of main movie page
     '''
-    url = '/level/1/film/%d/'
+    url = '/film/%d/'
 
     def parse(self, instance, content):
 
@@ -115,11 +116,33 @@ class MovieMainPage(KinopoiskPage):
                 elif name == u'год':
                     instance.year = self.prepare_int(value[:4])
 
+        trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
+        if len(trailers):
+            from kinopoisk import Trailer
+            instance.trailers += [Trailer(json.loads(trailers[0]))]
+
         instance.set_source('main_page')
 
 class MoviePostersPage(KinopoiskImagesPage):
     '''
     Parser of movie posters page
     '''
-    url = '/level/17/film/%d/'
+    url = '/film/%d/posters/'
     field_name = 'posters'
+
+class MovieTrailersPage(KinopoiskPage):
+    '''
+    Parser of kinopoisk trailers page
+    '''
+    url = '/film/%d/video/'
+
+    def parse(self, instance, content):
+        from kinopoisk import Trailer
+
+        trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
+        for trailer in trailers:
+            trailer = Trailer(json.loads(trailer.replace("'",'"')))
+            if trailer.id not in [tr.id for tr in instance.trailers]:
+                instance.trailers += [trailer]
+
+        instance.set_source(self.content_name)

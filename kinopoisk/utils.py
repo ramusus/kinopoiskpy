@@ -22,7 +22,7 @@ class Manager(object):
     search_url = None
 
     def search(self, query):
-        url, params = self.get_url_with_params(query)
+        url, params = self.get_url_with_params(query.encode('windows-1251'))
         response = get_request(url, params=params)
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object

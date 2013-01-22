@@ -2,7 +2,7 @@
 import unittest
 
 from datetime import datetime
-from kinopoisk import Movie, Person
+from kinopoisk import Movie, Person, Trailer
 
 class MovieTest(unittest.TestCase):
 
@@ -153,6 +153,12 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.runtime, 90)
         self.assertEqual(m.tagline, u'"Фильм, запрещенный к прокату во многих странах"')
 
+        self.assertEqual(len(m.trailers), 1)
+        self.assertEqual(m.trailers[0].id, 't12964')
+        self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-22111.flv')
+        self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
+        self.assertEqual(m.trailers[0].dom, 'tr')
+
         movies = Movie.objects.search('pulp fiction')
         self.assertTrue(len(movies) > 1)
 
@@ -161,6 +167,24 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.title, u'Криминальное чтиво')
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, u'Pulp Fiction')
+
+    def test_movie_trailers(self):
+        '''
+        Test of movie trailers source page
+        '''
+        m = Movie(id=278229)
+        m.get_content('trailers')
+
+        self.assertTrue(len(m.trailers) > 3)
+        self.assertEqual(m.trailers[0].id, 't12964')
+        self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-22111.flv')
+        self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
+        self.assertEqual(m.trailers[1].id, 't31616')
+        self.assertEqual(m.trailers[1].file, '278229/kinopoisk.ru-Redacted-42294.flv')
+        self.assertEqual(m.trailers[1].preview_file, '278229/3_18400.jpg')
+        self.assertEqual(m.trailers[2].id, 't9922')
+        self.assertEqual(m.trailers[2].file, '278229/kinopoisk.ru-Redacted-18453.mov')
+        self.assertEqual(m.trailers[2].preview_file, '278229/3_4476.jpg')
 
     def test_movie_repr(self):
         self.assertEqual(
@@ -226,7 +250,7 @@ class PersonTest(unittest.TestCase):
         m = Person()
         m.parse('photos', u'<table class="fotos"><tr><td><a href="/picture/1294472/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
         self.assertTrue(len(m.photos) == 2)
-        self.assertTrue(m.photos[0] == 'http://st.kinopoisk.ru/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
+        self.assertTrue(m.photos[0] == 'http://st-im.kinopoisk.ru/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
 
         m = Person(id=8217)
         m.get_content('photos')

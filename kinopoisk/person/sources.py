@@ -28,7 +28,7 @@ class PersonMainPage(KinopoiskPage):
     '''
     Parser of main person page
     '''
-    url = '/level/4/people/%d/'
+    url = '/name/%d/'
 
     def parse(self, instance, content):
 
