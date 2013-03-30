@@ -2,8 +2,8 @@ language: python
 python:
   - "2.7"
 install:
-  - pip install -q coveralls --use-mirrors
-  - pip install -q . --use-mirrors
+  - pip install coveralls --use-mirrors
+  - pip install . --use-mirrors
 script:
   - coverage run --source=kinopoiskpy ./kinopoisk/tests.py
 after_success:
