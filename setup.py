@@ -16,6 +16,7 @@ setup(
     install_requires=[
         'BeautifulSoup',
         'requests',
+        'simplejson',
         'python-dateutil',
     ],
     classifiers=[

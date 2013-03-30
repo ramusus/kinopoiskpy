@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-import simplejson as json
-import re
 from BeautifulSoup import BeautifulSoup, Tag
 from dateutil import parser
+
+import simplejson as json
+import re
 
 from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage
 
