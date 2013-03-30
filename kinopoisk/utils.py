@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from BeautifulSoup import BeautifulSoup
 from dateutil import parser
 import re
 
@@ -195,6 +194,7 @@ class KinopoiskImagesPage(KinopoiskPage):
 
         content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
 
+        from BeautifulSoup import BeautifulSoup
         soup_content = BeautifulSoup(content)
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
@@ -211,6 +211,7 @@ class KinopoiskImagesPage(KinopoiskPage):
     def parse(self, instance, content):
         urls = getattr(instance, self.field_name, [])
 
+        from BeautifulSoup import BeautifulSoup
         links = BeautifulSoup(content).findAll('a')
         for link in links:
 
