@@ -207,6 +207,13 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(e.title, 'Vitamin D')
         self.assertEqual(e.release_date, datetime(2009, 10, 7).date())
 
+        # It will false someday as well, we should find some TV series, that announced more series, but
+        # stop showing them in some moment. At that moment, I can't find any.
+        movies = Movie.objects.search('the killing')
+        self.assertGreaterEqual(len(movies), 1)
+        m = movies[0] # The Killing / Убийство
+        self.assertTrue(m.series)
+        m.get_content('series')
         ls = m.seasons[-1]
         le = ls.episodes[-1]
         self.assertIsNone(le.title)
