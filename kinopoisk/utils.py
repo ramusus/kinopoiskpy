@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from dateutil import parser
 import re
 
 def get_request(url, params=None):
@@ -157,6 +156,7 @@ class KinopoiskPage(object):
                 value = value.replace(month, '%02d' % i)
                 break
         value = value.replace(u'\xa0', '-')
+        from dateutil import parser
         return parser.parse(value, dayfirst=True).date()
 
     def cut_from_to(self, content, after, before):
