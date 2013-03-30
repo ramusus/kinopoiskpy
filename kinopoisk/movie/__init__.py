@@ -32,15 +32,19 @@ class Movie(KinopoiskObject):
 
     def __init__(self, *args, **kwargs):
         super(Movie, self).__init__(*args, **kwargs)
-        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage # import here for successful installing via pip
+        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
         self.register_source('main_page', MovieMainPage)
         self.register_source('posters', MoviePostersPage)
         self.register_source('trailers', MovieTrailersPage)
+        self.register_source('series', MovieSeries)
         self.posters = []
         self.trailers = []
         self.audience = []
+
+        self.series = None
+        self.seasons = []
 
     def __repr__(self):
         return ('<%s (%s), %s>' % (self.title, self.title_original, self.year or '-')).encode('utf-8')

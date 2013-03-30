@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from BeautifulSoup import BeautifulSoup
+from dateutil import parser
 import re
 
 def get_request(url, params=None):
@@ -145,6 +146,19 @@ class KinopoiskPage(object):
         value = self.prepare_str(value)
         value = int(value)
         return value
+
+    def prepare_date(self, value):
+        value = self.prepare_str(value).strip()
+        if not value:
+            return None
+        months = [u"января", u"февраля", u"марта", u"апреля", u"мая", u"июня",
+                  u"июля", u"августа", u"сентября", u"октября", u"ноября", u"декабря"]
+        for i, month in enumerate(months, start=1):
+            if month in value:
+                value = value.replace(month, '%02d' % i)
+                break
+        value = value.replace(u'\xa0', '-')
+        return parser.parse(value, dayfirst=True).date()
 
     def cut_from_to(self, content, after, before):
         start = content.find(after)

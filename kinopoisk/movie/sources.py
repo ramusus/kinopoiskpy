@@ -1,11 +1,30 @@
 # -*- coding: utf-8 -*-
 import simplejson as json
 import re
-
 from BeautifulSoup import BeautifulSoup, Tag
 from dateutil import parser
 
 from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage
+
+class SeriesEpisode(object):
+    def __init__(self, title=None, release_date=None):
+        self.title = title
+        self.release_date = release_date
+
+    def __repr__(self):
+        return '<%s "%s", %s>' % (
+            self.__class__.__name__,
+            self.title.encode('utf-8') if self.title else '???',
+            self.release_date or '-'
+        )
+
+class SeriesSeason(object):
+    def __init__(self, year, episodes=[]):
+        self.year = year
+        self.episodes = episodes
+
+    def __repr__(self):
+        return '<%s of %d: %d>' % (self.__class__, self.year, len(self.episodes))
 
 class MoviePremierLink(KinopoiskPage):
     '''
@@ -55,6 +74,7 @@ class MovieLink(KinopoiskPage):
                 # /level/1/film/342/sr/1/
                 instance.id = self.prepare_int(link['href'].split('/')[4])
                 instance.title = self.prepare_str(link.text)
+                instance.series = u'(сериал)' in instance.title
 
         year = content_soup.find('p', {'class': 'name'})
         if year:
@@ -72,7 +92,37 @@ class MovieLink(KinopoiskPage):
             else:
                 instance.title_original = self.prepare_str(otitle.text)
 
+        rating = content_soup.find('div', attrs={'class': 'rating'})
+        if rating:
+            instance.rating = float(rating['title'].split(' ')[0])
+
         instance.set_source('link')
+
+class MovieSeries(KinopoiskPage):
+    url = '/film/%s/episodes/'
+
+    def parse(self, instance, content):
+        soup = BeautifulSoup(content, convertEntities=BeautifulSoup.ALL_ENTITIES)
+        for season in soup.findAll('h1', attrs={'class': 'moviename-big'}):
+            if '21px' not in season['style']:
+                continue
+
+            year = self.prepare_int(season.nextSibling.string[:4])
+            tbody = season.parent.parent.parent
+            episodes = []
+            for tr in tbody.findAll('tr')[1:]:
+                if not tr.find('h1'):
+                    continue
+
+                raw_date = tr.find('td', attrs={'width': '20%'}).string
+                normalized_date = self.prepare_date(raw_date)
+                title = tr.find('h1').b.string
+                if title.startswith(u'Эпизод #'):
+                    title = None
+                episodes.append(SeriesEpisode(title, normalized_date))
+
+            if episodes:
+                instance.seasons.append(SeriesSeason(year, episodes))
 
 class MovieMainPage(KinopoiskPage):
     '''
@@ -115,6 +165,11 @@ class MovieMainPage(KinopoiskPage):
                     instance.runtime = self.prepare_int(value.split(' ')[0])
                 elif name == u'год':
                     instance.year = self.prepare_int(value[:4])
+                    instance.series = u'сезон' in value
+
+        rating = content_info.find('span', attrs={'class': 'rating_ball'})
+        if rating:
+            instance.rating = float(rating.string)
 
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         if len(trailers):
