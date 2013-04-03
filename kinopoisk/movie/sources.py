@@ -7,26 +7,6 @@ import re
 
 from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage
 
-class SeriesEpisode(object):
-    def __init__(self, title=None, release_date=None):
-        self.title = title
-        self.release_date = release_date
-
-    def __repr__(self):
-        return '<%s "%s", %s>' % (
-            self.__class__.__name__,
-            self.title.encode('utf-8') if self.title else '???',
-            self.release_date or '-'
-        )
-
-class SeriesSeason(object):
-    def __init__(self, year, episodes=[]):
-        self.year = year
-        self.episodes = episodes
-
-    def __repr__(self):
-        return '<%s of %d: %d>' % (self.__class__, self.year, len(self.episodes))
-
 class MoviePremierLink(KinopoiskPage):
     '''
     Parser movie info from premiers links
@@ -120,10 +100,10 @@ class MovieSeries(KinopoiskPage):
                 title = tr.find('h1').b.string
                 if title.startswith(u'Эпизод #'):
                     title = None
-                episodes.append(SeriesEpisode(title, normalized_date))
+                episodes.append((title, normalized_date))
 
             if episodes:
-                instance.seasons.append(SeriesSeason(year, episodes))
+                instance.add_series_season(year, episodes)
 
 class MovieMainPage(KinopoiskPage):
     '''

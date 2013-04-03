@@ -2,7 +2,7 @@
 import unittest
 
 from datetime import datetime
-from kinopoisk import Movie, Person, Trailer
+from kinopoisk import Movie, Person
 
 class MovieTest(unittest.TestCase):
 

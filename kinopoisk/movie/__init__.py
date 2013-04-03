@@ -3,35 +3,41 @@ from kinopoisk.utils import KinopoiskObject, Manager, get_request
 
 class Movie(KinopoiskObject):
 
-    title = ''
-    title_original = ''
-    plot = ''
+    def set_defaults(self):
+        self.title = ''
+        self.title_original = ''
+        self.plot = ''
 
-    year = None
-    countries = []
-    tagline = ''
+        self.year = None
+        self.countries = []
+        self.tagline = ''
 
-    directors = []
-    scenarios = []
-    producers = []
-    operators = []
-    composers = []
-    genres = []
+        self.directors = []
+        self.scenarios = []
+        self.producers = []
+        self.operators = []
+        self.composers = []
+        self.genres = []
 
-    budget = None
-    profit_usa = None
-    profit_russia = None
-    audience = []
+        self.budget = None
+        self.profit_usa = None
+        self.profit_russia = None
+        self.audience = []
 
-    rating = None
-    runtime = None
-    release = None
+        self.rating = None
+        self.runtime = None
+        self.release = None
 
-    posters = []
-    trailers = []
+        self.posters = []
+        self.trailers = []
+
+        self.series = None
+        self.seasons = []
 
     def __init__(self, *args, **kwargs):
         super(Movie, self).__init__(*args, **kwargs)
+        self.set_defaults()
+
         from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
@@ -39,49 +45,83 @@ class Movie(KinopoiskObject):
         self.register_source('posters', MoviePostersPage)
         self.register_source('trailers', MovieTrailersPage)
         self.register_source('series', MovieSeries)
-        self.posters = []
-        self.trailers = []
-        self.audience = []
-
-        self.series = None
-        self.seasons = []
 
     def __repr__(self):
         return ('<%s (%s), %s>' % (self.title, self.title_original, self.year or '-')).encode('utf-8')
 
-    def get_posters(self):
-        return self.posters
-
     def add_trailer(self, trailer_params):
         trailer = Trailer(trailer_params)
         if trailer.id not in [tr.id for tr in self.trailers]:
-            self.trailers += [trailer]
+            self.trailers.append(trailer)
+
+    def add_series_season(self, year, episodes):
+        self.seasons.append(SeriesSeason(year, [SeriesEpisode(title, date) for title, date in episodes]))
 
 class Trailer(object):
-    id = None
-    width = None
-    heigth = None
-    file = None
-    dom = 'tr'
-    advsys = "rutube"
-    sbt = ""
-    genres = None
-    preview_file = None
-    preview_width = None
-    preview_heigth = None
 
-    def __init__(self, params):
-        self.id = params['trailerId'].replace('top','')
-        self.width = params['trailerW']
-        self.heigth = params['trailerH']
-        self.file = params['trailerFile']
-        self.dom = params['trailerDom']
-        self.advsys = params['trailerAdvsys']
-        self.sbt = params['trailerSbt']
-        self.genres = params['genres']
-        self.preview_file = params['previewFile']
-        self.preview_width = params['previewW']
-        self.preview_heigth = params['previewH']
+    def set_defaults(self):
+        self.id = None
+        self.width = None
+        self.heigth = None
+        self.file = None
+        self.dom = 'tr'
+        self.advsys = 'rutube'
+        self.sbt = ''
+        self.genres = None
+        self.preview_file = None
+        self.preview_width = None
+        self.preview_heigth = None
+
+    def __init__(self, params=None):
+        self.set_defaults()
+
+        if params:
+            self.id = params['trailerId'].replace('top','')
+            self.width = params['trailerW']
+            self.heigth = params['trailerH']
+            self.file = params['trailerFile']
+            self.dom = params['trailerDom']
+            self.advsys = params['trailerAdvsys']
+            self.sbt = params['trailerSbt']
+            self.genres = params['genres']
+            self.preview_file = params['previewFile']
+            self.preview_width = params['previewW']
+            self.preview_heigth = params['previewH']
+
+class SeriesEpisode(object):
+
+    def set_defaults(self):
+        self.title = ''
+        self.release_date = None
+
+    def __init__(self, title=None, release_date=None):
+        self.set_defaults()
+
+        self.title = title
+        self.release_date = release_date
+
+    def __repr__(self):
+        return '<%s "%s", %s>' % (
+            self.__class__.__name__,
+            self.title.encode('utf-8') if self.title else '???',
+            self.release_date or '-'
+        )
+
+class SeriesSeason(object):
+
+    def set_defaults(self):
+        self.year = None
+        self.episodes = []
+
+    def __init__(self, year, episodes=None):
+        self.set_defaults()
+
+        self.year = year
+        if episodes:
+            self.episodes = episodes
+
+    def __repr__(self):
+        return '<%s of %d: %d>' % (self.__class__, self.year, len(self.episodes))
 
 class MovieManager(Manager):
     '''
