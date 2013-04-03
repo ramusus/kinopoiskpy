@@ -88,7 +88,9 @@ class MovieSeries(KinopoiskPage):
             if '21px' not in season['style']:
                 continue
 
-            year = self.prepare_int(season.nextSibling.string[:4])
+
+
+            year = self.prepare_int(season.nextSibling.split(',')[0])
             tbody = season.parent.parent.parent
             episodes = []
             for tr in tbody.findAll('tr')[1:]:
