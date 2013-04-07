@@ -172,19 +172,21 @@ class MovieTest(unittest.TestCase):
         '''
         Test of movie trailers source page
         '''
-        m = Movie(id=278229)
+        m = Movie(id=521689)
         m.get_content('trailers')
 
         self.assertTrue(len(m.trailers) > 3)
-        self.assertEqual(m.trailers[0].id, 't12964')
-        self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-22111.flv')
-        self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
-        self.assertEqual(m.trailers[1].id, 't31616')
-        self.assertEqual(m.trailers[1].file, '278229/kinopoisk.ru-Redacted-42294.flv')
-        self.assertEqual(m.trailers[1].preview_file, '278229/3_18400.jpg')
-        self.assertEqual(m.trailers[2].id, 't9922')
-        self.assertEqual(m.trailers[2].file, '278229/kinopoisk.ru-Redacted-18453.mov')
-        self.assertEqual(m.trailers[2].preview_file, '278229/3_4476.jpg')
+        self.assertEqual(m.trailers[0].id, 't138719')
+        self.assertEqual(m.trailers[0].file, '521689/kinopoisk.ru-Metro-138719.mp4')
+        self.assertEqual(m.trailers[0].preview_file, '521689/3_72031.jpg')
+        self.assertEqual(m.trailers[1].id, 't143082')
+        self.assertEqual(m.trailers[1].file, '521689/kinopoisk.ru-Metro-143082.mp4')
+        self.assertEqual(m.trailers[1].preview_file, '521689/3_77257.jpg')
+        self.assertEqual(m.trailers[2].id, 't141012')
+        self.assertEqual(m.trailers[2].file, '521689/kinopoisk.ru-Metro-141012.mp4')
+        self.assertEqual(m.trailers[2].preview_file, '521689/3_76485.jpg')
+
+        self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
     def test_movie_repr(self):
         self.assertEqual(

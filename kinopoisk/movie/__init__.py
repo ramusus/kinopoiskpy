@@ -30,6 +30,7 @@ class Movie(KinopoiskObject):
 
         self.posters = []
         self.trailers = []
+        self.youtube_ids = []
 
         self.series = None
         self.seasons = []

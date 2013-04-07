@@ -178,4 +178,5 @@ class MovieTrailersPage(KinopoiskPage):
         for trailer in trailers:
             instance.add_trailer(json.loads(trailer.replace("'",'"')))
 
+        instance.youtube_ids = list(set(re.findall(r'http://www.youtube.com/v/(.+)\?', content)))
         instance.set_source(self.content_name)
