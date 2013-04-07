@@ -51,7 +51,7 @@ class Movie(KinopoiskObject):
 
     def add_trailer(self, trailer_params):
         trailer = Trailer(trailer_params)
-        if trailer.id not in [tr.id for tr in self.trailers]:
+        if trailer.is_valid and trailer.id not in [tr.id for tr in self.trailers]:
             self.trailers.append(trailer)
 
     def add_series_season(self, year, episodes):
@@ -87,6 +87,14 @@ class Trailer(object):
             self.preview_file = params['previewFile']
             self.preview_width = params['previewW']
             self.preview_heigth = params['previewH']
+
+    @property
+    def is_valid(self):
+        '''
+        Check if filename is correct
+        '''
+        # not youtube video '521689/' (http://www.kinopoisk.ru/film/521689/video/)
+        return self.file[-1] != '/'
 
 class SeriesEpisode(object):
 
