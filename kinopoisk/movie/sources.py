@@ -133,7 +133,7 @@ class MovieMainPage(KinopoiskPage):
         if plot:
             instance.plot = self.prepare_str(plot.text)
 
-        table_info = content_info.find('table', {'class': 'info'})
+        table_info = content_info.find('table', {'class': re.compile(r'^info')})
         if table_info:
             for tr in table_info.findAll('tr'):
                 tds = tr.findAll('td')
