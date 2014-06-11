@@ -7,6 +7,7 @@ import re
 
 from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage
 
+
 class MoviePremierLink(KinopoiskPage):
     '''
     Parser movie info from premiers links
@@ -41,6 +42,7 @@ class MoviePremierLink(KinopoiskPage):
 
         instance.set_source('premier_link')
 
+
 class MovieLink(KinopoiskPage):
     '''
     Parser movie info from links
@@ -73,11 +75,12 @@ class MovieLink(KinopoiskPage):
             else:
                 instance.title_original = self.prepare_str(otitle.text)
 
-        rating = content_soup.find('div', attrs={'class': 'rating'})
+        rating = content_soup.find('div', attrs={'class': re.compile('^rating')})
         if rating:
             instance.rating = float(rating['title'].split(' ')[0])
 
         instance.set_source('link')
+
 
 class MovieSeries(KinopoiskPage):
     url = '/film/%s/episodes/'
@@ -88,9 +91,9 @@ class MovieSeries(KinopoiskPage):
             if '21px' not in season['style']:
                 continue
 
-
-
-            year = self.prepare_int(season.nextSibling.split(',')[0])
+            parts = season.nextSibling.split(',')
+            if len(parts) == 2:
+                year = self.prepare_int(parts[0])
             tbody = season.parent.parent.parent
             episodes = []
             for tr in tbody.findAll('tr')[1:]:
@@ -106,6 +109,7 @@ class MovieSeries(KinopoiskPage):
 
             if episodes:
                 instance.add_series_season(year, episodes)
+
 
 class MovieMainPage(KinopoiskPage):
     '''
@@ -156,9 +160,10 @@ class MovieMainPage(KinopoiskPage):
 
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         if len(trailers):
-            instance.add_trailer(json.loads(trailers[0].replace("'",'"')))
+            instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
         instance.set_source('main_page')
+
 
 class MoviePostersPage(KinopoiskImagesPage):
     '''
@@ -166,6 +171,7 @@ class MoviePostersPage(KinopoiskImagesPage):
     '''
     url = '/film/%d/posters/'
     field_name = 'posters'
+
 
 class MovieTrailersPage(KinopoiskPage):
     '''
@@ -176,7 +182,7 @@ class MovieTrailersPage(KinopoiskPage):
     def parse(self, instance, content):
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         for trailer in trailers:
-            instance.add_trailer(json.loads(trailer.replace("'",'"')))
+            instance.add_trailer(json.loads(trailer.replace("'", '"')))
 
         instance.youtube_ids = list(set(re.findall(r'http://www.youtube.com/v/(.+)\?', content)))
         instance.set_source(self.content_name)

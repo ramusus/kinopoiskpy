@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from kinopoisk.utils import KinopoiskObject, Manager, get_request
 
+
 class Movie(KinopoiskObject):
 
     def set_defaults(self):
@@ -39,7 +40,7 @@ class Movie(KinopoiskObject):
         super(Movie, self).__init__(*args, **kwargs)
         self.set_defaults()
 
-        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries # import here for successful installing via pip
+        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries  # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
         self.register_source('main_page', MovieMainPage)
@@ -57,6 +58,7 @@ class Movie(KinopoiskObject):
 
     def add_series_season(self, year, episodes):
         self.seasons.append(SeriesSeason(year, [SeriesEpisode(title, date) for title, date in episodes]))
+
 
 class Trailer(object):
 
@@ -77,7 +79,7 @@ class Trailer(object):
         self.set_defaults()
 
         if params:
-            self.id = params['trailerId'].replace('top','')
+            self.id = params['trailerId'].replace('top', '')
             self.width = params['trailerW']
             self.heigth = params['trailerH']
             self.file = params['trailerFile']
@@ -96,6 +98,7 @@ class Trailer(object):
         '''
         # not youtube video '521689/' (http://www.kinopoisk.ru/film/521689/video/)
         return self.file[-1] != '/'
+
 
 class SeriesEpisode(object):
 
@@ -116,6 +119,7 @@ class SeriesEpisode(object):
             self.release_date or '-'
         )
 
+
 class SeriesSeason(object):
 
     def set_defaults(self):
@@ -131,6 +135,7 @@ class SeriesSeason(object):
 
     def __repr__(self):
         return '<%s of %d: %d>' % (self.__class__, self.year, len(self.episodes))
+
 
 class MovieManager(Manager):
     '''
@@ -156,6 +161,7 @@ class MovieManager(Manager):
             'show': 'all',
         })
 
+
 class MoviePremiersManager(Manager):
 
     kinopoisk_object = Movie
@@ -178,6 +184,7 @@ class MoviePremiersManager(Manager):
             instances += [instance]
 
         return instances
+
 
 Movie.objects = MovieManager()
 Movie.premiers = MoviePremiersManager()

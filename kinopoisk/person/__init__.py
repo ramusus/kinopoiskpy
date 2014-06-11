@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from kinopoisk.utils import KinopoiskObject, Manager
 
+
 class Person(KinopoiskObject):
 
     def set_defaults(self):
@@ -16,7 +17,7 @@ class Person(KinopoiskObject):
         super(Person, self).__init__(*args, **kwargs)
         self.set_defaults()
 
-        from sources import PersonLink, PersonMainPage, PersonPhotosPage # import here for successful installing via pip
+        from sources import PersonLink, PersonMainPage, PersonPhotosPage  # import here for successful installing via pip
         self.register_source('link', PersonLink)
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)
@@ -25,6 +26,7 @@ class Person(KinopoiskObject):
 
     def __repr__(self):
         return ('<%s (%s), %s>' % (self.name, self.name_original, self.year_birth or '-')).encode('utf-8')
+
 
 class PersonManager(Manager):
     '''
@@ -43,5 +45,6 @@ class PersonManager(Manager):
             'm_act[what]': 'actor',
             'm_act[find]': query,
         })
+
 
 Person.objects = PersonManager()

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
+
 def get_request(url, params=None):
     import requests
     return requests.get(url, params=params, headers={
@@ -14,6 +15,7 @@ def get_request(url, params=None):
         'Referer': 'http://www.kinopoisk.ru/',
         'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
     })
+
 
 class Manager(object):
 
@@ -67,6 +69,7 @@ class Manager(object):
 #                return None
 #                exit
 
+
 class KinopoiskObject(object):
 
     id = None
@@ -117,6 +120,7 @@ class KinopoiskObject(object):
         instance.content_name = name
         return instance
 
+
 class KinopoiskImage(KinopoiskObject):
 
     def __init__(self, id=None):
@@ -125,6 +129,7 @@ class KinopoiskImage(KinopoiskObject):
 
     def get_url(self, name='picture', postfix=''):
         return super(KinopoiskImage, self).get_url(name, postfix)
+
 
 class KinopoiskPage(object):
 
@@ -178,6 +183,7 @@ class KinopoiskPage(object):
     def parse(self, instance, content):
         raise NotImplementedError('You must implement KinopoiskPage.parse() method')
 
+
 class KinopoiskImagesPage(KinopoiskPage):
     '''
     Parser of kinopoisk images page
@@ -202,7 +208,7 @@ class KinopoiskImagesPage(KinopoiskPage):
             # may be there is more pages?
             if len(getattr(instance, self.field_name)) % 21 == 0:
                 try:
-                    self.get(instance, page+1)
+                    self.get(instance, page + 1)
                 except ValueError:
                     return
         else:
