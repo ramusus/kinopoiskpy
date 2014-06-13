@@ -168,6 +168,36 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, u'Pulp Fiction')
 
+    def test_movie_by_id(self):
+        '''
+        Test of movie manager, movie obtain by id (not via search)
+        '''
+
+        m = Movie(id=278229)
+        m.get_content("main_page")
+        m.get_content("trailers")
+
+        self.assertEqual(m.id, 278229)
+        self.assertEqual(m.year, 2007)
+        self.assertEqual(m.title, u'Без цензуры')
+        self.assertEqual(m.title_original, u'Redacted')
+        self.assertEqual(m.plot, u'В центре картины  -  небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
+        self.assertEqual(m.runtime, 90)
+        self.assertEqual(m.tagline, u'"Фильм, запрещенный к прокату во многих странах"')
+        self.assertEqual(len(m.trailers), 4)
+        self.assertEqual(m.trailers[0].id, 't170078')
+        self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-170078.mp4')
+        self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
+        self.assertEqual(m.trailers[0].dom, 'tr')
+
+        self.assertEqual(m.directors, [u'Брайан Де Пальма'])
+        self.assertEqual(m.scenarios, [u'Брайан Де Пальма'])
+        self.assertEqual(m.producers, [u'Джейсон Клиот', u'Симона Урдл', u'Джоана Висенте'])
+        self.assertEqual(m.operators, [u'Джонатан Клифф'])
+        self.assertEqual(m.composers, [])
+        self.assertEqual(m.genres, [u'драма', u'криминал', u'военный'])
+        self.assertEqual(m.countries, [u'США', u'Канада'])
+
     def test_movie_trailers(self):
         '''
         Test of movie trailers source page
