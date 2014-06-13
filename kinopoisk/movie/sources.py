@@ -128,7 +128,8 @@ class MovieMainPage(KinopoiskPage):
         if title:
             instance.title = self.prepare_str(title.text)
 
-        title_original = content_info.find('span', {'style': 'color: #666; font-size: 13px'})
+        title_original = content_info.find('span', {'itemprop': 'alternativeHeadline'})
+
         if title_original:
             instance.title_original = self.prepare_str(title_original.text)
 
