@@ -157,6 +157,15 @@ class MovieMainPage(KinopoiskPage):
                 elif name == u'год':
                     instance.year = self.prepare_int(value[:4])
                     instance.series = u'сезон' in value
+                elif name == u'страна':
+                    countries = value.split(', ')
+                    for country in countries:
+                        instance.countries.append(self.prepare_str(country))
+                elif name == u'жанр':
+                    genres = value.split(', ')
+                    for genre in genres:
+                        if genre != u'...\nслова\n':
+                            instance.genres.append(self.prepare_str(genre))
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
         if rating:
