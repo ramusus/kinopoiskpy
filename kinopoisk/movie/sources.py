@@ -101,7 +101,10 @@ class MovieSeries(KinopoiskPage):
                     continue
 
                 raw_date = tr.find('td', attrs={'width': '20%'}).string
-                normalized_date = self.prepare_date(raw_date)
+                if raw_date.strip().count(u'\xa0') == 2:
+                    normalized_date = self.prepare_date(raw_date)
+                else:
+                    normalized_date = raw_date
                 title = tr.find('h1').b.string
                 if title.startswith(u'Эпизод #'):
                     title = None
@@ -128,7 +131,8 @@ class MovieMainPage(KinopoiskPage):
         if title:
             instance.title = self.prepare_str(title.text)
 
-        title_original = content_info.find('span', {'style': 'color: #666; font-size: 13px'})
+        title_original = content_info.find('span', {'itemprop': 'alternativeHeadline'})
+
         if title_original:
             instance.title_original = self.prepare_str(title_original.text)
 
