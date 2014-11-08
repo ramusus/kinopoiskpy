@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from BeautifulSoup import BeautifulSoup, Tag
+from bs4 import BeautifulSoup, Tag
 from dateutil import parser
 
 import simplejson as json
@@ -86,7 +86,7 @@ class MovieSeries(KinopoiskPage):
     url = '/film/%s/episodes/'
 
     def parse(self, instance, content):
-        soup = BeautifulSoup(content, convertEntities=BeautifulSoup.ALL_ENTITIES)
+        soup = BeautifulSoup(content)
         for season in soup.findAll('h1', attrs={'class': 'moviename-big'}):
             if '21px' not in season['style']:
                 continue
@@ -155,7 +155,7 @@ class MovieMainPage(KinopoiskPage):
                 elif name == u'время':
                     instance.runtime = self.prepare_int(value.split(' ')[0])
                 elif name == u'год':
-                    instance.year = self.prepare_int(value[:4])
+                    instance.year = self.prepare_int(value.split('(')[0])
                     instance.series = u'сезон' in value
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
