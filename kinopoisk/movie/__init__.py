@@ -170,7 +170,7 @@ class MoviePremiersManager(Manager):
         return ('http://www.kinopoisk.ru/level/8/view/prem/', {})
 
     def all(self):
-        from BeautifulSoup import BeautifulSoup
+        from bs4 import BeautifulSoup
 
         url, params = self.get_url_with_params()
         response = get_request(url, params=params)

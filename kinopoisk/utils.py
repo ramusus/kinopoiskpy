@@ -37,7 +37,7 @@ class Manager(object):
                 return []
             content_results = content[content.find('<div class="search_results">'):content.find('<div style="height: 40px"></div>')]
             if content_results:
-                from BeautifulSoup import BeautifulSoup # import here for successful installing via pip
+                from bs4 import BeautifulSoup # import here for successful installing via pip
                 soup_results = BeautifulSoup(content_results)
                 # <div class="element width_2">
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})
@@ -136,12 +136,10 @@ class KinopoiskPage(object):
     content_name = None
 
     def prepare_str(self, value):
-        value = re.compile(r"&nbsp;").sub(" ", value)
-        value = re.compile(r"&#151;").sub(" - ", value)
-        value = re.compile(r"&#133;").sub("...", value)
-        value = re.compile(r"<br>").sub("\n", value)
-        value = re.compile(r"<.+?>").sub("", value)
-        value = re.compile(r"&.aquo;").sub("\"", value)
+        # BS4 specific replacements
+        value = re.compile(u' ').sub(u' ', value)
+        value = re.compile(u'').sub(u'—', value)
+        # General replacements
         value = re.compile(r", \.\.\.").sub("", value)
         return value.strip()
 
@@ -200,7 +198,7 @@ class KinopoiskImagesPage(KinopoiskPage):
 
         content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
 
-        from BeautifulSoup import BeautifulSoup
+        from bs4 import BeautifulSoup
         soup_content = BeautifulSoup(content)
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
@@ -217,7 +215,7 @@ class KinopoiskImagesPage(KinopoiskPage):
     def parse(self, instance, content):
         urls = getattr(instance, self.field_name, [])
 
-        from BeautifulSoup import BeautifulSoup
+        from bs4 import BeautifulSoup
         links = BeautifulSoup(content).findAll('a')
         for link in links:
 
