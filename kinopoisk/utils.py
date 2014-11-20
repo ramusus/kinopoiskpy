@@ -25,6 +25,7 @@ class Manager(object):
     def search(self, query):
         url, params = self.get_url_with_params(query.encode('windows-1251'))
         response = get_request(url, params=params)
+        response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object
         if len(response.history):
@@ -46,7 +47,7 @@ class Manager(object):
                 instances = []
                 for result in results:
                     instance = self.kinopoisk_object()
-                    instance.parse('link', unicode(result))
+                    instance.parse('link', str(result))
                     if instance.id:
                         instances += [instance]
                 return instances
@@ -172,6 +173,7 @@ class KinopoiskPage(object):
     def get(self, instance):
         if instance.id:
             response = get_request(instance.get_url(self.content_name))
+            response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
 #            content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
             self.parse(instance, content)
@@ -190,6 +192,7 @@ class KinopoiskImagesPage(KinopoiskPage):
 
     def get(self, instance, page=1):
         response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page))
+        response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
 
         # header with sign 'No posters'
@@ -202,7 +205,7 @@ class KinopoiskImagesPage(KinopoiskPage):
         soup_content = BeautifulSoup(content)
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
-            self.parse(instance, unicode(table[0]))
+            self.parse(instance, str(table[0]))
             # may be there is more pages?
             if len(getattr(instance, self.field_name)) % 21 == 0:
                 try:
@@ -223,6 +226,7 @@ class KinopoiskImagesPage(KinopoiskPage):
             picture = KinopoiskImage(int(img_id[0]))
 
             response = get_request(picture.get_url())
+            response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             img = BeautifulSoup(content).find('img', attrs={'id': 'image'})
             if img:

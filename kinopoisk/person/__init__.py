@@ -17,7 +17,7 @@ class Person(KinopoiskObject):
         super(Person, self).__init__(*args, **kwargs)
         self.set_defaults()
 
-        from sources import PersonLink, PersonMainPage, PersonPhotosPage  # import here for successful installing via pip
+        from kinopoisk.person.sources import PersonLink, PersonMainPage, PersonPhotosPage  # import here for successful installing via pip
         self.register_source('link', PersonLink)
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)
@@ -25,7 +25,7 @@ class Person(KinopoiskObject):
         self.set_url('info', '/handler_info.php?obj_type=actor&obj_id=%d')
 
     def __repr__(self):
-        return ('<%s (%s), %s>' % (self.name, self.name_original, self.year_birth or '-')).encode('utf-8')
+        return '<%s (%s), %s>' % (self.name, self.name_original, self.year_birth or '-')
 
 
 class PersonManager(Manager):

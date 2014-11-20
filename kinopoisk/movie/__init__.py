@@ -40,7 +40,7 @@ class Movie(KinopoiskObject):
         super(Movie, self).__init__(*args, **kwargs)
         self.set_defaults()
 
-        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries  # import here for successful installing via pip
+        from kinopoisk.movie.sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries  # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
         self.register_source('main_page', MovieMainPage)
@@ -49,7 +49,7 @@ class Movie(KinopoiskObject):
         self.register_source('series', MovieSeries)
 
     def __repr__(self):
-        return ('<%s (%s), %s>' % (self.title, self.title_original, self.year or '-')).encode('utf-8')
+        return '<%s (%s), %s>' % (self.title, self.title_original, self.year or '-')
 
     def add_trailer(self, trailer_params):
         trailer = Trailer(trailer_params)
@@ -115,7 +115,7 @@ class SeriesEpisode(object):
     def __repr__(self):
         return '<%s "%s", %s>' % (
             self.__class__.__name__,
-            self.title.encode('utf-8') if self.title else '???',
+            self.title if self.title else '???',
             self.release_date or '-'
         )
 
