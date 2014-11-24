@@ -4,7 +4,7 @@ import re
 
 def get_request(url, params=None):
     import requests
-    return requests.get(url, params=params, headers={
+    response = requests.get(url, params=params, headers={
         'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3',
@@ -13,8 +13,11 @@ def get_request(url, params=None):
         'Keep-Alive': '300',
         'Connection': 'keep-alive',
         'Referer': 'http://www.kinopoisk.ru/',
-        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
+        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;'
+                  '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
     })
+    response.connection.close()
+    return response
 
 
 class Manager(object):
@@ -25,7 +28,6 @@ class Manager(object):
     def search(self, query):
         url, params = self.get_url_with_params(query.encode('windows-1251'))
         response = get_request(url, params=params)
-        response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object
         if len(response.history):
@@ -173,7 +175,6 @@ class KinopoiskPage(object):
     def get(self, instance):
         if instance.id:
             response = get_request(instance.get_url(self.content_name))
-            response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
 #            content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
             self.parse(instance, content)
@@ -192,7 +193,6 @@ class KinopoiskImagesPage(KinopoiskPage):
 
     def get(self, instance, page=1):
         response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page))
-        response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
 
         # header with sign 'No posters'
@@ -226,7 +226,6 @@ class KinopoiskImagesPage(KinopoiskPage):
             picture = KinopoiskImage(int(img_id[0]))
 
             response = get_request(picture.get_url())
-            response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             img = BeautifulSoup(content).find('img', attrs={'id': 'image'})
             if img:

@@ -54,7 +54,6 @@ class PersonMainPage(KinopoiskPage):
 
         if instance.id:
             response = get_request(instance.get_url('info'))
-            response.connection.close()
             if response.content:
                 instance.information = response.content.decode('windows-1251', 'ignore').replace(' class="trivia"', '')
 
