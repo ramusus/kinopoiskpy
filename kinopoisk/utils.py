@@ -4,7 +4,7 @@ import re
 
 def get_request(url, params=None):
     import requests
-    return requests.get(url, params=params, headers={
+    response = requests.get(url, params=params, headers={
         'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3',
@@ -13,8 +13,11 @@ def get_request(url, params=None):
         'Keep-Alive': '300',
         'Connection': 'keep-alive',
         'Referer': 'http://www.kinopoisk.ru/',
-        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
+        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;'
+                  '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
     })
+    response.connection.close()
+    return response
 
 
 class Manager(object):
@@ -46,7 +49,7 @@ class Manager(object):
                 instances = []
                 for result in results:
                     instance = self.kinopoisk_object()
-                    instance.parse('link', unicode(result))
+                    instance.parse('link', str(result))
                     if instance.id:
                         instances += [instance]
                 return instances
@@ -202,7 +205,7 @@ class KinopoiskImagesPage(KinopoiskPage):
         soup_content = BeautifulSoup(content)
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
-            self.parse(instance, unicode(table[0]))
+            self.parse(instance, str(table[0]))
             # may be there is more pages?
             if len(getattr(instance, self.field_name)) % 21 == 0:
                 try:

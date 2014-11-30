@@ -47,7 +47,7 @@ class PersonMainPage(KinopoiskPage):
 
         content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(content)
         for name, value in content_info:
-            if name.encode('utf-8') == 'дата рождения':
+            if name == 'дата рождения':
                 year_birth = re.compile(r'<a href="/lists/m_act%5Bbirthday%5D%5Byear%5D/\d{4}/">(\d{4})</a>').findall(value)
                 if year_birth:
                     instance.year_birth = self.prepare_int(year_birth[0])
