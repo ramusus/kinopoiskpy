@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-from kinopoisk.utils import KinopoiskObject, Manager, get_request
+from future.utils import python_2_unicode_compatible
+
+from ..utils import KinopoiskObject, Manager, get_request
 
 
+@python_2_unicode_compatible
 class Movie(KinopoiskObject):
 
     def set_defaults(self):
@@ -38,9 +41,8 @@ class Movie(KinopoiskObject):
 
     def __init__(self, *args, **kwargs):
         super(Movie, self).__init__(*args, **kwargs)
-        self.set_defaults()
 
-        from sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries  # import here for successful installing via pip
+        from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries  # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
         self.register_source('main_page', MovieMainPage)
@@ -49,7 +51,7 @@ class Movie(KinopoiskObject):
         self.register_source('series', MovieSeries)
 
     def __repr__(self):
-        return ('<%s (%s), %s>' % (self.title, self.title_original, self.year or '-')).encode('utf-8')
+        return '%s (%s), %s' % (self.title, self.title_original, self.year or '-')
 
     def add_trailer(self, trailer_params):
         trailer = Trailer(trailer_params)
@@ -60,6 +62,7 @@ class Movie(KinopoiskObject):
         self.seasons.append(SeriesSeason(year, [SeriesEpisode(title, date) for title, date in episodes]))
 
 
+@python_2_unicode_compatible
 class Trailer(object):
 
     def set_defaults(self):
@@ -100,6 +103,7 @@ class Trailer(object):
         return self.file[-1] != '/'
 
 
+@python_2_unicode_compatible
 class SeriesEpisode(object):
 
     def set_defaults(self):
@@ -113,13 +117,10 @@ class SeriesEpisode(object):
         self.release_date = release_date
 
     def __repr__(self):
-        return '<%s "%s", %s>' % (
-            self.__class__.__name__,
-            self.title.encode('utf-8') if self.title else '???',
-            self.release_date or '-'
-        )
+        return '%s, %s' % (self.title if self.title else '???', self.release_date or '-')
 
 
+@python_2_unicode_compatible
 class SeriesSeason(object):
 
     def set_defaults(self):
@@ -134,7 +135,7 @@ class SeriesSeason(object):
             self.episodes = episodes
 
     def __repr__(self):
-        return '<%s of %d: %d>' % (self.__class__, self.year, len(self.episodes))
+        return '%d: %d' % (self.year, len(self.episodes))
 
 
 class MovieManager(Manager):

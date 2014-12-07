@@ -18,6 +18,7 @@ setup(
         'requests',
         'simplejson',
         'python-dateutil',
+        'future',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',
