@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from builtins import str
 
+from .sources import PersonLink, PersonMainPage, PersonPhotosPage
 from ..utils import KinopoiskObject, Manager
-
 
 class Person(KinopoiskObject):
 
@@ -18,7 +18,6 @@ class Person(KinopoiskObject):
     def __init__(self, *args, **kwargs):
         super(Person, self).__init__(*args, **kwargs)
 
-        from .sources import PersonLink, PersonMainPage, PersonPhotosPage  # import here for successful installing via pip
         self.register_source('link', PersonLink)
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)

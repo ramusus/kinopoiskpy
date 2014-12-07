@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from future.utils import python_2_unicode_compatible
+from bs4 import BeautifulSoup
 
+from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries
 from ..utils import KinopoiskObject, Manager, get_request
 
 
@@ -42,7 +44,6 @@ class Movie(KinopoiskObject):
     def __init__(self, *args, **kwargs):
         super(Movie, self).__init__(*args, **kwargs)
 
-        from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries  # import here for successful installing via pip
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
         self.register_source('main_page', MovieMainPage)
@@ -171,8 +172,6 @@ class MoviePremiersManager(Manager):
         return ('http://www.kinopoisk.ru/level/8/view/prem/', {})
 
     def all(self):
-        from bs4 import BeautifulSoup
-
         url, params = self.get_url_with_params()
         response = get_request(url, params=params)
         content = response.content.decode('windows-1251', 'ignore')

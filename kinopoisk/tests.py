@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 import unittest
 
 from datetime import datetime
-from . import Movie, Person
+from .movie import Movie
+from .person import Person
 
 
 class MovieTest(unittest.TestCase):
