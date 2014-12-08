@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from BeautifulSoup import BeautifulSoup, Tag
+from __future__ import unicode_literals
+from bs4 import BeautifulSoup, Tag
+
 from dateutil import parser
 
 import simplejson as json
 import re
 
-from kinopoisk.utils import KinopoiskPage, KinopoiskImagesPage
+from ..utils import KinopoiskPage, KinopoiskImagesPage
 
 
 class MoviePremierLink(KinopoiskPage):
@@ -57,7 +59,7 @@ class MovieLink(KinopoiskPage):
                 # /level/1/film/342/sr/1/
                 instance.id = self.prepare_int(link['href'].split('/')[4])
                 instance.title = self.prepare_str(link.text)
-                instance.series = u'(сериал)' in instance.title
+                instance.series = '(сериал)' in instance.title
 
         year = content_soup.find('p', {'class': 'name'})
         if year:
@@ -68,7 +70,7 @@ class MovieLink(KinopoiskPage):
 
         otitle = content_soup.find('span', {'class': 'gray'})
         if otitle:
-            if u'мин' in otitle.text:
+            if 'мин' in otitle.text:
                 values = otitle.text.split(', ')
                 instance.runtime = self.prepare_int(values[-1].split(' ')[0])
                 instance.title_original = self.prepare_str(', '.join(values[:-1]))
@@ -86,7 +88,7 @@ class MovieSeries(KinopoiskPage):
     url = '/film/%s/episodes/'
 
     def parse(self, instance, content):
-        soup = BeautifulSoup(content, convertEntities=BeautifulSoup.ALL_ENTITIES)
+        soup = BeautifulSoup(content)
         for season in soup.findAll('h1', attrs={'class': 'moviename-big'}):
             if '21px' not in season['style']:
                 continue
@@ -101,12 +103,12 @@ class MovieSeries(KinopoiskPage):
                     continue
 
                 raw_date = tr.find('td', attrs={'width': '20%'}).string
-                if raw_date.strip().count(u'\xa0') == 2:
+                if raw_date.strip().count('\xa0') == 2:
                     normalized_date = self.prepare_date(raw_date)
                 else:
                     normalized_date = raw_date
                 title = tr.find('h1').b.string
-                if title.startswith(u'Эпизод #'):
+                if title.startswith('Эпизод #'):
                     title = None
                 episodes.append((title, normalized_date))
 
@@ -150,21 +152,21 @@ class MovieMainPage(KinopoiskPage):
                 if value == '-':
                     continue
 
-                if name == u'слоган':
+                if name == 'слоган':
                     instance.tagline = self.prepare_str(value)
-                elif name == u'время':
+                elif name == 'время':
                     instance.runtime = self.prepare_int(value.split(' ')[0])
-                elif name == u'год':
-                    instance.year = self.prepare_int(value[:4])
-                    instance.series = u'сезон' in value
-                elif name == u'страна':
+                elif name == 'год':
+                    instance.year = self.prepare_int(value.split('(')[0])
+                    instance.series = 'сезон' in value
+                elif name == 'страна':
                     countries = value.split(', ')
                     for country in countries:
                         instance.countries.append(self.prepare_str(country))
-                elif name == u'жанр':
+                elif name == 'жанр':
                     genres = value.split(', ')
                     for genre in genres:
-                        if genre != u'...\nслова\n':
+                        if genre != '...\nслова\n':
                             instance.genres.append(self.prepare_str(genre))
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})

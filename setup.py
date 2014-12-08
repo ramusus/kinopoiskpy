@@ -14,10 +14,11 @@ setup(
     include_package_data=True,
     zip_safe=False, # because we're including media that Django needs
     install_requires=[
-        'BeautifulSoup',
+        'beautifulsoup4',
         'requests',
         'simplejson',
         'python-dateutil',
+        'future',
     ],
     classifiers=[
         'Development Status :: 4 - Beta',

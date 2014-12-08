@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+from builtins import str
 import re
 
 
@@ -23,8 +25,9 @@ class Manager(object):
     search_url = None
 
     def search(self, query):
-        url, params = self.get_url_with_params(query.encode('windows-1251'))
+        url, params = self.get_url_with_params(query)
         response = get_request(url, params=params)
+        response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object
         if len(response.history):
@@ -37,7 +40,7 @@ class Manager(object):
                 return []
             content_results = content[content.find('<div class="search_results">'):content.find('<div style="height: 40px"></div>')]
             if content_results:
-                from BeautifulSoup import BeautifulSoup # import here for successful installing via pip
+                from bs4 import BeautifulSoup # import here for successful installing via pip
                 soup_results = BeautifulSoup(content_results)
                 # <div class="element width_2">
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})
@@ -46,7 +49,7 @@ class Manager(object):
                 instances = []
                 for result in results:
                     instance = self.kinopoisk_object()
-                    instance.parse('link', unicode(result))
+                    instance.parse('link', str(result))
                     if instance.id:
                         instances += [instance]
                 return instances
@@ -59,9 +62,9 @@ class Manager(object):
     def get_first(self, query):
         self.search(query)
 
-#        htmlf=html[html.find(u'<!-- результаты поиска -->'):html.find(u'<!-- /результаты поиска -->')]
+#        htmlf=html[html.find('<!-- результаты поиска -->'):html.find('<!-- /результаты поиска -->')]
 #        if htmlf<>"":
-#            htmlf = htmlf[htmlf.find(u'Скорее всего вы ищете'):htmlf.find('</a>')]
+#            htmlf = htmlf[htmlf.find('Скорее всего вы ищете'):htmlf.find('</a>')]
 #            htmlf=re.compile(r'<a class="all" href="(.+?)">').findall(htmlf)
 #            try:
 #                html = UrlRequest("http://www.kinopoisk.ru"+htmlf[0]).read()
@@ -79,9 +82,14 @@ class KinopoiskObject(object):
     _sources = []
     _source_classes = {}
 
-    def __init__(self, id=None):
+    def __init__(self, id=None, **kwargs):
         if id:
             self.id = id
+        self.set_defaults()
+        self.__dict__.update(kwargs)
+
+    def set_defaults(self):
+        pass
 
     def parse(self, name, content):
         self.get_source_instance(name).parse(self, content)
@@ -136,12 +144,10 @@ class KinopoiskPage(object):
     content_name = None
 
     def prepare_str(self, value):
-        value = re.compile(r"&nbsp;").sub(" ", value)
-        value = re.compile(r"&#151;").sub(" - ", value)
-        value = re.compile(r"&#133;").sub("...", value)
-        value = re.compile(r"<br>").sub("\n", value)
-        value = re.compile(r"<.+?>").sub("", value)
-        value = re.compile(r"&.aquo;").sub("\"", value)
+        # BS4 specific replacements
+        value = re.compile(' ').sub(' ', value)
+        value = re.compile('').sub('—', value)
+        # General replacements
         value = re.compile(r", \.\.\.").sub("", value)
         return value.strip()
 
@@ -160,7 +166,7 @@ class KinopoiskPage(object):
             if month in value:
                 value = value.replace(month, '%02d' % i)
                 break
-        value = value.replace(u'\xa0', '-')
+        value = value.replace('\xa0', '-')
         from dateutil import parser
         return parser.parse(value, dayfirst=True).date()
 
@@ -174,6 +180,7 @@ class KinopoiskPage(object):
     def get(self, instance):
         if instance.id:
             response = get_request(instance.get_url(self.content_name))
+            response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
 #            content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
             self.parse(instance, content)
@@ -192,6 +199,7 @@ class KinopoiskImagesPage(KinopoiskPage):
 
     def get(self, instance, page=1):
         response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page))
+        response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
 
         # header with sign 'No posters'
@@ -200,11 +208,11 @@ class KinopoiskImagesPage(KinopoiskPage):
 
         content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
 
-        from BeautifulSoup import BeautifulSoup
+        from bs4 import BeautifulSoup
         soup_content = BeautifulSoup(content)
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
-            self.parse(instance, unicode(table[0]))
+            self.parse(instance, str(table[0]))
             # may be there is more pages?
             if len(getattr(instance, self.field_name)) % 21 == 0:
                 try:
@@ -217,7 +225,7 @@ class KinopoiskImagesPage(KinopoiskPage):
     def parse(self, instance, content):
         urls = getattr(instance, self.field_name, [])
 
-        from BeautifulSoup import BeautifulSoup
+        from bs4 import BeautifulSoup
         links = BeautifulSoup(content).findAll('a')
         for link in links:
 
@@ -225,6 +233,7 @@ class KinopoiskImagesPage(KinopoiskPage):
             picture = KinopoiskImage(int(img_id[0]))
 
             response = get_request(picture.get_url())
+            response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             img = BeautifulSoup(content).find('img', attrs={'id': 'image'})
             if img:
