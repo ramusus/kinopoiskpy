@@ -171,7 +171,7 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, 'Pulp Fiction')
 
-    def test_movie_by_id(self):
+    def test_movie_by_id_278229(self):
         '''
         Test of movie manager, movie obtain by id (not via search)
         '''
@@ -193,14 +193,15 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
         self.assertEqual(m.trailers[0].dom, 'tr')
 
+        self.assertEqual(m.genres, ['драма', 'криминал', 'военный'])
+        self.assertEqual(m.countries, ['США', 'Канада'])
+
         # TODO: still not implemented
 #         self.assertEqual(m.directors, ['Брайан Де Пальма'])
 #         self.assertEqual(m.scenarios, ['Брайан Де Пальма'])
 #         self.assertEqual(m.producers, ['Джейсон Клиот', 'Симона Урдл', 'Джоана Висенте'])
 #         self.assertEqual(m.operators, ['Джонатан Клифф'])
 #         self.assertEqual(m.composers, [])
-#         self.assertEqual(m.genres, ['драма', 'криминал', 'военный'])
-#         self.assertEqual(m.countries, ['США', 'Канада'])
 
     def test_movie_trailers(self):
         '''
