@@ -195,6 +195,9 @@ class MovieTest(unittest.TestCase):
 
         self.assertEqual(m.genres, ['драма', 'криминал', 'военный'])
         self.assertEqual(m.countries, ['США', 'Канада'])
+        self.assertEqual(m.profit_usa, 65388)
+        self.assertEqual(m.profit_russia, 15391)
+        self.assertEqual(m.profit_world, 779600)
 
         # TODO: still not implemented
 #         self.assertEqual(m.directors, ['Брайан Де Пальма'])
@@ -227,6 +230,9 @@ class MovieTest(unittest.TestCase):
 
         self.assertEqual(m.genres, ['фэнтези', 'боевик', 'приключения'])
         self.assertEqual(m.countries, ['США'])
+        self.assertEqual(m.profit_usa, 305413918)
+        self.assertEqual(m.profit_russia, 9060000)
+        self.assertEqual(m.profit_world, 654264015)
 
         # TODO: still not implemented
 #         self.assertEqual(m.directors, ['Гор Вербински'])
@@ -259,6 +265,9 @@ class MovieTest(unittest.TestCase):
 
         self.assertEqual(m.genres, ['фантастика', 'драма', 'приключения'])
         self.assertEqual(m.countries, ['США', 'Великобритания'])
+        self.assertEqual(m.profit_usa, 158445319)
+        self.assertEqual(m.profit_russia, 24110578)
+        self.assertEqual(m.profit_world, 592845319)
 
         # TODO: still not implemented
 #         self.assertEqual(m.directors, ['Кристофер Нолан'])

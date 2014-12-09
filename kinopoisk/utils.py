@@ -170,6 +170,18 @@ class KinopoiskPage(object):
         from dateutil import parser
         return parser.parse(value, dayfirst=True).date()
 
+    def prepare_profit(self, value):
+        profit = value
+        if '=' in profit:
+            profit = profit[profit.index('=') + 1:]
+
+        # Remove all whitespace characters
+        profit = ''.join(profit.split())
+
+        # Remove currency symbol to cast budget to int
+        profit = profit[1:]
+        return self.prepare_int(profit)
+
     def cut_from_to(self, content, after, before):
         start = content.find(after)
         end = content.find(before)
