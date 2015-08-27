@@ -14,7 +14,7 @@ To install the latest version using pip:
 
 Search movies:
 
-    >>> from kinopoisk import Movie
+    >>> from kinopoisk.movie import Movie
     >>> movie_list = Movie.objects.search('Redacted')
     >>> len(movie_list)
     1
@@ -23,7 +23,7 @@ Search movies:
 
 Get content of movie by ID:
 
-    >>> from kinopoisk import Movie
+    >>> from kinopoisk.movie import Movie
     >>> movie = Movie(id=278229)
     >>> movie.get_content('main_page')
     >>> movie.year
@@ -48,7 +48,7 @@ Get content of movie by ID:
 
 Get content of person by ID:
 
-    >>> from kinopoisk import Person
+    >>> from kinopoisk.person import Person
     >>> person = Person(id=6245)
     >>> person.get_content('main_page')
     >>> person.id
