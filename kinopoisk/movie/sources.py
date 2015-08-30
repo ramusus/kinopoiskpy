@@ -19,7 +19,7 @@ class MoviePremierLink(KinopoiskPage):
         if isinstance(content, Tag):
             premier_soup = content
         else:
-            content_soup = BeautifulSoup(content)
+            content_soup = BeautifulSoup(content, 'lxml')
             premier_soup = content_soup.find('div', {'class': 'premier_item'})
 
         title_soup = premier_soup.find('span', {'class': 'name_big'}) or premier_soup.find('span', {'class': 'name'})
@@ -50,7 +50,7 @@ class MovieLink(KinopoiskPage):
     Parser movie info from links
     '''
     def parse(self, instance, content):
-        content_soup = BeautifulSoup(content)
+        content_soup = BeautifulSoup(content, 'lxml')
 
         link = content_soup.find('p', {'class': 'name'})
         if link:
@@ -88,7 +88,7 @@ class MovieSeries(KinopoiskPage):
     url = '/film/%s/episodes/'
 
     def parse(self, instance, content):
-        soup = BeautifulSoup(content)
+        soup = BeautifulSoup(content, 'lxml')
         for season in soup.findAll('h1', attrs={'class': 'moviename-big'}):
             if '21px' not in season['style']:
                 continue
@@ -128,7 +128,7 @@ class MovieMainPage(KinopoiskPage):
         if instance_id:
             instance.id = self.prepare_int(instance_id[0])
 
-        content_info = BeautifulSoup(content)
+        content_info = BeautifulSoup(content, 'lxml')
         title = content_info.find('h1', {'class': 'moviename-big'})
         if title:
             instance.title = self.prepare_str(title.text)

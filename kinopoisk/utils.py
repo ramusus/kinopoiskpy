@@ -41,7 +41,7 @@ class Manager(object):
             content_results = content[content.find('<div class="search_results">'):content.find('<div style="height: 40px"></div>')]
             if content_results:
                 from bs4 import BeautifulSoup # import here for successful installing via pip
-                soup_results = BeautifulSoup(content_results)
+                soup_results = BeautifulSoup(content_results, 'lxml')
                 # <div class="element width_2">
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})
                 if not results:
@@ -209,7 +209,7 @@ class KinopoiskImagesPage(KinopoiskPage):
         content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
 
         from bs4 import BeautifulSoup
-        soup_content = BeautifulSoup(content)
+        soup_content = BeautifulSoup(content, 'lxml')
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
             self.parse(instance, str(table[0]))
@@ -226,7 +226,7 @@ class KinopoiskImagesPage(KinopoiskPage):
         urls = getattr(instance, self.field_name, [])
 
         from bs4 import BeautifulSoup
-        links = BeautifulSoup(content).findAll('a')
+        links = BeautifulSoup(content, 'lxml').findAll('a')
         for link in links:
 
             img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
@@ -235,7 +235,7 @@ class KinopoiskImagesPage(KinopoiskPage):
             response = get_request(picture.get_url())
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
-            img = BeautifulSoup(content).find('img', attrs={'id': 'image'})
+            img = BeautifulSoup(content, 'lxml').find('img', attrs={'id': 'image'})
             if img:
                 img_url = img['src']
                 if img_url not in urls:
