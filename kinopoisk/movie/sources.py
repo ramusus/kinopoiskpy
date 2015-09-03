@@ -50,7 +50,7 @@ class MovieLink(KinopoiskPage):
     Parser movie info from links
     '''
     def parse(self, instance, content):
-        content_soup = BeautifulSoup(content, 'lxml')
+        content_soup = BeautifulSoup(content, 'html.parser')
 
         link = content_soup.find('p', {'class': 'name'})
         if link:
