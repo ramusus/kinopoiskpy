@@ -157,7 +157,10 @@ class MovieMainPage(KinopoiskPage):
                 elif name == 'время':
                     instance.runtime = self.prepare_int(value.split(' ')[0])
                 elif name == 'год':
-                    instance.year = self.prepare_int(value.split('(')[0])
+                    try:
+                        instance.year = self.prepare_int(value.split('(')[0])
+                    except ValueError:
+                        pass
                     instance.series = 'сезон' in value
                 elif name == 'страна':
                     countries = value.split(', ')

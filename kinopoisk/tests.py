@@ -10,11 +10,11 @@ from .person import Person
 class MovieTest(unittest.TestCase):
 
     def test_movie_link_source(self):
-        '''
+        """
         Test of parsing movie link in search results
-        '''
+        """
         m = Movie()
-        m.parse('link', '''<p class="pic"><a href="/level/1/film/342/sr/1/"><img class="flap_img" src="http://st.kinopoisk.ru/images/spacer.gif" title="/images/sm_film/342.jpg" alt="Криминальное чтиво" title="Криминальное чтиво" /></a></p>
+        m.parse('link', """<p class="pic"><a href="/level/1/film/342/sr/1/"><img class="flap_img" src="http://st.kinopoisk.ru/images/spacer.gif" title="/images/sm_film/342.jpg" alt="Криминальное чтиво" title="Криминальное чтиво" /></a></p>
             <div class="info">
             <p class="name"><a href="/level/1/film/342/sr/1/">Криминальное чтиво</a> <span class="year">1994</span></p>
             <span class="gray">Pulp Fiction, 154 мин</span>
@@ -26,7 +26,7 @@ class MovieTest(unittest.TestCase):
             </span>
             </div>
             <div class="clear"></div>
-            </div>''')
+            </div>""")
         self.assertEqual(m.title, 'Криминальное чтиво')
         self.assertEqual(m.id, 342)
         self.assertEqual(m.runtime, 154)
@@ -44,18 +44,18 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.title_original, 'Zdar Buh, hosi!')
 
     def test_movie_main_page_source(self):
-        '''
+        """
         Test of parsing movie info from movie page
-        '''
+        """
         m = Movie()
         m.parse('main_page', '<h1 style="margin: 0; padding: 0" class="moviename-big">Title</h1><div class="brand_words" itemprop="description">Description</div>')
         self.assertEqual(m.title, 'Title')
         self.assertEqual(m.plot, 'Description')
 
     def test_movie_posters_page_source(self):
-        '''
+        """
         Test of parsing movie posters
-        '''
+        """
         m = Movie()
         m.parse('posters', '<table class="fotos"><tr><td><a href="/picture/1207166/"><img  src="/images/poster/sm_1207166.jpg" width="170" height="244" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>800&times;1148</i><a href="/picture/1207166/" target="_blank" title="Открыть в новом окне"></a>598 Кб</b></td><td class="center"><a href="/picture/1196342/"><img  src="/images/poster/sm_1196342.jpg" width="170" height="238" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>394&times;552</i><a href="/picture/1196342/" target="_blank" title="Открыть в новом окне"></a>96 Кб</b></td></tr></table>')
         self.assertTrue(len(m.posters) == 2)
@@ -67,7 +67,7 @@ class MovieTest(unittest.TestCase):
     def test_movie_premier_link_source(self):
 
         m = Movie()
-        m.parse('premier_link', '''<div class="premier_item" id="544226" style="z-index:999;" itemscope="" itemtype="http://schema.org/Event">
+        m.parse('premier_link', """<div class="premier_item" id="544226" style="z-index:999;" itemscope="" itemtype="http://schema.org/Event">
    <meta itemprop="startDate" content="2012-03-15">
    <meta itemprop="image" content="http://st.kinopoisk.ru/images/sm_film/544226.jpg">
    <div class="image">
@@ -95,7 +95,7 @@ class MovieTest(unittest.TestCase):
    <span id="ur_rating_544226" class="ajax_rating"><i>Рейтинг фильма:<u>6.68 &nbsp; <b>329</b></u></i></span>
    <div class="my_mark" id="my_vote_544226" title="Моя оценка"></div>
    <div class="MyKP_Folder_Select shortselect" id="MyKP_Folder_544226" type="film"><div class="select" id="select_544226"><span class="title" onclick="ClickFolders(this)">Мои фильмы <b></b></span><div class="list_div"></div></div></div>
-</div>''')
+</div>""")
         self.assertEqual(m.id, 544226)
         self.assertEqual(m.title, 'Белоснежка: Месть гномов')
         self.assertEqual(m.title_original, 'Mirror Mirror')
@@ -104,7 +104,7 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.plot, 'Злая Королева, мечтающая выйти замуж за красивого и богатого Принца, хитростью выдворяет из дворца Белоснежку и берет власть в свои руки. Но милая девушка не погибла в темном дремучем лесу, а связалась с бандой гномов-разбойников. Вместе они отомстят Злодейке!')
 
         m = Movie()
-        m.parse('premier_link', '''<div class="premier_item" id="2360" style="z-index:992;" itemscope="" itemtype="http://schema.org/Event">
+        m.parse('premier_link', """<div class="premier_item" id="2360" style="z-index:992;" itemscope="" itemtype="http://schema.org/Event">
    <meta itemprop="startDate" content="2012-03-22">
    <meta itemprop="image" content="http://st.kinopoisk.ru/images/sm_film/2360.jpg">
    <div class="image gray">
@@ -132,7 +132,7 @@ class MovieTest(unittest.TestCase):
    <span id="ur_rating_2360" class="ajax_rating"><i>Рейтинг фильма:<u>8.78 &nbsp; <b>91558</b></u></i></span>
    <div class="my_mark" id="my_vote_2360" title="Моя оценка"></div>
    <div class="MyKP_Folder_Select shortselect" id="MyKP_Folder_2360" type="film"><div class="select" id="select_2360"><span class="title" onclick="ClickFolders(this)">Мои фильмы <b></b></span><div class="list_div"></div></div></div>
-</div>''')
+</div>""")
 
         self.assertEqual(m.id, 2360)
         self.assertEqual(m.title, 'Король Лев')
@@ -141,9 +141,9 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.release, datetime(2012, 3, 22))
 
     def test_movie(self):
-        '''
+        """
         Test of movie manager
-        '''
+        """
         movies = Movie.objects.search('Без цензуры 2007')
         self.assertTrue(len(movies) > 1)
 
@@ -172,9 +172,9 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.title_original, 'Pulp Fiction')
 
     def test_movie_by_id(self):
-        '''
+        """
         Test of movie manager, movie obtain by id (not via search)
-        '''
+        """
 
         m = Movie(id=278229)
         m.get_content("main_page")
@@ -193,6 +193,11 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
         self.assertEqual(m.trailers[0].dom, 'tr')
 
+        m = Movie(id=746251)
+        m.get_content("main_page")
+        self.assertEqual(m.year, None)
+        self.assertEqual(m.title, 'Ловкость')
+
         # TODO: still not implemented
 #         self.assertEqual(m.directors, ['Брайан Де Пальма'])
 #         self.assertEqual(m.scenarios, ['Брайан Де Пальма'])
@@ -203,9 +208,9 @@ class MovieTest(unittest.TestCase):
 #         self.assertEqual(m.countries, ['США', 'Канада'])
 
     def test_movie_trailers(self):
-        '''
+        """
         Test of movie trailers source page
-        '''
+        """
         m = Movie(id=521689)
         m.get_content('trailers')
 
@@ -275,9 +280,9 @@ class MovieTest(unittest.TestCase):
 class PersonTest(unittest.TestCase):
 
     def test_person(self):
-        '''
+        """
         Test of person manager
-        '''
+        """
         persons = Person.objects.search('Гуальтиеро Якопетти')
         self.assertTrue(len(persons) == 1)
 
@@ -305,11 +310,11 @@ class PersonTest(unittest.TestCase):
 #        self.assertTrue(len(m.information) > 50) # TODO: fix "Safety error" in response of subrequest
 
     def test_person_link_source(self):
-        '''
+        """
         Test of parsing person link in search results
-        '''
+        """
         m = Person()
-        m.parse('link', '''<div class="element most_wanted">
+        m.parse('link', """<div class="element most_wanted">
             <div class="right">
             <ul class="links">
             <li><a href="/name/24508/photos/">фото</a><s></s></li>
@@ -329,16 +334,16 @@ class PersonTest(unittest.TestCase):
                  </span>
             </div>
             <div class="clear"></div>
-            </div>''')
+            </div>""")
         self.assertEqual(m.name, 'Джон Малкович')
         self.assertEqual(m.id, 24508)
         self.assertEqual(m.year_birth, 1953)
         self.assertEqual(m.name_original, 'John Malkovich')
 
     def test_person_photos_page_source(self):
-        '''
+        """
         Test of parsing person photos
-        '''
+        """
         m = Person()
         m.parse('photos', '<table class="fotos"><tr><td><a href="/picture/1294472/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
         self.assertTrue(len(m.photos) == 2)
