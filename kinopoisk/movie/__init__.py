@@ -17,7 +17,8 @@ class Movie(KinopoiskObject):
         self.year = None
         self.countries = []
         self.tagline = ''
-
+        
+        self.actors = []
         self.directors = []
         self.scenarios = []
         self.producers = []

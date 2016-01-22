@@ -192,6 +192,7 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-170078.mp4')
         self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
         self.assertEqual(m.trailers[0].dom, 'tr')
+        self.assertEqual(m.actors, ['Иззи Диаз', 'Роб Дивейни','Ти Джонс','Анас Веллман','Майк Фигуроа','Яналь Кассай','Дхиая Калиль','Кел О’Нил','Дэниэл Стюарт-Шерман','Патрик Кэрролл'])
 
         m = Movie(id=746251)
         m.get_content("main_page")
