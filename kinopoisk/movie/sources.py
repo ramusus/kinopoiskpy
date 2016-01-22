@@ -11,9 +11,9 @@ from ..utils import KinopoiskPage, KinopoiskImagesPage
 
 
 class MoviePremierLink(KinopoiskPage):
-    '''
+    """
     Parser movie info from premiers links
-    '''
+    """
     def parse(self, instance, content):
 
         if isinstance(content, Tag):
@@ -46,9 +46,9 @@ class MoviePremierLink(KinopoiskPage):
 
 
 class MovieLink(KinopoiskPage):
-    '''
+    """
     Parser movie info from links
-    '''
+    """
     def parse(self, instance, content):
         content_soup = BeautifulSoup(content, 'lxml')
 
@@ -117,9 +117,9 @@ class MovieSeries(KinopoiskPage):
 
 
 class MovieMainPage(KinopoiskPage):
-    '''
+    """
     Parser of main movie page
-    '''
+    """
     url = '/film/%d/'
 
     def parse(self, instance, content):
@@ -180,28 +180,28 @@ class MovieMainPage(KinopoiskPage):
         if len(trailers):
             instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
-        actors = content_info.find('div',{'id':'actorList'})
-        if actors:		
+        actors = content_info.find('div', {'id': 'actorList'})
+        if actors:
             for ac in actors.ul.findAll('li'):
                 actor = ac.a.text
                 if actor != "...":
                     instance.actors.append(self.prepare_str(actor))
-			 
+
         instance.set_source('main_page')
 
 
 class MoviePostersPage(KinopoiskImagesPage):
-    '''
+    """
     Parser of movie posters page
-    '''
+    """
     url = '/film/%d/posters/'
     field_name = 'posters'
 
 
 class MovieTrailersPage(KinopoiskPage):
-    '''
+    """
     Parser of kinopoisk trailers page
-    '''
+    """
     url = '/film/%d/video/'
 
     def parse(self, instance, content):
