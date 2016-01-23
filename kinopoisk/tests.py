@@ -152,15 +152,15 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, 2007)
         self.assertEqual(m.title, 'Без цензуры')
         self.assertEqual(m.title_original, 'Redacted')
-#        self.assertEqual(m.plot, 'В центре картины  -  небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
+        # self.assertEqual(m.plot, 'В центре картины  -  небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
         self.assertEqual(m.runtime, 90)
-#        self.assertEqual(m.tagline, '"Фильм, запрещенный к прокату во многих странах"')
+        # self.assertEqual(m.tagline, '"Фильм, запрещенный к прокату во многих странах"')
 
-#         self.assertEqual(len(m.trailers), 1)
-#         self.assertEqual(m.trailers[0].id, 't12964')
-#         self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-22111.flv')
-#         self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
-#         self.assertEqual(m.trailers[0].dom, 'tr')
+        # self.assertEqual(len(m.trailers), 1)
+        # self.assertEqual(m.trailers[0].id, 't12964')
+        # self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-22111.flv')
+        # self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
+        # self.assertEqual(m.trailers[0].dom, 'tr')
 
         movies = Movie.objects.search('pulp fiction')
         self.assertTrue(len(movies) > 1)
@@ -171,11 +171,10 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, 'Pulp Fiction')
 
-    def test_movie_by_id(self):
+    def test_movie_by_id_278229(self):
         """
         Test of movie manager, movie obtain by id (not via search)
         """
-
         m = Movie(id=278229)
         m.get_content("main_page")
         m.get_content("trailers")
@@ -201,14 +200,86 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, None)
         self.assertEqual(m.title, 'Ловкость')
 
+        self.assertEqual(m.genres, ['драма', 'криминал', 'военный'])
+        self.assertEqual(m.countries, ['США', 'Канада'])
+        self.assertEqual(m.profit_usa, 65388)
+        self.assertEqual(m.profit_russia, 15391)
+        self.assertEqual(m.profit_world, 779600)
+
         # TODO: still not implemented
-#         self.assertEqual(m.directors, ['Брайан Де Пальма'])
-#         self.assertEqual(m.scenarios, ['Брайан Де Пальма'])
-#         self.assertEqual(m.producers, ['Джейсон Клиот', 'Симона Урдл', 'Джоана Висенте'])
-#         self.assertEqual(m.operators, ['Джонатан Клифф'])
-#         self.assertEqual(m.composers, [])
-#         self.assertEqual(m.genres, ['драма', 'криминал', 'военный'])
-#         self.assertEqual(m.countries, ['США', 'Канада'])
+        # self.assertEqual(m.directors, ['Брайан Де Пальма'])
+        # self.assertEqual(m.scenarios, ['Брайан Де Пальма'])
+        # self.assertEqual(m.producers, ['Джейсон Клиот', 'Симона Урдл', 'Джоана Висенте'])
+        # self.assertEqual(m.operators, ['Джонатан Клифф'])
+        # self.assertEqual(m.composers, [])
+
+    def test_movie_by_id_4374(self):
+        """
+        Test of movie manager, movie obtain by id (not via search)
+        """
+        m = Movie(id=4374)
+        m.get_content("main_page")
+        m.get_content("trailers")
+
+        self.assertEqual(m.id, 4374)
+        self.assertEqual(m.year, 2003)
+        self.assertEqual(m.title, 'Пираты Карибского моря: Проклятие Черной жемчужины')
+        self.assertEqual(m.title_original, 'Pirates of the Caribbean: The Curse of the Black Pearl')
+        self.assertEqual(m.plot, 'Жизнь харизматичного авантюриста, капитана Джека Воробья, полная увлекательных приключений, резко меняется, когда его заклятый враг — капитан Барбосса — похищает корабль Джека, Черную Жемчужину, а затем нападает на Порт Ройал и крадет прекрасную дочь губернатора, Элизабет Свонн.Друг детства Элизабет, Уилл Тернер, вместе с Джеком возглавляет спасательную экспедицию на самом быстром корабле Британии, в попытке вызволить девушку из плена и заодно отобрать у злодея Черную Жемчужину. Вслед за этой парочкой отправляется амбициозный коммодор Норрингтон, который к тому же числится женихом Элизабет.Однако Уилл не знает, что над Барбоссой висит вечное проклятие, при лунном свете превращающее его с командой в живых скелетов. Проклятье будет снято лишь тогда, когда украденное золото Ацтеков будет возвращено пиратами на старое место.')
+        self.assertEqual(m.runtime, 143)
+        self.assertEqual(m.tagline, "«Over 3000 Islands of Paradise -- For Some it's A Blessing -- For Others... It's A Curse»")
+        self.assertEqual(len(m.trailers), 2)
+        self.assertEqual(m.trailers[0].id, 't6747')
+        self.assertEqual(m.trailers[0].file, '4374/kinopoisk.ru-Pirates-Caribbean-The-Curse-Black-Pearl-14933.flv')
+        self.assertEqual(m.trailers[0].preview_file, '4374/3_529.jpg')
+        self.assertEqual(m.trailers[0].dom, 'tr')
+
+        self.assertEqual(m.genres, ['фэнтези', 'боевик', 'приключения'])
+        self.assertEqual(m.countries, ['США'])
+        self.assertEqual(m.profit_usa, 305413918)
+        self.assertEqual(m.profit_russia, 9060000)
+        self.assertEqual(m.profit_world, 654264015)
+
+        # TODO: still not implemented
+        # self.assertEqual(m.directors, ['Гор Вербински'])
+        # self.assertEqual(m.scenarios, ['Тед Эллиот', 'Терри Россио', 'Стюарт Битти'])
+        # self.assertEqual(m.producers, ['Джерри Брукхаймер', 'Пол Дисон', 'Брюс Хендрикс'])
+        # self.assertEqual(m.operators, ['Дариуш Вольски'])
+        # self.assertEqual(m.composers, ['Клаус Баделт'])
+
+    def test_movie_by_id_258687(self):
+        """
+        Test of movie manager, movie obtain by id (not via search)
+        """
+        m = Movie(id=258687)
+        m.get_content("main_page")
+        m.get_content("trailers")
+
+        self.assertEqual(m.id, 258687)
+        self.assertEqual(m.year, 2014)
+        self.assertEqual(m.title, 'Интерстеллар')
+        self.assertEqual(m.title_original, 'Interstellar')
+        self.assertEqual(m.plot, 'Когда засуха приводит человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и переселить человечество на другую планету.')
+        self.assertEqual(m.runtime, 169)
+        self.assertEqual(m.tagline, "«Следующий шаг человечества станет величайшим»")
+        self.assertEqual(len(m.trailers), 65)
+        self.assertEqual(m.trailers[0].id, 't211201')
+        self.assertEqual(m.trailers[0].file, '258687/kinopoisk.ru-Interstellar-211201.mp4')
+        self.assertEqual(m.trailers[0].preview_file, '258687/3_100619.jpg')
+        self.assertEqual(m.trailers[0].dom, 'tr')
+
+        self.assertEqual(m.genres, ['фантастика', 'драма', 'приключения'])
+        self.assertEqual(m.countries, ['США', 'Великобритания'])
+        self.assertEqual(m.profit_usa, 158445319)
+        self.assertEqual(m.profit_russia, 24110578)
+        self.assertEqual(m.profit_world, 592845319)
+
+        # TODO: still not implemented
+        # self.assertEqual(m.directors, ['Кристофер Нолан'])
+        # self.assertEqual(m.scenarios, ['Джонатан Нолан', 'Кристофер Нолан'])
+        # self.assertEqual(m.producers, ['Кристофер Нолан', 'Линда Обст', 'Эмма Томас'])
+        # self.assertEqual(m.operators, ['Хойте Ван Хойтема'])
+        # self.assertEqual(m.composers, ['Ханс Циммер'])
 
     def test_movie_trailers(self):
         """
@@ -225,12 +296,12 @@ class MovieTest(unittest.TestCase):
 
         self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
-#     def test_movie_repr(self):
-#         instance = Movie(title='Молчание ягнят', title_original='The Silence of the Lambs', year='1990')
-#         self.assertEqual(
-#             repr(instance),
-#             'Молчание ягнят (The Silence of the Lambs), 1990'
-#         )
+    # def test_movie_repr(self):
+    #     instance = Movie(title='Молчание ягнят', title_original='The Silence of the Lambs', year='1990')
+    #     self.assertEqual(
+    #         repr(instance),
+    #         'Молчание ягнят (The Silence of the Lambs), 1990'
+    #     )
 
     def test_movie_series(self):
         movies = Movie.objects.search('glee')
@@ -257,7 +328,7 @@ class MovieTest(unittest.TestCase):
         ls = m.seasons[-1]
         le = ls.episodes[-1]
         self.assertTrue(le.title, 'Eden')
-#        self.assertIsNone(le.release_date)
+        # self.assertIsNone(le.release_date)
 
         m = Movie(id=419200)  # Kick-Ass / Пипец
         m.get_content('main_page')
@@ -348,7 +419,7 @@ class PersonTest(unittest.TestCase):
         Test of parsing person photos
         """
         m = Person()
-        m.parse('photos', '<table class="fotos"><tr><td><a href="/picture/1294472/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
+        m.parse('photos', '<table class="fotos"><tr><td><a href="/picture/1294472/"><img src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
         self.assertTrue(len(m.photos) == 2)
         self.assertTrue(m.photos[0] == 'http://st-im.kinopoisk.ru/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
 
@@ -356,12 +427,12 @@ class PersonTest(unittest.TestCase):
         m.get_content('photos')
         self.assertTrue(len(m.photos) > 10)
 
-#     def test_person_repr(self):
-#         instance = Person(name='Чарльз Чаплин', name_original='Charles Chaplin', year='-')
-#         self.assertEqual(
-#             repr(instance),
-#             '<Чарльз Чаплин (Charles Chaplin), ->'
-#         )
+    # def test_person_repr(self):
+    #     instance = Person(name='Чарльз Чаплин', name_original='Charles Chaplin', year='-')
+    #     self.assertEqual(
+    #         repr(instance),
+    #         '<Чарльз Чаплин (Charles Chaplin), ->'
+    #     )
 
 if __name__ == '__main__':
     unittest.main()

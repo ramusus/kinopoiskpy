@@ -29,6 +29,7 @@ class Movie(KinopoiskObject):
         self.budget = None
         self.profit_usa = None
         self.profit_russia = None
+        self.profit_world = None
         self.audience = []
 
         self.rating = None
