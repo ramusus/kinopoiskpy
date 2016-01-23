@@ -200,18 +200,8 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.year, None)
         self.assertEqual(m.title, 'Ловкость')
 
-        self.assertEqual(m.genres, ['драма', 'криминал', 'военный'])
-        self.assertEqual(m.countries, ['США', 'Канада'])
-        self.assertEqual(m.profit_usa, 65388)
-        self.assertEqual(m.profit_russia, 15391)
-        self.assertEqual(m.profit_world, 779600)
-
-        # TODO: still not implemented
-        # self.assertEqual(m.directors, ['Брайан Де Пальма'])
-        # self.assertEqual(m.scenarios, ['Брайан Де Пальма'])
-        # self.assertEqual(m.producers, ['Джейсон Клиот', 'Симона Урдл', 'Джоана Висенте'])
-        # self.assertEqual(m.operators, ['Джонатан Клифф'])
-        # self.assertEqual(m.composers, [])
+        self.assertEqual(m.genres, ['драма'])
+        self.assertEqual(m.countries, ['США'])
 
     def test_movie_by_id_4374(self):
         """
@@ -228,17 +218,17 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.plot, 'Жизнь харизматичного авантюриста, капитана Джека Воробья, полная увлекательных приключений, резко меняется, когда его заклятый враг — капитан Барбосса — похищает корабль Джека, Черную Жемчужину, а затем нападает на Порт Ройал и крадет прекрасную дочь губернатора, Элизабет Свонн.Друг детства Элизабет, Уилл Тернер, вместе с Джеком возглавляет спасательную экспедицию на самом быстром корабле Британии, в попытке вызволить девушку из плена и заодно отобрать у злодея Черную Жемчужину. Вслед за этой парочкой отправляется амбициозный коммодор Норрингтон, который к тому же числится женихом Элизабет.Однако Уилл не знает, что над Барбоссой висит вечное проклятие, при лунном свете превращающее его с командой в живых скелетов. Проклятье будет снято лишь тогда, когда украденное золото Ацтеков будет возвращено пиратами на старое место.')
         self.assertEqual(m.runtime, 143)
         self.assertEqual(m.tagline, "«Over 3000 Islands of Paradise -- For Some it's A Blessing -- For Others... It's A Curse»")
-        self.assertEqual(len(m.trailers), 2)
-        self.assertEqual(m.trailers[0].id, 't6747')
-        self.assertEqual(m.trailers[0].file, '4374/kinopoisk.ru-Pirates-Caribbean-The-Curse-Black-Pearl-14933.flv')
-        self.assertEqual(m.trailers[0].preview_file, '4374/3_529.jpg')
-        self.assertEqual(m.trailers[0].dom, 'tr')
+        self.assertGreater(len(m.trailers), 2)
+        self.assertGreater(len(m.trailers[0].id), 0)
+        self.assertGreater(len(m.trailers[0].file), 0)
+        self.assertGreater(len(m.trailers[0].preview_file), 0)
+        self.assertGreater(len(m.trailers[0].dom), 0)
 
         self.assertEqual(m.genres, ['фэнтези', 'боевик', 'приключения'])
         self.assertEqual(m.countries, ['США'])
-        self.assertEqual(m.profit_usa, 305413918)
-        self.assertEqual(m.profit_russia, 9060000)
-        self.assertEqual(m.profit_world, 654264015)
+        self.assertGreaterEqual(m.profit_usa, 305413918)
+        self.assertGreaterEqual(m.profit_russia, 9060000)
+        self.assertGreaterEqual(m.profit_world, 654264015)
 
         # TODO: still not implemented
         # self.assertEqual(m.directors, ['Гор Вербински'])
@@ -262,7 +252,7 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.plot, 'Когда засуха приводит человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и переселить человечество на другую планету.')
         self.assertEqual(m.runtime, 169)
         self.assertEqual(m.tagline, "«Следующий шаг человечества станет величайшим»")
-        self.assertEqual(len(m.trailers), 65)
+        self.assertGreater(len(m.trailers), 65)
         self.assertEqual(m.trailers[0].id, 't211201')
         self.assertEqual(m.trailers[0].file, '258687/kinopoisk.ru-Interstellar-211201.mp4')
         self.assertEqual(m.trailers[0].preview_file, '258687/3_100619.jpg')
@@ -270,9 +260,9 @@ class MovieTest(unittest.TestCase):
 
         self.assertEqual(m.genres, ['фантастика', 'драма', 'приключения'])
         self.assertEqual(m.countries, ['США', 'Великобритания'])
-        self.assertEqual(m.profit_usa, 158445319)
-        self.assertEqual(m.profit_russia, 24110578)
-        self.assertEqual(m.profit_world, 592845319)
+        self.assertGreaterEqual(m.profit_usa, 158445319)
+        self.assertGreaterEqual(m.profit_russia, 24110578)
+        self.assertGreaterEqual(m.profit_world, 592845319)
 
         # TODO: still not implemented
         # self.assertEqual(m.directors, ['Кристофер Нолан'])
