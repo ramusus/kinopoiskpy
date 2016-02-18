@@ -196,7 +196,7 @@ class MovieMainPage(KinopoiskPage):
             instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
         actors = content_info.find('div', {'id': 'actorList'})
-        if actors:
+        if actors and actors.ul:
             for ac in actors.ul.findAll('li'):
                 actor = ac.a.text
                 if actor != "...":

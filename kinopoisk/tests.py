@@ -203,6 +203,11 @@ class MovieTest(unittest.TestCase):
         self.assertEqual(m.genres, ['драма'])
         self.assertEqual(m.countries, ['США'])
 
+        # movie with empty actors
+        m = Movie(id=926005)
+        m.get_content('main_page')
+        self.assertEqual(m.actors, [])
+
     def test_movie_by_id_4374(self):
         """
         Test of movie manager, movie obtain by id (not via search)
