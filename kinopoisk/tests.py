@@ -276,6 +276,15 @@ class MovieTest(unittest.TestCase):
         # self.assertEqual(m.operators, ['Хойте Ван Хойтема'])
         # self.assertEqual(m.composers, ['Ханс Циммер'])
 
+    def test_movie_by_id_1552(self):
+
+        m = Movie(id=1552)
+        m.get_content("main_page")
+        m.get_content("trailers")
+
+        self.assertEqual(m.profit_russia, 41000)
+        self.assertEqual(m.budget, 10000000)
+
     def test_movie_trailers(self):
         """
         Test of movie trailers source page

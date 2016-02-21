@@ -171,21 +171,14 @@ class MovieMainPage(KinopoiskPage):
                     for genre in genres:
                         if genre != '...\nслова\n':
                             instance.genres.append(self.prepare_str(genre))
+                elif name == 'бюджет':
+                    instance.budget = self.find_profit(tds[1])
                 elif name == 'сборы в США':
-                    tag = tds[1].find('a')
-                    if not tag:
-                        tag = tds[1].find('div')
-                    instance.profit_usa = self.prepare_profit(tag.text)
+                    instance.profit_usa = self.find_profit(tds[1])
                 elif name == 'сборы в России':
-                    tag = tds[1].find('a')
-                    if not tag:
-                        tag = tds[1].find('div')
-                    instance.profit_russia = self.prepare_profit(tag.text)
+                    instance.profit_russia = self.find_profit(tds[1])
                 elif name == 'сборы в мире':
-                    tag = tds[1].find('a')
-                    if not tag:
-                        tag = tds[1].find('div')
-                    instance.profit_world = self.prepare_profit(tag.text)
+                    instance.profit_world = self.find_profit(tds[1])
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
         if rating:

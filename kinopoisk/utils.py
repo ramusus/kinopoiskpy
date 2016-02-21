@@ -182,6 +182,13 @@ class KinopoiskPage(object):
         profit = profit[1:]
         return self.prepare_int(profit)
 
+    def find_profit(self, td):
+        for tag in [td.find('a'), td.find('div')]:
+            if tag:
+                for value in tag.contents:
+                    if '$' in value:
+                        return self.prepare_profit(value)
+
     def cut_from_to(self, content, after, before):
         start = content.find(after)
         end = content.find(before)
