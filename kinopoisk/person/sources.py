@@ -35,7 +35,7 @@ class PersonMainPage(KinopoiskPage):
 
     def parse(self, instance, content):
 
-        id = re.compile(r"<link rel=\"canonical\" href=\"http://www.kinopoisk.ru/name/(\d+)/\" />").findall(content)
+        id = re.compile(r"<link rel=\"canonical\" href=\"https://www.kinopoisk.ru/name/(\d+)/\" />").findall(content)
         if id:
             instance.id = self.prepare_int(id[0])
 
