@@ -4,9 +4,9 @@ Sources for Person
 """
 from __future__ import unicode_literals
 
-from builtins import str
-
 import re
+
+from builtins import str
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage, get_request
 
