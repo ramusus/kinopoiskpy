@@ -33,7 +33,7 @@ class Manager(object):
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object
-        if len(response.history) > 1:
+        if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
             instance = self.kinopoisk_object()
             instance.parse('main_page', content)
             return [instance]
