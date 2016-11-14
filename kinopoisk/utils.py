@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from builtins import str
+
 import re
+
+from builtins import str
 
 
 def get_request(url, params=None):
     import requests
     return requests.get(url, params=params, headers={
-        'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8',
+        'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/'
+                      '3.5.8',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3',
         'Accept-Encoding': 'deflate',
@@ -15,12 +18,12 @@ def get_request(url, params=None):
         'Keep-Alive': '300',
         'Connection': 'keep-alive',
         'Referer': 'http://www.kinopoisk.ru/',
-        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
+        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;'
+                  '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
     })
 
 
 class Manager(object):
-
     kinopoisk_object = None
     search_url = None
 
@@ -30,7 +33,7 @@ class Manager(object):
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object
-        if len(response.history):
+        if len(response.history) > 1:
             instance = self.kinopoisk_object()
             instance.parse('main_page', content)
             return [instance]
@@ -38,9 +41,10 @@ class Manager(object):
             # <h2 class="textorangebig" style="font:100 18px">К сожалению, сервер недоступен...</h2>
             if content.find('<h2 class="textorangebig" style="font:100 18px">') != -1:
                 return []
-            content_results = content[content.find('<div class="search_results">'):content.find('<div style="height: 40px"></div>')]
+            content_results = content[content.find('<div class="search_results">'):content.find(
+                '<div style="height: 40px"></div>')]
             if content_results:
-                from bs4 import BeautifulSoup # import here for successful installing via pip
+                from bs4 import BeautifulSoup  # import here for successful installing via pip
                 soup_results = BeautifulSoup(content_results, 'lxml')
                 # <div class="element width_2">
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})
@@ -62,7 +66,8 @@ class Manager(object):
     def get_first(self, query):
         self.search(query)
 
-#        htmlf=html[html.find('<!-- результаты поиска -->'):html.find('<!-- /результаты поиска -->')]
+
+# htmlf=html[html.find('<!-- результаты поиска -->'):html.find('<!-- /результаты поиска -->')]
 #        if htmlf<>"":
 #            htmlf = htmlf[htmlf.find('Скорее всего вы ищете'):htmlf.find('</a>')]
 #            htmlf=re.compile(r'<a class="all" href="(.+?)">').findall(htmlf)
@@ -74,7 +79,6 @@ class Manager(object):
 
 
 class KinopoiskObject(object):
-
     id = None
     objects = None
 
@@ -130,7 +134,6 @@ class KinopoiskObject(object):
 
 
 class KinopoiskImage(KinopoiskObject):
-
     def __init__(self, id=None):
         super(KinopoiskImage, self).__init__(id)
         self.set_url('picture', '/picture/%d/')
@@ -140,7 +143,6 @@ class KinopoiskImage(KinopoiskObject):
 
 
 class KinopoiskPage(object):
-
     content_name = None
 
     def prepare_str(self, value):
@@ -201,7 +203,7 @@ class KinopoiskPage(object):
             response = get_request(instance.get_url(self.content_name))
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
-#            content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
+            # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
             self.parse(instance, content)
             return
         raise NotImplementedError('This method must be implemented in subclass')
@@ -211,9 +213,9 @@ class KinopoiskPage(object):
 
 
 class KinopoiskImagesPage(KinopoiskPage):
-    '''
+    """
     Parser of kinopoisk images page
-    '''
+    """
     field_name = None
 
     def get(self, instance, page=1):

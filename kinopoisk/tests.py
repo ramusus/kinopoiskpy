@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa: E501
 from __future__ import unicode_literals
 import unittest
 
@@ -58,11 +59,11 @@ class MovieTest(unittest.TestCase):
         """
         m = Movie()
         m.parse('posters', '<table class="fotos"><tr><td><a href="/picture/1207166/"><img  src="/images/poster/sm_1207166.jpg" width="170" height="244" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>800&times;1148</i><a href="/picture/1207166/" target="_blank" title="Открыть в новом окне"></a>598 Кб</b></td><td class="center"><a href="/picture/1196342/"><img  src="/images/poster/sm_1196342.jpg" width="170" height="238" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>394&times;552</i><a href="/picture/1196342/" target="_blank" title="Открыть в новом окне"></a>96 Кб</b></td></tr></table>')
-        self.assertTrue(len(m.posters) == 2)
+        self.assertEqual(len(m.posters), 2)
 
         m = Movie(id=51319)
         m.get_content('posters')
-        self.assertTrue(len(m.posters) > 5)
+        self.assertGreater(len(m.posters), 5)
 
     def test_movie_premier_link_source(self):
 
@@ -145,7 +146,7 @@ class MovieTest(unittest.TestCase):
         Test of movie manager
         """
         movies = Movie.objects.search('Без цензуры 2007')
-        self.assertTrue(len(movies) > 1)
+        self.assertGreater(len(movies), 1)
 
         m = movies[0]
         self.assertEqual(m.id, 278229)
@@ -163,7 +164,7 @@ class MovieTest(unittest.TestCase):
         # self.assertEqual(m.trailers[0].dom, 'tr')
 
         movies = Movie.objects.search('pulp fiction')
-        self.assertTrue(len(movies) > 1)
+        self.assertGreater(len(movies), 1)
 
         m = movies[0]
         self.assertEqual(m.id, 342)
@@ -292,11 +293,11 @@ class MovieTest(unittest.TestCase):
         m = Movie(id=521689)
         m.get_content('trailers')
 
-        self.assertTrue(len(m.trailers) > 3)
+        self.assertGreater(len(m.trailers), 3)
         for i in range(0, 3):
             self.assertEqual(m.trailers[i].id[0], 't')
-            self.assertTrue(len(m.trailers[i].file) > 0)
-            self.assertTrue(len(m.trailers[i].preview_file) > 0)
+            self.assertGreater(len(m.trailers[i].file), 0)
+            self.assertGreater(len(m.trailers[i].preview_file), 0)
 
         self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
@@ -331,7 +332,7 @@ class MovieTest(unittest.TestCase):
         m.get_content('series')
         ls = m.seasons[-1]
         le = ls.episodes[-1]
-        self.assertTrue(le.title, 'Eden')
+        self.assertEqual(le.title, 'Эдем')
         # self.assertIsNone(le.release_date)
 
         m = Movie(id=419200)  # Kick-Ass / Пипец
@@ -362,7 +363,7 @@ class PersonTest(unittest.TestCase):
         Test of person manager
         """
         persons = Person.objects.search('Гуальтиеро Якопетти')
-        self.assertTrue(len(persons) == 1)
+        self.assertEqual(len(persons), 1)
 
         m = persons[0]
         self.assertEqual(m.id, 351549)
@@ -371,7 +372,7 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(m.name_original, 'Gualtiero Jacopetti')
 
         persons = Person.objects.search('malkovich')
-        self.assertTrue(len(persons) > 1)
+        self.assertGreater(len(persons), 1)
 
         m = persons[0]
         self.assertEqual(m.id, 24508)
@@ -385,7 +386,7 @@ class PersonTest(unittest.TestCase):
         self.assertEqual(m.name, 'Джонни Депп')
         self.assertEqual(m.year_birth, 1963)
         self.assertEqual(m.name_original, 'Johnny Depp')
-#        self.assertTrue(len(m.information) > 50) # TODO: fix "Safety error" in response of subrequest
+#        self.assertGreater(len(m.information), 50) # TODO: fix "Safety error" in response of subrequest
 
     def test_person_link_source(self):
         """
@@ -424,12 +425,12 @@ class PersonTest(unittest.TestCase):
         """
         m = Person()
         m.parse('photos', '<table class="fotos"><tr><td><a href="/picture/1294472/"><img src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
-        self.assertTrue(len(m.photos) == 2)
-        self.assertTrue(m.photos[0] == 'http://st-im.kinopoisk.ru/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
+        self.assertEqual(len(m.photos), 2)
+        self.assertEqual(m.photos[0], '//st.kp.yandex.net/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
 
         m = Person(id=8217)
         m.get_content('photos')
-        self.assertTrue(len(m.photos) > 10)
+        self.assertGreater(len(m.photos), 10)
 
     # def test_person_repr(self):
     #     instance = Person(name='Чарльз Чаплин', name_original='Charles Chaplin', year='-')

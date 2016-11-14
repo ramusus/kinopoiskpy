@@ -1,17 +1,20 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from builtins import str
+
 import re
+
+from builtins import str
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage, get_request
 
 
 class PersonLink(KinopoiskPage):
-    '''
+    """
     Parser person info from links
-    '''
+    """
+
     def parse(self, instance, content):
-        link = re.compile(r'<p class="name"><a href="/name/(\d+)/[^"]*">(.+?)</a>').findall(content)
+        link = re.compile(r'<p class="name"><a[^>]+href="/name/(\d+)/[^"]*">(.+?)</a>').findall(content)
         if link:
             instance.id = self.prepare_int(link[0][0])
             instance.name = self.prepare_str(link[0][1])
@@ -28,14 +31,14 @@ class PersonLink(KinopoiskPage):
 
 
 class PersonMainPage(KinopoiskPage):
-    '''
+    """
     Parser of main person page
-    '''
+    """
     url = '/name/%d/'
 
     def parse(self, instance, content):
 
-        id = re.compile(r"<link rel=\"canonical\" href=\"http://www.kinopoisk.ru/name/(\d+)/\" />").findall(content)
+        id = re.compile(r"<link rel=\"canonical\" href=\"https?://www.kinopoisk.ru/name/(\d+)/\" />").findall(content)
         if id:
             instance.id = self.prepare_int(id[0])
 
@@ -47,10 +50,12 @@ class PersonMainPage(KinopoiskPage):
         if name_original:
             instance.name_original = self.prepare_str(name_original[0])
 
-        content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(content)
+        content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(
+            content)
         for name, value in content_info:
             if str(name) == 'дата рождения':
-                year_birth = re.compile(r'<a href="/lists/m_act%5Bbirthday%5D%5Byear%5D/\d{4}/">(\d{4})</a>').findall(value)
+                year_birth = re.compile(r'<a href="/lists/m_act%5Bbirthday%5D%5Byear%5D/\d{4}/">(\d{4})</a>').findall(
+                    value)
                 if year_birth:
                     instance.year_birth = self.prepare_int(year_birth[0])
 
@@ -64,8 +69,8 @@ class PersonMainPage(KinopoiskPage):
 
 
 class PersonPhotosPage(KinopoiskImagesPage):
-    '''
+    """
     Parser of person photos page
-    '''
+    """
     url = '/name/%d/photos/'
     field_name = 'photos'

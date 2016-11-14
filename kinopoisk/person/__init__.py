@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from builtins import str
 
 from .sources import PersonLink, PersonMainPage, PersonPhotosPage
 from ..utils import KinopoiskObject, Manager
 
-class Person(KinopoiskObject):
 
+class Person(KinopoiskObject):
     def set_defaults(self):
         self.name = ''
         self.name_original = ''
@@ -29,9 +28,9 @@ class Person(KinopoiskObject):
 
 
 class PersonManager(Manager):
-    '''
+    """
     Person manager
-    '''
+    """
     kinopoisk_object = Person
 
     def get_url_with_params(self, query):

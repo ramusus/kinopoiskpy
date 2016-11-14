@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from future.utils import python_2_unicode_compatible
 from bs4 import BeautifulSoup
+from future.utils import python_2_unicode_compatible
 
 from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries
 from ..utils import KinopoiskObject, Manager, get_request
@@ -8,7 +8,6 @@ from ..utils import KinopoiskObject, Manager, get_request
 
 @python_2_unicode_compatible
 class Movie(KinopoiskObject):
-
     def set_defaults(self):
         self.title = ''
         self.title_original = ''
@@ -17,7 +16,7 @@ class Movie(KinopoiskObject):
         self.year = None
         self.countries = []
         self.tagline = ''
-        
+
         self.actors = []
         self.directors = []
         self.scenarios = []
@@ -67,7 +66,6 @@ class Movie(KinopoiskObject):
 
 @python_2_unicode_compatible
 class Trailer(object):
-
     def set_defaults(self):
         self.id = None
         self.width = None
@@ -108,7 +106,6 @@ class Trailer(object):
 
 @python_2_unicode_compatible
 class SeriesEpisode(object):
-
     def set_defaults(self):
         self.title = ''
         self.release_date = None
@@ -125,7 +122,6 @@ class SeriesEpisode(object):
 
 @python_2_unicode_compatible
 class SeriesSeason(object):
-
     def set_defaults(self):
         self.year = None
         self.episodes = []
@@ -161,13 +157,13 @@ class MovieManager(Manager):
         # http://www.kinopoisk.ru/index.php?level=7&ser=a:3:{s:4:"find";s:3:"day";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}&show=all
         return ('http://www.kinopoisk.ru/index.php', {
             'level': 7,
-            'ser': 'a:3:{s:4:"find";s:%d:"%s";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}' % (len(query), query),
+            'ser': 'a:3:{s:4:"find";s:%d:"%s";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}' % (
+                len(query), query),
             'show': 'all',
         })
 
 
 class MoviePremiersManager(Manager):
-
     kinopoisk_object = Movie
 
     def get_url_with_params(self):
