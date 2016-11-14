@@ -155,19 +155,19 @@ class MovieManager(Manager):
         })
         # возвращает не по релевантности, а непонятно как
         # http://www.kinopoisk.ru/index.php?level=7&ser=a:3:{s:4:"find";s:3:"day";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}&show=all
-        return ('http://www.kinopoisk.ru/index.php', {
-            'level': 7,
-            'ser': 'a:3:{s:4:"find";s:%d:"%s";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}' % (
-                len(query), query),
-            'show': 'all',
-        })
+        # return ('http://www.kinopoisk.ru/index.php', {
+        #     'level': 7,
+        #     'ser': 'a:3:{s:4:"find";s:%d:"%s";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}' % (
+        #         len(query), query),
+        #     'show': 'all',
+        # })
 
 
 class MoviePremiersManager(Manager):
     kinopoisk_object = Movie
 
-    def get_url_with_params(self):
-        return ('http://www.kinopoisk.ru/level/8/view/prem/', {})
+    def get_url_with_params(self, query):
+        return 'http://www.kinopoisk.ru/level/8/view/prem/', {}
 
     def all(self):
         url, params = self.get_url_with_params()

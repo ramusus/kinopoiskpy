@@ -61,7 +61,7 @@ class Manager(object):
             raise ValueError('Unknown html layout found by request "%s"' % response.url)
 
     def get_url_with_params(self, query):
-        return ('http://www.kinopoisk.ru/index.php', {'kp_query': query})
+        return 'http://www.kinopoisk.ru/index.php', {'kp_query': query}
 
     def get_first(self, query):
         self.search(query)
