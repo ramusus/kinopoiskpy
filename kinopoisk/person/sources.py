@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+"""
+Sources for Person
+"""
 from __future__ import unicode_literals
 
 import re
-
-from builtins import str
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage, get_request
 
@@ -38,9 +39,10 @@ class PersonMainPage(KinopoiskPage):
 
     def parse(self, instance, content):
 
-        id = re.compile(r"<link rel=\"canonical\" href=\"https?://www.kinopoisk.ru/name/(\d+)/\" />").findall(content)
-        if id:
-            instance.id = self.prepare_int(id[0])
+        person_id = re.compile(r"<link rel=\"canonical\" href=\"https?://www.kinopoisk.ru/name/(\d+)/\" />").findall(
+            content)
+        if person_id:
+            instance.id = self.prepare_int(person_id[0])
 
         name = re.compile(r'<h1 class="moviename-big" itemprop="name">(.+?)</h1>').findall(content)
         if name:

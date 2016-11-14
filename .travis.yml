@@ -4,10 +4,12 @@ python:
   - "3.4"
 install:
   - pip install flake8
+  - pip install pylint
   - pip install coveralls --use-mirrors
   - pip install . --use-mirrors
 before_script:
   - flake8 .
+  - pylint kinopoisk
 script:
   - coverage run --source=kinopoisk -m kinopoisk.tests
 after_success:

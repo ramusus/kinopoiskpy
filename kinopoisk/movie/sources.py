@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Sources for Movie
+"""
 from __future__ import unicode_literals
 from bs4 import BeautifulSoup, Tag
 

@@ -5,6 +5,9 @@ from ..utils import KinopoiskObject, Manager
 
 
 class Person(KinopoiskObject):
+    """
+    Person Class
+    """
     def set_defaults(self):
         self.name = ''
         self.name_original = ''
