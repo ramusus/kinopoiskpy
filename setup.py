@@ -12,7 +12,7 @@ setup(
     license='BSD',
     packages=find_packages(),
     include_package_data=True,
-    zip_safe=False, # because we're including media that Django needs
+    zip_safe=False,  # because we're including media that Django needs
     install_requires=[
         'beautifulsoup4',
         'lxml',
