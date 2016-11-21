@@ -166,7 +166,7 @@ class MovieManager(Manager):
 class MoviePremiersManager(Manager):
     kinopoisk_object = Movie
 
-    def get_url_with_params(self, query):
+    def get_url_with_params(self, query=None):
         return 'http://www.kinopoisk.ru/level/8/view/prem/', {}
 
     def all(self):
