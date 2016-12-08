@@ -50,7 +50,7 @@ class PersonMainPage(KinopoiskPage):
         if name:
             instance.name = self.prepare_str(name[0])
 
-        name_original = re.compile(r'<span itemprop="alternativeHeadline">([\w\s]+)\s+</span>').findall(content)
+        name_original = re.compile(r'<span itemprop="alternateName">([A-Z]\'?[- a-zA-Z]+)</span>').findall(content)
         if name_original:
             instance.name_original = self.prepare_str(name_original[0])
 
