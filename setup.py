@@ -4,7 +4,7 @@ setup(
     name='kinopoiskpy',
     version=__import__('kinopoisk').__version__,
     description='Python API to kinopoisk.ru',
-    long_description=open('README.md').read(),
+    long_description=open('README.md', encoding='utf-8').read(),
     author='ramusus',
     author_email='ramusus@gmail.com',
     url='https://github.com/ramusus/kinopoiskpy',
