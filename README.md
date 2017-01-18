@@ -20,6 +20,8 @@ Search movies:
     1
     >>> print movie_list[0].title
     Без цензуры
+    >>> print movie_list[0].id
+    278229
 
 Get content of movie by ID:
 
