@@ -59,8 +59,7 @@ class MovieLink(KinopoiskPage):
         if link:
             link = link.find('a')
             if link:
-                # /level/1/film/342/sr/1/
-                instance.id = self.prepare_int(link['href'].split('/')[4])
+                instance.id = self.prepare_int(link['data-id'])
                 instance.title = self.prepare_str(link.text)
                 instance.series = '(сериал)' in instance.title
 

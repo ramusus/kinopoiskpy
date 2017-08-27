@@ -17,7 +17,7 @@ class MovieTest(unittest.TestCase):
         m = Movie()
         m.parse('link', """<p class="pic"><a href="/level/1/film/342/sr/1/"><img class="flap_img" src="http://st.kinopoisk.ru/images/spacer.gif" title="/images/sm_film/342.jpg" alt="Криминальное чтиво" title="Криминальное чтиво" /></a></p>
             <div class="info">
-            <p class="name"><a href="/level/1/film/342/sr/1/">Криминальное чтиво</a> <span class="year">1994</span></p>
+            <p class="name"><a href="/film/kriminalnoe-chtivo-1994-342/sr/1/" data-id="342">Криминальное чтиво</a> <span class="year">1994</span></p>
             <span class="gray">Pulp Fiction, 154 мин</span>
             <span class="gray">США, <i class="director">реж. <a class="lined" href="/level/4/people/7640/">Квентин Тарантино</a></i>
             <br />(триллер, криминал)
