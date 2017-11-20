@@ -32,7 +32,7 @@ class MoviePremierLink(KinopoiskPage):
         date = premier_soup.find('meta', {'itemprop': 'startDate'})['content']
         try:
             instance.release = parser.parse(date)
-        except:
+        except Exception:
             pass
 
         match = re.findall(r'^(.+) \((\d{4})\)$', title_soup.nextSibling.nextSibling.contents[0])
@@ -42,7 +42,7 @@ class MoviePremierLink(KinopoiskPage):
 
         try:
             instance.plot = self.prepare_str(premier_soup.find('span', {'class': 'sinopsys'}).contents[0])
-        except:
+        except Exception:
             pass
 
         instance.set_source('premier_link')

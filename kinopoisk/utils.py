@@ -104,7 +104,7 @@ class KinopoiskObject(object):
     def register_source(self, name, class_name):
         try:
             self.set_url(name, class_name.url)
-        except:
+        except AttributeError:
             pass
         self.set_source(name)
         self._source_classes[name] = class_name
