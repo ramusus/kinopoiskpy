@@ -1,6 +1,6 @@
 # Kinopoiskpy
 
-[![Build Status](https://travis-ci.org/ramusus/kinopoiskpy.png?branch=master)](https://travis-ci.org/ramusus/kinopoiskpy) [![PyPI version](https://badge.fury.io/py/kinopoiskpy.png)](http://badge.fury.io/py/kinopoiskpy) [![Coverage Status](https://coveralls.io/repos/ramusus/kinopoiskpy/badge.png?branch=master)](https://coveralls.io/r/ramusus/kinopoiskpy)
+[![PyPI version](https://img.shields.io/pypi/v/kinopoiskpy.svg)](https://pypi.python.org/pypi/kinopoiskpy) [![Build Status](https://img.shields.io/travis/ramusus/kinopoiskpy.svg?branch=master)](https://travis-ci.org/ramusus/kinopoiskpy) [![Coverage Status](https://coveralls.io/repos/ramusus/kinopoiskpy/badge.svg?branch=master)](https://coveralls.io/r/ramusus/kinopoiskpy)
 
 This package is pythonic API to kinopoisk.ru website.
 
