@@ -19,27 +19,25 @@ HEADERS = {
               '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
 }
 
-def get_request(url, params=None):
-    import requests
-    return requests.get(url, params=params, headers=HEADERS)
-
 
 class Manager(object):
     kinopoisk_object = None
     search_url = None
 
-    def search(self, query):
+    def __init__(self):
         import requests
+        self.request = requests.Session()
+
+    def search(self, query):
         url, params = self.get_url_with_params(query)
-        session = requests.Session()
-        response = session.get(url, params=params, headers=HEADERS)
+        response = self.request.get(url, params=params, headers=HEADERS)
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object
         if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
             instance = self.kinopoisk_object()
             source_instance = instance.get_source_instance('main_page')
-            source_instance.session = session
+            source_instance.request = self.request
             source_instance.parse(instance, content)
             return [instance]
         else:
@@ -151,6 +149,10 @@ class KinopoiskImage(KinopoiskObject):
 class KinopoiskPage(object):
     content_name = None
 
+    def __init__(self):
+        import requests
+        self.request = requests.Session()
+
     def prepare_str(self, value):
         # BS4 specific replacements
         value = re.compile(' ').sub(' ', value)
@@ -206,9 +208,7 @@ class KinopoiskPage(object):
 
     def get(self, instance):
         if instance.id:
-            import requests
-            self.session = requests.Session()
-            response = self.session.get(instance.get_url(self.content_name), headers=HEADERS)
+            response = self.request.get(instance.get_url(self.content_name), headers=HEADERS)
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
@@ -227,7 +227,7 @@ class KinopoiskImagesPage(KinopoiskPage):
     field_name = None
 
     def get(self, instance, page=1):
-        response = get_request(instance.get_url(self.content_name, postfix='page/%d/' % page))
+        response = self.request.get(instance.get_url(self.content_name, postfix='page/{}/'.format(page)), headers=HEADERS)
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
 
@@ -261,7 +261,7 @@ class KinopoiskImagesPage(KinopoiskPage):
             img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
             picture = KinopoiskImage(int(img_id[0]))
 
-            response = get_request(picture.get_url())
+            response = self.request.get(picture.get_url(), headers=HEADERS)
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             img = BeautifulSoup(content, 'lxml').find('img', attrs={'id': 'image'})

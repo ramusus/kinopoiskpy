@@ -67,7 +67,7 @@ class PersonMainPage(KinopoiskPage):
             token = re.findall(r'xsrftoken = \'([^\']+)\'', content)
             obj_type = re.findall(r'objType: \'([^\']+)\'', content)
             if token and obj_type:
-                response = self.session.get(instance.get_url('info', token=token[0], type=obj_type[0]), headers=HEADERS)
+                response = self.request.get(instance.get_url('info', token=token[0], type=obj_type[0]), headers=HEADERS)
                 response.connection.close()
                 if response.content:
                     instance.information = response.content.decode('windows-1251', 'ignore').replace(

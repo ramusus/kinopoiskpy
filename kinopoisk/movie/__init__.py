@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from future.utils import python_2_unicode_compatible
 
 from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries
-from ..utils import KinopoiskObject, Manager, get_request
+from ..utils import KinopoiskObject, Manager, HEADERS
 
 
 @python_2_unicode_compatible
@@ -174,7 +174,7 @@ class MoviePremiersManager(Manager):
 
     def all(self):
         url, params = self.get_url_with_params()
-        response = get_request(url, params=params)
+        response = self.request(url, params=params, headers=HEADERS)
         content = response.content.decode('windows-1251', 'ignore')
 
         content_soup = BeautifulSoup(content, 'lxml')

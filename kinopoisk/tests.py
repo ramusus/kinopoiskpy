@@ -73,7 +73,6 @@ class MovieTest(VCRMixin, VCRTestCase):
     #     self.assertGreater(len(m.posters), 5)
 
     def test_movie_premier_link_source(self):
-
         m = Movie()
         m.parse('premier_link', """<div class="premier_item" id="544226" style="z-index:999;" itemscope="" itemtype="http://schema.org/Event">
    <meta itemprop="startDate" content="2012-03-15">
@@ -148,10 +147,7 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.release, datetime(2012, 3, 22))
 
-    def test_movie(self):
-        """
-        Test of movie manager
-        """
+    def test_movie_search_manager_redacted(self):
         movies = Movie.objects.search('Без цензуры 2007')
         self.assertGreater(len(movies), 1)
 
@@ -170,6 +166,7 @@ class MovieTest(VCRMixin, VCRTestCase):
         # self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
         # self.assertEqual(m.trailers[0].dom, 'tr')
 
+    def test_movie_search_manager_pulp_fiction(self):
         movies = Movie.objects.search('pulp fiction')
         self.assertGreater(len(movies), 1)
 
@@ -179,7 +176,7 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, 'Pulp Fiction')
 
-    def test_movie_by_id_278229(self):
+    def test_movie_main_page_id_278229(self):
         """
         Test of movie manager, movie obtain by id (not via search)
         """
@@ -203,6 +200,7 @@ class MovieTest(VCRMixin, VCRTestCase):
                                     'Яналь Кассай', 'Дхиая Калиль', 'Кел О’Нил', 'Дэниэл Стюарт-Шерман',
                                     'Патрик Кэрролл'])
 
+    def test_movie_main_page_id_746251(self):
         m = Movie(id=746251)
         m.get_content("main_page")
         self.assertEqual(m.year, None)
@@ -211,12 +209,12 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.genres, ['драма'])
         self.assertEqual(m.countries, ['США'])
 
-        # movie with empty actors
+    def test_movie_main_page_empty_actors(self):
         m = Movie(id=926005)
         m.get_content('main_page')
         self.assertEqual(m.actors, [])
 
-    def test_movie_by_id_4374(self):
+    def test_movie_main_page_id_4374(self):
         """
         Test of movie manager, movie obtain by id (not via search)
         """
@@ -250,7 +248,7 @@ class MovieTest(VCRMixin, VCRTestCase):
         # self.assertEqual(m.operators, ['Дариуш Вольски'])
         # self.assertEqual(m.composers, ['Клаус Баделт'])
 
-    def test_movie_by_id_258687(self):
+    def test_movie_main_page_id_258687(self):
         """
         Test of movie manager, movie obtain by id (not via search)
         """
@@ -286,7 +284,6 @@ class MovieTest(VCRMixin, VCRTestCase):
         # self.assertEqual(m.composers, ['Ханс Циммер'])
 
     def test_movie_by_id_1552(self):
-
         m = Movie(id=1552)
         m.get_content("main_page")
         # m.get_content("trailers")
@@ -313,7 +310,7 @@ class MovieTest(VCRMixin, VCRTestCase):
         instance = Movie(title='Молчание ягнят', title_original='The Silence of the Lambs', year='1990')
         self.assertEqual(str(instance).decode('utf-8'), 'Молчание ягнят (The Silence of the Lambs), 1990')
 
-    def test_movie_series(self):
+    def test_movie_series_search_glee(self):
         movies = Movie.objects.search('glee')
         self.assertGreaterEqual(len(movies), 1)
 
@@ -328,6 +325,7 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertEqual(e.title, 'Витамин D')
         self.assertEqual(e.release_date, datetime(2009, 10, 7).date())
 
+    def test_movie_series_search_killing(self):
         # It will false someday as well, we should find some TV series, that announced more series, but
         # stop showing them in some moment. At that moment, I can't find any.
         movies = Movie.objects.search('the killing')
@@ -340,33 +338,33 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertEqual(le.title, 'Эдем')
         # self.assertIsNone(le.release_date)
 
+    def test_movie_series_main_page_kickass(self):
         m = Movie(id=419200)  # Kick-Ass / Пипец
         m.get_content('main_page')
         self.assertFalse(m.series)
         self.assertRaises(ValueError, m.get_content, ('series', ))
 
+    def test_movie_series_main_page_bigband(self):
         m = Movie(id=306084)  # The Big Bang Theory / Теория большого взрыва
         m.get_content('main_page')
         self.assertTrue(m.series)
 
-    def test_movie_rating(self):
+    def test_movie_rating_from_search_result(self):
         movies = Movie.objects.search('the big bang theory')
         self.assertGreaterEqual(len(movies), 1)
 
         m = movies[0]  # The Big Bang Theory Series
         self.assertGreaterEqual(m.rating, 8.5)
 
-        m = Movie(id=306084)  # same
+    def test_movie_rating_from_main_page_source(self):
+        m = Movie(id=306084)
         m.get_content('main_page')
         self.assertGreaterEqual(m.rating, 8.5)
 
 
 class PersonTest(VCRMixin, VCRTestCase):
 
-    def test_person(self):
-        """
-        Test of person manager
-        """
+    def test_person_manager_with_one_result(self):
         persons = Person.objects.search('Гуальтиеро Якопетти')
         self.assertEqual(len(persons), 1)
 
@@ -376,6 +374,7 @@ class PersonTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.year_birth, 1919)
         self.assertEqual(m.name_original, 'Gualtiero Jacopetti')
 
+    def test_person_manager_with_many_results(self):
         persons = Person.objects.search('malkovich')
         self.assertGreater(len(persons), 1)
 
@@ -385,6 +384,7 @@ class PersonTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.year_birth, 1953)
         self.assertEqual(m.name_original, 'John Malkovich')
 
+    def test_person_main_page_source(self):
         m = Person(id=6245)
         m.get_content('main_page')
         self.assertEqual(m.id, 6245)
@@ -394,9 +394,6 @@ class PersonTest(VCRMixin, VCRTestCase):
         self.assertGreater(len(m.information), 50)
 
     def test_person_link_source(self):
-        """
-        Test of parsing person link in search results
-        """
         m = Person()
         m.parse('link', """<div class="element most_wanted">
             <div class="right">
