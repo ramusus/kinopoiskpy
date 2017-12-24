@@ -8,7 +8,7 @@ import re
 
 from builtins import str
 
-from ..utils import KinopoiskPage, KinopoiskImagesPage, get_request
+from ..utils import KinopoiskPage, KinopoiskImagesPage, HEADERS
 
 
 class PersonLink(KinopoiskPage):
@@ -37,7 +37,7 @@ class PersonMainPage(KinopoiskPage):
     """
     Parser of main person page
     """
-    url = '/name/%d/'
+    url = '/name/{id}/'
 
     def parse(self, instance, content):
 
@@ -64,10 +64,14 @@ class PersonMainPage(KinopoiskPage):
                     instance.year_birth = self.prepare_int(year_birth[0])
 
         if instance.id:
-            response = get_request(instance.get_url('info'))
-            response.connection.close()
-            if response.content:
-                instance.information = response.content.decode('windows-1251', 'ignore').replace(' class="trivia"', '')
+            token = re.findall(r'xsrftoken = \'([^\']+)\'', content)
+            obj_type = re.findall(r'objType: \'([^\']+)\'', content)
+            if token and obj_type:
+                response = self.session.get(instance.get_url('info', token=token[0], type=obj_type[0]), headers=HEADERS)
+                response.connection.close()
+                if response.content:
+                    instance.information = response.content.decode('windows-1251', 'ignore').replace(
+                        ' class="trivia"', '')
 
         instance.set_source('main_page')
 
@@ -76,5 +80,5 @@ class PersonPhotosPage(KinopoiskImagesPage):
     """
     Parser of person photos page
     """
-    url = '/name/%d/photos/'
+    url = '/name/{id}/photos/'
     field_name = 'photos'

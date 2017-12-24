@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+from future.utils import python_2_unicode_compatible
 
 from .sources import PersonLink, PersonMainPage, PersonPhotosPage
 from ..utils import KinopoiskObject, Manager
 
 
+@python_2_unicode_compatible
 class Person(KinopoiskObject):
     """
     Person Class
@@ -24,9 +26,9 @@ class Person(KinopoiskObject):
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)
 
-        self.set_url('info', '/handler_info.php?obj_type=actor&obj_id=%d')
+        self.set_url('info', '/handler_info.php?token={token}&obj_type={type}&obj_id={id}')
 
-    def __repr__(self):
+    def __str__(self):
         return '%s (%s), %s' % (self.name, self.name_original, self.year_birth or '-')
 
 

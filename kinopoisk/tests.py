@@ -9,7 +9,13 @@ from .movie import Movie
 from .person import Person
 
 
-class MovieTest(VCRTestCase):
+class VCRMixin:
+    def _get_vcr_kwargs(self, **kwargs):
+        kwargs['record_mode'] = 'new_episodes'
+        return kwargs
+
+
+class MovieTest(VCRMixin, VCRTestCase):
 
     def test_movie_link_source(self):
         """
@@ -303,12 +309,9 @@ class MovieTest(VCRTestCase):
     #
     #     self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
-    # def test_movie_repr(self):
-    #     instance = Movie(title='Молчание ягнят', title_original='The Silence of the Lambs', year='1990')
-    #     self.assertEqual(
-    #         repr(instance),
-    #         'Молчание ягнят (The Silence of the Lambs), 1990'
-    #     )
+    def test_movie_str(self):
+        instance = Movie(title='Молчание ягнят', title_original='The Silence of the Lambs', year='1990')
+        self.assertEqual(str(instance).decode('utf-8'), 'Молчание ягнят (The Silence of the Lambs), 1990')
 
     def test_movie_series(self):
         movies = Movie.objects.search('glee')
@@ -358,7 +361,7 @@ class MovieTest(VCRTestCase):
         self.assertGreaterEqual(m.rating, 8.5)
 
 
-class PersonTest(VCRTestCase):
+class PersonTest(VCRMixin, VCRTestCase):
 
     def test_person(self):
         """
@@ -388,7 +391,7 @@ class PersonTest(VCRTestCase):
         self.assertEqual(m.name, 'Джонни Депп')
         self.assertEqual(m.year_birth, 1963)
         self.assertEqual(m.name_original, 'Johnny Depp')
-#        self.assertGreater(len(m.information), 50) # TODO: fix "Safety error" in response of subrequest
+        self.assertGreater(len(m.information), 50)
 
     def test_person_link_source(self):
         """
@@ -435,12 +438,9 @@ class PersonTest(VCRTestCase):
     #     m.get_content('photos')
     #     self.assertGreater(len(m.photos), 10)
 
-    # def test_person_repr(self):
-    #     instance = Person(name='Чарльз Чаплин', name_original='Charles Chaplin', year='-')
-    #     self.assertEqual(
-    #         repr(instance),
-    #         '<Чарльз Чаплин (Charles Chaplin), ->'
-    #     )
+    def test_person_str(self):
+        instance = Person(name='Чарльз Чаплин', name_original='Charles Chaplin', year='-')
+        self.assertEqual(str(instance).decode('utf-8'), 'Чарльз Чаплин (Charles Chaplin), -')
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,6 +8,9 @@ from ..utils import KinopoiskObject, Manager, get_request
 
 @python_2_unicode_compatible
 class Movie(KinopoiskObject):
+    """
+    Movie Class
+    """
     def set_defaults(self):
         self.title = ''
         self.title_original = ''
@@ -52,7 +55,7 @@ class Movie(KinopoiskObject):
         self.register_source('trailers', MovieTrailersPage)
         self.register_source('series', MovieSeries)
 
-    def __repr__(self):
+    def __str__(self):
         return '%s (%s), %s' % (self.title, self.title_original, self.year or '-')
 
     def add_trailer(self, trailer_params):
@@ -97,9 +100,9 @@ class Trailer(object):
 
     @property
     def is_valid(self):
-        '''
+        """
         Check if filename is correct
-        '''
+        """
         # not youtube video '521689/' (http://www.kinopoisk.ru/film/521689/video/)
         return self.file[-1] != '/'
 
@@ -138,9 +141,9 @@ class SeriesSeason(object):
 
 
 class MovieManager(Manager):
-    '''
+    """
     Movie manager
-    '''
+    """
     kinopoisk_object = Movie
 
     def get_url_with_params(self, query):

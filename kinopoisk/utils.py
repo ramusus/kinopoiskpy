@@ -5,22 +5,23 @@ import re
 
 from builtins import str
 
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/'
+                  '3.5.8',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3',
+    'Accept-Encoding': 'deflate',
+    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
+    'Keep-Alive': '300',
+    'Connection': 'keep-alive',
+    'Referer': 'http://www.kinopoisk.ru/',
+    'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;'
+              '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
+}
 
 def get_request(url, params=None):
     import requests
-    return requests.get(url, params=params, headers={
-        'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/'
-                      '3.5.8',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3',
-        'Accept-Encoding': 'deflate',
-        'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
-        'Keep-Alive': '300',
-        'Connection': 'keep-alive',
-        'Referer': 'http://www.kinopoisk.ru/',
-        'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;'
-                  '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
-    })
+    return requests.get(url, params=params, headers=HEADERS)
 
 
 class Manager(object):
@@ -28,14 +29,18 @@ class Manager(object):
     search_url = None
 
     def search(self, query):
+        import requests
         url, params = self.get_url_with_params(query)
-        response = get_request(url, params=params)
+        session = requests.Session()
+        response = session.get(url, params=params, headers=HEADERS)
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
         # request is redirected to main page of object
         if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
             instance = self.kinopoisk_object()
-            instance.parse('main_page', content)
+            source_instance = instance.get_source_instance('main_page')
+            source_instance.session = session
+            source_instance.parse(instance, content)
             return [instance]
         else:
             # <h2 class="textorangebig" style="font:100 18px">К сожалению, сервер недоступен...</h2>
@@ -112,13 +117,14 @@ class KinopoiskObject(object):
     def set_url(self, name, url):
         self._urls[name] = url
 
-    def get_url(self, name, postfix=''):
+    def get_url(self, name, postfix='', **kwargs):
         url = self._urls.get(name)
         if not url:
             raise ValueError('There is no urlpage with name "%s"' % name)
         if not self.id:
             raise ValueError('ID of object is empty')
-        return 'http://www.kinopoisk.ru' + url % self.id + postfix
+        kwargs['id'] = self.id
+        return ('http://www.kinopoisk.ru' + url).format(**kwargs) + postfix
 
     def set_source(self, name):
         if name not in self._sources:
@@ -136,10 +142,10 @@ class KinopoiskObject(object):
 class KinopoiskImage(KinopoiskObject):
     def __init__(self, id=None):
         super(KinopoiskImage, self).__init__(id)
-        self.set_url('picture', '/picture/%d/')
+        self.set_url('picture', '/picture/{id}/')
 
-    def get_url(self, name='picture', postfix=''):
-        return super(KinopoiskImage, self).get_url(name, postfix)
+    def get_url(self, name='picture', postfix='', **kwargs):
+        return super(KinopoiskImage, self).get_url(name, postfix=postfix, **kwargs)
 
 
 class KinopoiskPage(object):
@@ -200,7 +206,9 @@ class KinopoiskPage(object):
 
     def get(self, instance):
         if instance.id:
-            response = get_request(instance.get_url(self.content_name))
+            import requests
+            self.session = requests.Session()
+            response = self.session.get(instance.get_url(self.content_name), headers=HEADERS)
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
             # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]

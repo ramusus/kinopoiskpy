@@ -88,7 +88,7 @@ class MovieLink(KinopoiskPage):
 
 
 class MovieSeries(KinopoiskPage):
-    url = '/film/%s/episodes/'
+    url = '/film/{id}/episodes/'
 
     def parse(self, instance, content):
         soup = BeautifulSoup(content, 'lxml')
@@ -123,7 +123,7 @@ class MovieMainPage(KinopoiskPage):
     """
     Parser of main movie page
     """
-    url = '/film/%d/'
+    url = '/film/{id}/'
 
     def parse(self, instance, content):
 
@@ -205,7 +205,7 @@ class MoviePostersPage(KinopoiskImagesPage):
     """
     Parser of movie posters page
     """
-    url = '/film/%d/posters/'
+    url = '/film/{id}/posters/'
     field_name = 'posters'
 
 
@@ -213,7 +213,7 @@ class MovieTrailersPage(KinopoiskPage):
     """
     Parser of kinopoisk trailers page
     """
-    url = '/film/%d/video/'
+    url = '/film/{id}/video/'
 
     def parse(self, instance, content):
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
