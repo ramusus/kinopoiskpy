@@ -422,19 +422,19 @@ class PersonTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.year_birth, 1953)
         self.assertEqual(m.name_original, 'John Malkovich')
 
-    # tests trigger captcha
-    # def test_person_photos_page_source(self):
-    #     """
-    #     Test of parsing person photos
-    #     """
-    #     m = Person()
-    #     m.parse('photos', '<table class="fotos"><tr><td><a href="/picture/1294472/"><img src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
-    #     self.assertEqual(len(m.photos), 2)
-    #     self.assertEqual(m.photos[0], '//st.kp.yandex.net/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
-    #
-    #     m = Person(id=8217)
-    #     m.get_content('photos')
-    #     self.assertGreater(len(m.photos), 10)
+    def test_person_parse_photos_page_source(self):
+        """
+        Test of parsing person photos
+        """
+        m = Person()
+        m.parse('photos', '<table class="fotos"><tr><td><a href="/picture/1294472/"><img src="http://st.kinopoisk.ru/images/kadr/sm_1294472.jpg" width="170" height="254" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1494</i><a href="/picture/1294472/" target="_blank" title="Открыть в новом окне"></a>676 Кб</b></td><td class="center"><a href="/picture/1294471/"><img  src="http://st.kinopoisk.ru/images/kadr/sm_1294471.jpg" width="170" height="253" alt="Просмотр фото" title="Просмотр фото" /></a><b><i>1000&times;1491</i><a href="/picture/1294471/" target="_blank" title="Открыть в новом окне"></a>649 Кб</b></td></tr></table>')
+        self.assertEqual(len(m.photos), 2)
+        self.assertEqual(m.photos[0], '//st.kp.yandex.net/im/kadr/1/2/9/kinopoisk.ru-Johnny-Depp-1294472.jpg')
+
+    def test_person_photos_page_source(self):
+        m = Person(id=8217)
+        m.get_content('photos')
+        self.assertGreaterEqual(len(m.photos), 11)
 
     def test_person_str(self):
         instance = Person(name='Чарльз Чаплин', name_original='Charles Chaplin', year='-')
