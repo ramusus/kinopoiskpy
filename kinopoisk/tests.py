@@ -60,17 +60,18 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.title, 'Title')
         self.assertEqual(m.plot, 'Description')
 
-    # def test_movie_posters_page_source(self):
-    #     """
-    #     Test of parsing movie posters
-    #     """
-    #     m = Movie()
-    #     m.parse('posters', '<table class="fotos"><tr><td><a href="/picture/1207166/"><img  src="/images/poster/sm_1207166.jpg" width="170" height="244" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>800&times;1148</i><a href="/picture/1207166/" target="_blank" title="Открыть в новом окне"></a>598 Кб</b></td><td class="center"><a href="/picture/1196342/"><img  src="/images/poster/sm_1196342.jpg" width="170" height="238" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>394&times;552</i><a href="/picture/1196342/" target="_blank" title="Открыть в новом окне"></a>96 Кб</b></td></tr></table>')
-    #     self.assertEqual(len(m.posters), 2)
-    #
-    #     m = Movie(id=51319)
-    #     m.get_content('posters')
-    #     self.assertGreater(len(m.posters), 5)
+    def test_movie_parse_posters_page_source(self):
+        """
+        Test of parsing movie posters
+        """
+        m = Movie()
+        m.parse('posters', '<table class="fotos"><tr><td><a href="/picture/1207166/"><img  src="/images/poster/sm_1207166.jpg" width="170" height="244" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>800&times;1148</i><a href="/picture/1207166/" target="_blank" title="Открыть в новом окне"></a>598 Кб</b></td><td class="center"><a href="/picture/1196342/"><img  src="/images/poster/sm_1196342.jpg" width="170" height="238" alt="Просмотр фото" title="Просмотр постера" /></a><b><i>394&times;552</i><a href="/picture/1196342/" target="_blank" title="Открыть в новом окне"></a>96 Кб</b></td></tr></table>')
+        self.assertEqual(len(m.posters), 2)
+
+    def test_movie_posters_page_source(self):
+        m = Movie(id=51319)
+        m.get_content('posters')
+        self.assertGreaterEqual(len(m.posters), 34)
 
     def test_movie_premier_link_source(self):
         m = Movie()
