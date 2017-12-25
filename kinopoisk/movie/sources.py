@@ -61,8 +61,7 @@ class MovieLink(KinopoiskPage):
         if link:
             link = link.find('a')
             if link:
-                # /film/tor-ragnaryok-2017-822709/sr/1/
-                instance.id = self.prepare_int(link['href'].split('/')[2].split('-')[-1])
+                instance.id = self.prepare_int(link['data-id'])
                 instance.title = self.prepare_str(link.text)
                 instance.series = '(сериал)' in instance.title
 

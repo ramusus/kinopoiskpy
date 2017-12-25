@@ -17,40 +17,6 @@ class VCRMixin:
 
 class MovieTest(VCRMixin, VCRTestCase):
 
-    def test_movie_link_source(self):
-        """
-        Test of parsing movie link in search results
-        """
-        m = Movie()
-        m.parse('link', """<p class="pic"><a href="/level/1/film/342/sr/1/"><img class="flap_img" src="http://st.kinopoisk.ru/images/spacer.gif" title="/images/sm_film/342.jpg" alt="Криминальное чтиво" title="Криминальное чтиво" /></a></p>
-            <div class="info">
-            <p class="name"><a href="/film/tor-ragnaryok-2017-342/sr/1/">Криминальное чтиво</a> <span class="year">1994</span></p>
-            <span class="gray">Pulp Fiction, 154 мин</span>
-            <span class="gray">США, <i class="director">реж. <a class="lined" href="/level/4/people/7640/">Квентин Тарантино</a></i>
-            <br />(триллер, криминал)
-                 </span>
-            <span class="gray">
-            <a class="lined" href="/level/4/people/6479/">Джон Траволта</a>, <a class="lined" href="/level/4/people/7164/">Сэмюэл Л. Джексон</a>, <a class="lined" href="/level/19/film/342/#actor">...</a>
-            </span>
-            </div>
-            <div class="clear"></div>
-            </div>""")
-        self.assertEqual(m.title, 'Криминальное чтиво')
-        self.assertEqual(m.id, 342)
-        self.assertEqual(m.runtime, 154)
-        self.assertEqual(m.year, 1994)
-        self.assertEqual(m.title_original, 'Pulp Fiction')
-
-        m = Movie()
-        m.parse('link', '<div class="element width_2"><span class="gray"></span></div>')
-        self.assertEqual(m.runtime, None)
-        self.assertEqual(m.title_original, '')
-
-        m = Movie()
-        m.parse('link', '<div class="element width_2"><span class="gray">Zdar Buh, hosi!</span></div>')
-        self.assertEqual(m.runtime, None)
-        self.assertEqual(m.title_original, 'Zdar Buh, hosi!')
-
     def test_movie_main_page_source(self):
         """
         Test of parsing movie info from movie page
