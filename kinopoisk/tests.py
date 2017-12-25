@@ -238,16 +238,21 @@ class MovieTest(VCRMixin, VCRTestCase):
 
         self.assertEqual(m.genres, ['фэнтези', 'боевик', 'приключения'])
         self.assertEqual(m.countries, ['США'])
+        self.assertGreaterEqual(m.budget, 140000000)
+        self.assertGreaterEqual(m.marketing, 40000000)
         self.assertGreaterEqual(m.profit_usa, 305413918)
         self.assertGreaterEqual(m.profit_russia, 9060000)
         self.assertGreaterEqual(m.profit_world, 654264015)
 
-        # TODO: still not implemented
-        # self.assertEqual(m.directors, ['Гор Вербински'])
-        # self.assertEqual(m.scenarios, ['Тед Эллиот', 'Терри Россио', 'Стюарт Битти'])
-        # self.assertEqual(m.producers, ['Джерри Брукхаймер', 'Пол Дисон', 'Брюс Хендрикс'])
-        # self.assertEqual(m.operators, ['Дариуш Вольски'])
-        # self.assertEqual(m.composers, ['Клаус Баделт'])
+        self.assertEqual(m.actors, ['Джонни Депп', 'Джеффри Раш', 'Орландо Блум', 'Кира Найтли', 'Джек Девенпорт',
+                                    'Кевин МакНэлли', 'Джонатан Прайс', 'Ли Аренберг', 'Макензи Крук', 'Дэвид Бэйли'])
+        self.assertEqual(m.directors, ['Гор Вербински'])
+        self.assertEqual(m.screenwriters, ['Тед Эллиот', 'Терри Россио', 'Стюарт Битти'])
+        self.assertEqual(m.producers, ['Джерри Брукхаймер', 'Пол Дисон', 'Брюс Хендрикс'])
+        self.assertEqual(m.operators, ['Дариуш Вольски'])
+        self.assertEqual(m.composers, ['Клаус Бадельт'])
+        self.assertEqual(m.art_direction_by, ['Брайан Моррис', 'Дерек Р. Хилл', 'Майкл Пауэлс'])
+        self.assertEqual(m.editing_by, ['Стивен Е. Ривкин', 'Артур Шмидт', 'Крэйг Вуд'])
 
     def test_movie_main_page_id_258687(self):
         """
@@ -277,12 +282,11 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertGreaterEqual(m.profit_russia, 24110578)
         self.assertGreaterEqual(m.profit_world, 592845319)
 
-        # TODO: still not implemented
-        # self.assertEqual(m.directors, ['Кристофер Нолан'])
-        # self.assertEqual(m.scenarios, ['Джонатан Нолан', 'Кристофер Нолан'])
-        # self.assertEqual(m.producers, ['Кристофер Нолан', 'Линда Обст', 'Эмма Томас'])
-        # self.assertEqual(m.operators, ['Хойте Ван Хойтема'])
-        # self.assertEqual(m.composers, ['Ханс Циммер'])
+        self.assertEqual(m.directors, ['Кристофер Нолан'])
+        self.assertEqual(m.screenwriters, ['Джонатан Нолан', 'Кристофер Нолан'])
+        self.assertEqual(m.producers, ['Кристофер Нолан', 'Линда Обст', 'Эмма Томас'])
+        self.assertEqual(m.operators, ['Хойте Ван Хойтема'])
+        self.assertEqual(m.composers, ['Ханс Циммер'])
 
     def test_movie_by_id_1552(self):
         m = Movie(id=1552)

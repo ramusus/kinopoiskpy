@@ -45,8 +45,6 @@ Get content of movie by ID:
     >>> movie.get_content('posters')
     >>> len(movie.posters) > 0
     True
-    >>> movie.__dict__.keys()
-    ['rating', 'series', 'seasons', 'year', '_sources', 'id', 'composers', 'plot', 'genres', 'title', 'tagline', 'profit_usa', 'audience', 'scenarios', 'profit_russia', 'operators', 'youtube_ids', 'trailers', 'posters', 'producers', 'countries', 'budget', 'title_original', 'directors', 'release', 'runtime']
 
 Get content of person by ID:
 
@@ -66,8 +64,6 @@ Get content of person by ID:
     >>> person.get_content('photos')
     >>> len(person.photos) > 10
     True
-    >>> person.__dict__.keys()
-    ['information', 'name', 'name_original', 'photos', '_sources', 'id', 'year_birth']
 
 ## Contributors
 

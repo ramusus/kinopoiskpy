@@ -23,13 +23,16 @@ class Movie(KinopoiskObject):
 
         self.actors = []
         self.directors = []
-        self.scenarios = []
+        self.screenwriters = []
         self.producers = []
         self.operators = []
         self.composers = []
+        self.art_direction_by = []
+        self.editing_by = []
         self.genres = []
 
         self.budget = None
+        self.marketing = None
         self.profit_usa = None
         self.profit_russia = None
         self.profit_world = None

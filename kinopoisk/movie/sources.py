@@ -3,12 +3,12 @@
 Sources for Movie
 """
 from __future__ import unicode_literals
-from bs4 import BeautifulSoup, Tag
 
-from dateutil import parser
+import re
 
 import simplejson as json
-import re
+from bs4 import BeautifulSoup, Tag
+from dateutil import parser
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage
 
@@ -17,6 +17,7 @@ class MoviePremierLink(KinopoiskPage):
     """
     Parser movie info from premiers links
     """
+
     def parse(self, instance, content):
 
         if isinstance(content, Tag):
@@ -52,6 +53,7 @@ class MovieLink(KinopoiskPage):
     """
     Parser movie info from links
     """
+
     def parse(self, instance, content):
         content_soup = BeautifulSoup(content, 'lxml')
 
@@ -124,6 +126,22 @@ class MovieMainPage(KinopoiskPage):
     Parser of main movie page
     """
     url = '/film/{id}/'
+    main_persons = {
+        'режиссер': 'directors',
+        'сценарий': 'screenwriters',
+        'продюсер': 'producers',
+        'оператор': 'operators',
+        'композитор': 'composers',
+        'художник': 'art_direction_by',
+        'монтаж': 'editing_by',
+    }
+    main_profits = {
+        'бюджет': 'budget',
+        'маркетинг': 'marketing',
+        'сборы в США': 'profit_usa',
+        'сборы в России': 'profit_russia',
+        'сборы в мире': 'profit_world',
+    }
 
     def parse(self, instance, content):
 
@@ -166,22 +184,17 @@ class MovieMainPage(KinopoiskPage):
                         pass
                     instance.series = 'сезон' in value
                 elif name == 'страна':
-                    countries = value.split(', ')
-                    for country in countries:
-                        instance.countries.append(self.prepare_str(country))
+                    for item in value.split(', '):
+                        instance.countries.append(self.prepare_str(item))
                 elif name == 'жанр':
                     genres = value.split(', ')
                     for genre in genres:
                         if genre != '...\nслова\n':
                             instance.genres.append(self.prepare_str(genre))
-                elif name == 'бюджет':
-                    instance.budget = self.find_profit(tds[1])
-                elif name == 'сборы в США':
-                    instance.profit_usa = self.find_profit(tds[1])
-                elif name == 'сборы в России':
-                    instance.profit_russia = self.find_profit(tds[1])
-                elif name == 'сборы в мире':
-                    instance.profit_world = self.find_profit(tds[1])
+                elif name in self.main_profits:
+                    self.parse_main_profit(instance, self.main_profits[name], tds)
+                elif name in self.main_persons:
+                    self.parse_main_persons(instance, self.main_persons[name], value)
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
         if rating:
@@ -193,12 +206,20 @@ class MovieMainPage(KinopoiskPage):
 
         actors = content_info.find('div', {'id': 'actorList'})
         if actors and actors.ul:
-            for ac in actors.ul.findAll('li'):
-                actor = ac.a.text
-                if actor != "...":
-                    instance.actors.append(self.prepare_str(actor))
+            self.parse_persons(instance, 'actors', [li.a.text for li in actors.ul.findAll('li')])
 
         instance.set_source('main_page')
+
+    def parse_main_profit(self, instance, field_name, value):
+        setattr(instance, field_name, self.find_profit(value[1]))
+
+    def parse_main_persons(self, instance, field_name, content):
+        return self.parse_persons(instance, field_name, content.split(', '))
+
+    def parse_persons(self, instance, field_name, links):
+        for link in links:
+            if link != "...":
+                getattr(instance, field_name).append(self.prepare_str(link))
 
 
 class MoviePostersPage(KinopoiskImagesPage):
