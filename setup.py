@@ -1,11 +1,17 @@
 from setuptools import setup, find_packages
 from io import open
 
+try:
+    import pypandoc
+    long_description = pypandoc.convert('README.md', 'rst')
+except(IOError, ImportError):
+    long_description = open('README.md', encoding='utf-8').read()
+
 setup(
     name='kinopoiskpy',
     version=__import__('kinopoisk').__version__,
     description='Python API to kinopoisk.ru',
-    long_description=open('README.md', encoding='utf-8').read(),
+    long_description=long_description,
     author='ramusus',
     author_email='ramusus@gmail.com',
     url='https://github.com/ramusus/kinopoiskpy',

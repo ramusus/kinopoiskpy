@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
-from bs4 import BeautifulSoup
+from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
+from bs4 import BeautifulSoup
 
 from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries
-from ..utils import KinopoiskObject, Manager, get_request
+from ..utils import KinopoiskObject, Manager, HEADERS
 
 
 @python_2_unicode_compatible
 class Movie(KinopoiskObject):
+    """
+    Movie Class
+    """
     def set_defaults(self):
         self.title = ''
         self.title_original = ''
@@ -19,13 +23,16 @@ class Movie(KinopoiskObject):
 
         self.actors = []
         self.directors = []
-        self.scenarios = []
+        self.screenwriters = []
         self.producers = []
         self.operators = []
         self.composers = []
+        self.art_direction_by = []
+        self.editing_by = []
         self.genres = []
 
         self.budget = None
+        self.marketing = None
         self.profit_usa = None
         self.profit_russia = None
         self.profit_world = None
@@ -53,7 +60,7 @@ class Movie(KinopoiskObject):
         self.register_source('series', MovieSeries)
 
     def __repr__(self):
-        return '%s (%s), %s' % (self.title, self.title_original, self.year or '-')
+        return '{} ({}), {}'.format(self.title, self.title_original, self.year or '-')
 
     def add_trailer(self, trailer_params):
         trailer = Trailer(trailer_params)
@@ -97,9 +104,9 @@ class Trailer(object):
 
     @property
     def is_valid(self):
-        '''
+        """
         Check if filename is correct
-        '''
+        """
         # not youtube video '521689/' (http://www.kinopoisk.ru/film/521689/video/)
         return self.file[-1] != '/'
 
@@ -117,7 +124,7 @@ class SeriesEpisode(object):
         self.release_date = release_date
 
     def __repr__(self):
-        return '%s, %s' % (self.title if self.title else '???', self.release_date or '-')
+        return '{}, {}'.format(self.title if self.title else '???', self.release_date or '-')
 
 
 @python_2_unicode_compatible
@@ -134,13 +141,13 @@ class SeriesSeason(object):
             self.episodes = episodes
 
     def __repr__(self):
-        return '%d: %d' % (self.year, len(self.episodes))
+        return '{}: {}'.format(self.year, len(self.episodes))
 
 
 class MovieManager(Manager):
-    '''
+    """
     Movie manager
-    '''
+    """
     kinopoisk_object = Movie
 
     def get_url_with_params(self, query):
@@ -171,7 +178,7 @@ class MoviePremiersManager(Manager):
 
     def all(self):
         url, params = self.get_url_with_params()
-        response = get_request(url, params=params)
+        response = self.request(url, params=params, headers=HEADERS)
         content = response.content.decode('windows-1251', 'ignore')
 
         content_soup = BeautifulSoup(content, 'lxml')

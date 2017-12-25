@@ -1,6 +1,6 @@
 # Kinopoiskpy
 
-[![Build Status](https://travis-ci.org/ramusus/kinopoiskpy.png?branch=master)](https://travis-ci.org/ramusus/kinopoiskpy) [![PyPI version](https://badge.fury.io/py/kinopoiskpy.png)](http://badge.fury.io/py/kinopoiskpy) [![Coverage Status](https://coveralls.io/repos/ramusus/kinopoiskpy/badge.png?branch=master)](https://coveralls.io/r/ramusus/kinopoiskpy)
+[![PyPI version](https://img.shields.io/pypi/v/kinopoiskpy.svg)](https://pypi.python.org/pypi/kinopoiskpy) [![Build Status](https://img.shields.io/travis/ramusus/kinopoiskpy.svg?branch=master)](https://travis-ci.org/ramusus/kinopoiskpy) [![Coverage Status](https://coveralls.io/repos/ramusus/kinopoiskpy/badge.svg?branch=master)](https://coveralls.io/r/ramusus/kinopoiskpy)
 
 This package is pythonic API to kinopoisk.ru website.
 
@@ -45,8 +45,6 @@ Get content of movie by ID:
     >>> movie.get_content('posters')
     >>> len(movie.posters) > 0
     True
-    >>> movie.__dict__.keys()
-    ['rating', 'series', 'seasons', 'year', '_sources', 'id', 'composers', 'plot', 'genres', 'title', 'tagline', 'profit_usa', 'audience', 'scenarios', 'profit_russia', 'operators', 'youtube_ids', 'trailers', 'posters', 'producers', 'countries', 'budget', 'title_original', 'directors', 'release', 'runtime']
 
 Get content of person by ID:
 
@@ -66,8 +64,6 @@ Get content of person by ID:
     >>> person.get_content('photos')
     >>> len(person.photos) > 10
     True
-    >>> person.__dict__.keys()
-    ['information', 'name', 'name_original', 'photos', '_sources', 'id', 'year_birth']
 
 ## Contributors
 
