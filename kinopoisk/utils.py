@@ -227,7 +227,8 @@ class KinopoiskImagesPage(KinopoiskPage):
     field_name = None
 
     def get(self, instance, page=1):
-        response = self.request.get(instance.get_url(self.content_name, postfix='page/{}/'.format(page)), headers=HEADERS)
+        response = self.request.get(instance.get_url(self.content_name, postfix='page/{}/'.format(page)),
+                                    headers=HEADERS)
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
 
