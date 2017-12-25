@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from bs4 import BeautifulSoup
+from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
+from bs4 import BeautifulSoup
 
 from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries
 from ..utils import KinopoiskObject, Manager, HEADERS
@@ -55,8 +56,8 @@ class Movie(KinopoiskObject):
         self.register_source('trailers', MovieTrailersPage)
         self.register_source('series', MovieSeries)
 
-    def __str__(self):
-        return '%s (%s), %s' % (self.title, self.title_original, self.year or '-')
+    def __repr__(self):
+        return '{} ({}), {}'.format(self.title, self.title_original, self.year or '-')
 
     def add_trailer(self, trailer_params):
         trailer = Trailer(trailer_params)
@@ -120,7 +121,7 @@ class SeriesEpisode(object):
         self.release_date = release_date
 
     def __repr__(self):
-        return '%s, %s' % (self.title if self.title else '???', self.release_date or '-')
+        return '{}, {}'.format(self.title if self.title else '???', self.release_date or '-')
 
 
 @python_2_unicode_compatible
@@ -137,7 +138,7 @@ class SeriesSeason(object):
             self.episodes = episodes
 
     def __repr__(self):
-        return '%d: %d' % (self.year, len(self.episodes))
+        return '{}: {}'.format(self.year, len(self.episodes))
 
 
 class MovieManager(Manager):

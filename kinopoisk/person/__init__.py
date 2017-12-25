@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 
 from .sources import PersonLink, PersonMainPage, PersonPhotosPage
@@ -28,8 +29,8 @@ class Person(KinopoiskObject):
 
         self.set_url('info', '/handler_info.php?token={token}&obj_type={type}&obj_id={id}')
 
-    def __str__(self):
-        return '%s (%s), %s' % (self.name, self.name_original, self.year_birth or '-')
+    def __repr__(self):
+        return '{} ({}), {}'.format(self.name, self.name_original, self.year_birth or '-')
 
 
 class PersonManager(Manager):

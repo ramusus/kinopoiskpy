@@ -307,9 +307,9 @@ class MovieTest(VCRMixin, VCRTestCase):
     #
     #     self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
-    def test_movie_str(self):
+    def test_movie_repr(self):
         instance = Movie(title='Молчание ягнят', title_original='The Silence of the Lambs', year='1990')
-        self.assertEqual(str(instance).decode('utf-8'), 'Молчание ягнят (The Silence of the Lambs), 1990')
+        self.assertEqual(instance.__repr__(), 'Молчание ягнят (The Silence of the Lambs), 1990')
 
     def test_movie_series_search_glee(self):
         movies = Movie.objects.search('glee')
@@ -436,9 +436,9 @@ class PersonTest(VCRMixin, VCRTestCase):
         m.get_content('photos')
         self.assertGreaterEqual(len(m.photos), 11)
 
-    def test_person_str(self):
+    def test_person_repr(self):
         instance = Person(name='Чарльз Чаплин', name_original='Charles Chaplin', year='-')
-        self.assertEqual(str(instance).decode('utf-8'), 'Чарльз Чаплин (Charles Chaplin), -')
+        self.assertEqual(instance.__repr__(), 'Чарльз Чаплин (Charles Chaplin), -')
 
 if __name__ == '__main__':
     unittest.main()
