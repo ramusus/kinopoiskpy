@@ -144,7 +144,7 @@ class MovieMainPage(KinopoiskPage):
 
     def parse(self, instance, content):
 
-        instance_id = re.compile(r'<script type="text/javascript"> id_film = (\d+); </script>').findall(content)
+        instance_id = re.compile(r'id_film = (\d+);').findall(content)
         if instance_id:
             instance.id = self.prepare_int(instance_id[0])
 

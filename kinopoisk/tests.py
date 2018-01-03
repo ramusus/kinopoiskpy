@@ -143,6 +143,16 @@ class MovieTest(VCRMixin, VCRTestCase):
         self.assertEqual(m.year, 1994)
         self.assertEqual(m.title_original, 'Pulp Fiction')
 
+    def test_movie_search_manager_warcraft(self):
+        movies = Movie.objects.search('Варкрафт')
+        self.assertEqual(len(movies), 1)
+
+        m = movies[0]
+        self.assertEqual(m.id, 277328)
+        self.assertEqual(m.title, 'Варкрафт')
+        self.assertEqual(m.year, 2016)
+        self.assertEqual(m.title_original, 'Warcraft')
+
     def test_movie_main_page_id_278229(self):
         """
         Test of movie manager, movie obtain by id (not via search)
