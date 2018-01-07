@@ -178,7 +178,7 @@ class MoviePremiersManager(Manager):
 
     def all(self):
         url, params = self.get_url_with_params()
-        response = self.request(url, params=params, headers=HEADERS)
+        response = self.request.get(url, params=params, headers=HEADERS)
         content = response.content.decode('windows-1251', 'ignore')
 
         content_soup = BeautifulSoup(content, 'lxml')
