@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 
-from .sources import PersonLink, PersonMainPage, PersonPhotosPage
+from .sources import PersonLink, PersonShortLink, PersonMainPage, PersonPhotosPage
 from ..utils import KinopoiskObject, Manager
 
 
@@ -24,13 +24,19 @@ class Person(KinopoiskObject):
         super(Person, self).__init__(*args, **kwargs)
 
         self.register_source('link', PersonLink)
+        self.register_source('short_link', PersonShortLink)
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)
 
         self.set_url('info', '/handler_info.php?token={token}&obj_type={type}&obj_id={id}')
 
     def __repr__(self):
-        return '{} ({}), {}'.format(self.name, self.name_original, self.year_birth or '-')
+        repr = self.name
+        if self.name_original:
+            repr += ' ({})'.format(self.name_original)
+        if self.year_birth:
+            repr += ', {}'.format(self.year_birth)
+        return repr
 
 
 class PersonManager(Manager):

@@ -11,6 +11,20 @@ from builtins import str
 from ..utils import KinopoiskPage, KinopoiskImagesPage, HEADERS
 
 
+class PersonShortLink(KinopoiskPage):
+    """
+    Parser person info from short links
+    """
+
+    def parse(self, instance, content):
+        link = re.compile(r'<a[^>]+href="/name/(\d+)/">(.+?)</a>').findall(content)
+        if link:
+            instance.id = self.prepare_int(link[0][0])
+            instance.name = self.prepare_str(link[0][1])
+
+        instance.set_source('short_link')
+
+
 class PersonLink(KinopoiskPage):
     """
     Parser person info from links

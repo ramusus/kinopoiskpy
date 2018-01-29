@@ -2,22 +2,21 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [!!python/unicode 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
-      Accept-Charset: [!!python/unicode 'windows-1251,utf-8;q=0.7,*;q=0.7']
-      Accept-Encoding: [!!python/unicode 'deflate']
-      Accept-Language: [!!python/unicode 'ru,en-us;q=0.7,en;q=0.3']
-      Connection: [!!python/unicode 'keep-alive']
-      Cookie: [!!python/unicode 'users_info[check_sh_bool]=none; search_last_date=2010-02-19;
-          search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
-      Keep-Alive: [!!python/unicode '300']
-      Referer: [!!python/unicode 'http://www.kinopoisk.ru/']
-      User-Agent: [!!python/unicode 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8)
-          Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8']
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
+      Cookie: ['users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
     method: GET
     uri: http://www.kinopoisk.ru/picture/1207166/
   response:
-    body: {string: !!python/unicode "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\
-        \n<body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\
+    body: {string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n\
+        <body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\
         \n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"}
     headers:
       connection: [keep-alive]
@@ -31,15 +30,15 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [!!python/unicode 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
-      Accept-Charset: [!!python/unicode 'windows-1251,utf-8;q=0.7,*;q=0.7']
-      Accept-Encoding: [!!python/unicode 'deflate']
-      Accept-Language: [!!python/unicode 'ru,en-us;q=0.7,en;q=0.3']
-      Connection: [!!python/unicode 'keep-alive']
-      Keep-Alive: [!!python/unicode '300']
-      Referer: [!!python/unicode 'http://www.kinopoisk.ru/']
-      User-Agent: [!!python/unicode 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8)
-          Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8']
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
     method: GET
     uri: https://www.kinopoisk.ru/picture/1207166/
   response:
@@ -525,17 +524,16 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [!!python/unicode 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
-      Accept-Charset: [!!python/unicode 'windows-1251,utf-8;q=0.7,*;q=0.7']
-      Accept-Encoding: [!!python/unicode 'deflate']
-      Accept-Language: [!!python/unicode 'ru,en-us;q=0.7,en;q=0.3']
-      Connection: [!!python/unicode 'keep-alive']
-      Cookie: [!!python/unicode 'users_info[check_sh_bool]=none; search_last_date=2010-02-19;
-          search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
-      Keep-Alive: [!!python/unicode '300']
-      Referer: [!!python/unicode 'http://www.kinopoisk.ru/']
-      User-Agent: [!!python/unicode 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8)
-          Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8']
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
+      Cookie: ['users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
     method: GET
     uri: https://www.kinopoisk.ru/picture/1207166/
   response:
@@ -1020,22 +1018,21 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [!!python/unicode 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
-      Accept-Charset: [!!python/unicode 'windows-1251,utf-8;q=0.7,*;q=0.7']
-      Accept-Encoding: [!!python/unicode 'deflate']
-      Accept-Language: [!!python/unicode 'ru,en-us;q=0.7,en;q=0.3']
-      Connection: [!!python/unicode 'keep-alive']
-      Cookie: [!!python/unicode 'users_info[check_sh_bool]=none; search_last_date=2010-02-19;
-          search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
-      Keep-Alive: [!!python/unicode '300']
-      Referer: [!!python/unicode 'http://www.kinopoisk.ru/']
-      User-Agent: [!!python/unicode 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8)
-          Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8']
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
+      Cookie: ['users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
     method: GET
     uri: http://www.kinopoisk.ru/picture/1196342/
   response:
-    body: {string: !!python/unicode "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\
-        \n<body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\
+    body: {string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n\
+        <body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\
         \n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"}
     headers:
       connection: [keep-alive]
@@ -1049,17 +1046,17 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [!!python/unicode 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
-      Accept-Charset: [!!python/unicode 'windows-1251,utf-8;q=0.7,*;q=0.7']
-      Accept-Encoding: [!!python/unicode 'deflate']
-      Accept-Language: [!!python/unicode 'ru,en-us;q=0.7,en;q=0.3']
-      Connection: [!!python/unicode 'keep-alive']
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
       Cookie: [last_visit=2017-12-25+05%3A33%3A45; mobile=no; yandex_gid=213; user_country=ot;
           PHPSESSID=tf7p8iglu09ke6sro497bt5pi4; tc=1]
-      Keep-Alive: [!!python/unicode '300']
-      Referer: [!!python/unicode 'http://www.kinopoisk.ru/']
-      User-Agent: [!!python/unicode 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8)
-          Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8']
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
     method: GET
     uri: https://www.kinopoisk.ru/picture/1196342/
   response:
@@ -1539,17 +1536,16 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: [!!python/unicode 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
-      Accept-Charset: [!!python/unicode 'windows-1251,utf-8;q=0.7,*;q=0.7']
-      Accept-Encoding: [!!python/unicode 'deflate']
-      Accept-Language: [!!python/unicode 'ru,en-us;q=0.7,en;q=0.3']
-      Connection: [!!python/unicode 'keep-alive']
-      Cookie: [!!python/unicode 'users_info[check_sh_bool]=none; search_last_date=2010-02-19;
-          search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
-      Keep-Alive: [!!python/unicode '300']
-      Referer: [!!python/unicode 'http://www.kinopoisk.ru/']
-      User-Agent: [!!python/unicode 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8)
-          Gecko/20100214 Linux Mint/8 (Helena) Firefox/3.5.8']
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
+      Cookie: ['users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
     method: GET
     uri: https://www.kinopoisk.ru/picture/1196342/
   response:
@@ -2027,4 +2023,60 @@ interactions:
       strict-transport-security: [max-age=31536000; includeSubDomains]
       x-frame-options: [SAMEORIGIN]
     status: {code: 200, message: OK}
+- request:
+    body: null
+    headers:
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
+      Cookie: ['users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
+    method: GET
+    uri: http://www.kinopoisk.ru/picture/1207166/
+  response:
+    body: {string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n\
+        <body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\
+        \n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"}
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [text/html]
+      Date: ['Mon, 29 Jan 2018 21:33:57 GMT']
+      Keep-Alive: [timeout=60]
+      Location: ['https://www.kinopoisk.ru/picture/1207166/']
+      Server: [nginx]
+    status: {code: 301, message: Moved Permanently}
+- request:
+    body: null
+    headers:
+      Accept: ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8']
+      Accept-Charset: ['windows-1251,utf-8;q=0.7,*;q=0.7']
+      Accept-Encoding: [deflate]
+      Accept-Language: ['ru,en-us;q=0.7,en;q=0.3']
+      Connection: [keep-alive]
+      Cookie: ['users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18']
+      Keep-Alive: ['300']
+      Referer: ['http://www.kinopoisk.ru/']
+      User-Agent: ['Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214
+          Linux Mint/8 (Helena) Firefox/3.5.8']
+    method: GET
+    uri: http://www.kinopoisk.ru/picture/1196342/
+  response:
+    body: {string: "<html>\r\n<head><title>301 Moved Permanently</title></head>\r\n\
+        <body bgcolor=\"white\">\r\n<center><h1>301 Moved Permanently</h1></center>\r\
+        \n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n"}
+    headers:
+      Connection: [keep-alive]
+      Content-Length: ['178']
+      Content-Type: [text/html]
+      Date: ['Mon, 29 Jan 2018 21:33:58 GMT']
+      Keep-Alive: [timeout=60]
+      Location: ['https://www.kinopoisk.ru/picture/1196342/']
+      Server: [nginx]
+    status: {code: 301, message: Moved Permanently}
 version: 1

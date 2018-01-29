@@ -193,7 +193,7 @@ class MovieMainPage(KinopoiskPage):
                 elif name in self.main_profits:
                     self.parse_main_profit(instance, self.main_profits[name], tds)
                 elif name in self.main_persons:
-                    self.parse_main_persons(instance, self.main_persons[name], value)
+                    self.parse_persons(instance, self.main_persons[name], tds[1].contents)
 
         rating = content_info.find('span', attrs={'class': 'rating_ball'})
         if rating:
@@ -205,20 +205,20 @@ class MovieMainPage(KinopoiskPage):
 
         actors = content_info.find('div', {'id': 'actorList'})
         if actors and actors.ul:
-            self.parse_persons(instance, 'actors', [li.a.text for li in actors.ul.findAll('li')])
+            self.parse_persons(instance, 'actors', [li.a for li in actors.ul.findAll('li')])
 
         instance.set_source('main_page')
 
     def parse_main_profit(self, instance, field_name, value):
         setattr(instance, field_name, self.find_profit(value[1]))
 
-    def parse_main_persons(self, instance, field_name, content):
-        return self.parse_persons(instance, field_name, content.split(', '))
-
     def parse_persons(self, instance, field_name, links):
+        from kinopoisk.person import Person
         for link in links:
-            if link != "...":
-                getattr(instance, field_name).append(self.prepare_str(link))
+            if isinstance(link, Tag) and link.text != "...":
+                person = Person()
+                person.parse('short_link', str(link))
+                getattr(instance, field_name).append(person)
 
 
 class MoviePostersPage(KinopoiskImagesPage):
