@@ -12,7 +12,7 @@ before_script:
   - flake8 .
 #  - pylint kinopoisk
 script:
-  - coverage run --source=kinopoisk -m kinopoisk.tests
+  - coverage run --source=kinopoisk -m kinopoisk.tests.__init__
 after_success:
   - coveralls
 notifications:
