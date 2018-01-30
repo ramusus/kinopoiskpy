@@ -38,7 +38,7 @@ class MoviePremierLink(KinopoiskPage):
 
         match = re.findall(r'^(.+) \((\d{4})\)$', title_soup.nextSibling.nextSibling.contents[0])
         if len(match):
-            instance.title_original = self.prepare_str(match[0][0].strip())
+            instance.title_en = self.prepare_str(match[0][0].strip())
             instance.year = self.prepare_int(match[0][1])
 
         try:
@@ -77,9 +77,9 @@ class MovieLink(KinopoiskPage):
             if 'мин' in otitle.text:
                 values = otitle.text.split(', ')
                 instance.runtime = self.prepare_int(values[-1].split(' ')[0])
-                instance.title_original = self.prepare_str(', '.join(values[:-1]))
+                instance.title_en = self.prepare_str(', '.join(values[:-1]))
             else:
-                instance.title_original = self.prepare_str(otitle.text)
+                instance.title_en = self.prepare_str(otitle.text)
 
         rating = content_soup.find('div', attrs={'class': re.compile('^rating')})
         if rating:
@@ -153,10 +153,10 @@ class MovieMainPage(KinopoiskPage):
         if title:
             instance.title = self.prepare_str(title.text)
 
-        title_original = content_info.find('span', {'itemprop': 'alternativeHeadline'})
+        title_en = content_info.find('span', {'itemprop': 'alternativeHeadline'})
 
-        if title_original:
-            instance.title_original = self.prepare_str(title_original.text)
+        if title_en:
+            instance.title_en = self.prepare_str(title_en.text)
 
         # <div class="brand_words" itemprop="description">
         plot = content_info.find('div', {'class': 'brand_words', 'itemprop': 'description'})

@@ -13,7 +13,7 @@ class Person(KinopoiskObject):
     """
     def set_defaults(self):
         self.name = ''
-        self.name_original = ''
+        self.name_en = ''
         self.information = ''
 
         self.year_birth = None
@@ -32,8 +32,8 @@ class Person(KinopoiskObject):
 
     def __repr__(self):
         repr = self.name
-        if self.name_original:
-            repr += ' ({})'.format(self.name_original)
+        if self.name_en:
+            repr += ' ({})'.format(self.name_en)
         if self.year_birth:
             repr += ', {}'.format(self.year_birth)
         return repr

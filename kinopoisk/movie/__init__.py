@@ -14,7 +14,7 @@ class Movie(KinopoiskObject):
     """
     def set_defaults(self):
         self.title = ''
-        self.title_original = ''
+        self.title_en = ''
         self.plot = ''
 
         self.year = None
@@ -60,7 +60,7 @@ class Movie(KinopoiskObject):
         self.register_source('series', MovieSeries)
 
     def __repr__(self):
-        return '{} ({}), {}'.format(self.title, self.title_original, self.year or '-')
+        return '{} ({}), {}'.format(self.title, self.title_en, self.year or '-')
 
     def add_trailer(self, trailer_params):
         trailer = Trailer(trailer_params)

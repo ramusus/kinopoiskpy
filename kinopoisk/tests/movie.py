@@ -22,7 +22,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.id, 278229)
         self.assertEqual(m.year, 2007)
         self.assertEqual(m.title, 'Без цензуры')
-        self.assertEqual(m.title_original, 'Redacted')
+        self.assertEqual(m.title_en, 'Redacted')
         # self.assertEqual(m.plot, 'В центре картины  -  небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
         self.assertEqual(m.runtime, 90)
         # self.assertEqual(m.tagline, '"Фильм, запрещенный к прокату во многих странах"')
@@ -41,7 +41,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.id, 342)
         self.assertEqual(m.title, 'Криминальное чтиво')
         self.assertEqual(m.year, 1994)
-        self.assertEqual(m.title_original, 'Pulp Fiction')
+        self.assertEqual(m.title_en, 'Pulp Fiction')
 
     def test_movie_search_manager_warcraft(self):
         movies = Movie.objects.search('Варкрафт')
@@ -51,7 +51,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.id, 277328)
         self.assertEqual(m.title, 'Варкрафт')
         self.assertEqual(m.year, 2016)
-        self.assertEqual(m.title_original, 'Warcraft')
+        self.assertEqual(m.title_en, 'Warcraft')
 
     def test_movie_main_page_id_278229(self):
         """
@@ -64,7 +64,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.id, 278229)
         self.assertEqual(m.year, 2007)
         self.assertEqual(m.title, 'Без цензуры')
-        self.assertEqual(m.title_original, 'Redacted')
+        self.assertEqual(m.title_en, 'Redacted')
         self.assertEqual(m.plot, 'В центре картины — небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
         self.assertEqual(m.runtime, 90)
         self.assertEqual(m.tagline, '«Фильм, запрещенный к прокату во многих странах»')
@@ -102,7 +102,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.id, 4374)
         self.assertEqual(m.year, 2003)
         self.assertEqual(m.title, 'Пираты Карибского моря: Проклятие Черной жемчужины')
-        self.assertEqual(m.title_original, 'Pirates of the Caribbean: The Curse of the Black Pearl')
+        self.assertEqual(m.title_en, 'Pirates of the Caribbean: The Curse of the Black Pearl')
         self.assertEqual(m.plot, 'Жизнь харизматичного авантюриста, капитана Джека Воробья, полная увлекательных приключений, резко меняется, когда его заклятый враг — капитан Барбосса — похищает корабль Джека, Черную Жемчужину, а затем нападает на Порт Ройал и крадет прекрасную дочь губернатора, Элизабет Свонн.Друг детства Элизабет, Уилл Тернер, вместе с Джеком возглавляет спасательную экспедицию на самом быстром корабле Британии, в попытке вызволить девушку из плена и заодно отобрать у злодея Черную Жемчужину. Вслед за этой парочкой отправляется амбициозный коммодор Норрингтон, который к тому же числится женихом Элизабет.Однако Уилл не знает, что над Барбоссой висит вечное проклятие, при лунном свете превращающее его с командой в живых скелетов. Проклятье будет снято лишь тогда, когда украденное золото Ацтеков будет возвращено пиратами на старое место.')
         self.assertEqual(m.runtime, 143)
         self.assertEqual(m.tagline, "«Over 3000 Islands of Paradise -- For Some it's A Blessing -- For Others... It's A Curse»")
@@ -141,7 +141,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.id, 258687)
         self.assertEqual(m.year, 2014)
         self.assertEqual(m.title, 'Интерстеллар')
-        self.assertEqual(m.title_original, 'Interstellar')
+        self.assertEqual(m.title_en, 'Interstellar')
         self.assertEqual(m.plot, 'Когда засуха приводит человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и переселить человечество на другую планету.')
         self.assertEqual(m.runtime, 169)
         self.assertEqual(m.tagline, "«Следующий шаг человечества станет величайшим»")
@@ -188,7 +188,7 @@ class MovieTest(BaseTest):
     #     self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
     def test_movie_repr(self):
-        instance = Movie(title='Молчание ягнят', title_original='The Silence of the Lambs', year='1990')
+        instance = Movie(title='Молчание ягнят', title_en='The Silence of the Lambs', year='1990')
         self.assertEqual(instance.__repr__(), 'Молчание ягнят (The Silence of the Lambs), 1990')
 
     def test_movie_series_search_glee(self):

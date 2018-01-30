@@ -32,7 +32,7 @@ Get content of movie by ID:
     2007
     >>> movie.title
     u'Без цензуры'
-    >>> movie.title_original
+    >>> movie.title_en
     u'Redacted'
     >>> movie.plot
     u'В центре картины  -  небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.'
@@ -57,7 +57,7 @@ Get content of person by ID:
     u'Джонни Депп'
     >>> person.year_birth
     1963
-    >>> person.name_original
+    >>> person.name_en
     u'Johnny Depp'
     >>> len(person.information) > 50
     True

@@ -42,7 +42,7 @@ class PersonLink(KinopoiskPage):
 
         otitle = re.compile(r'<span class="gray">(.*?)</span>').findall(content)
         if otitle:
-            instance.name_original = self.prepare_str(otitle[0])
+            instance.name_en = self.prepare_str(otitle[0])
 
         instance.set_source('link')
 
@@ -64,9 +64,9 @@ class PersonMainPage(KinopoiskPage):
         if name:
             instance.name = self.prepare_str(name[0])
 
-        name_original = re.compile(r'<span itemprop="alternateName">([A-Z]\'?[- a-zA-Z]+)</span>').findall(content)
-        if name_original:
-            instance.name_original = self.prepare_str(name_original[0])
+        name_en = re.compile(r'<span itemprop="alternateName">([A-Z]\'?[- a-zA-Z]+)</span>').findall(content)
+        if name_en:
+            instance.name_en = self.prepare_str(name_en[0])
 
         content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(
             content)
