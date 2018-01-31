@@ -217,7 +217,7 @@ class MovieMainPage(KinopoiskPage):
         for link in links:
             if isinstance(link, Tag) and link.text != "...":
                 person = Person()
-                person.parse('short_link', str(link))
+                person.parse('short_link', link.decode())
                 getattr(instance, field_name).append(person)
 
 
