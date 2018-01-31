@@ -105,6 +105,12 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title_en, 'Pirates of the Caribbean: The Curse of the Black Pearl')
         self.assertEqual(m.plot, 'Жизнь харизматичного авантюриста, капитана Джека Воробья, полная увлекательных приключений, резко меняется, когда его заклятый враг — капитан Барбосса — похищает корабль Джека, Черную Жемчужину, а затем нападает на Порт Ройал и крадет прекрасную дочь губернатора, Элизабет Свонн.Друг детства Элизабет, Уилл Тернер, вместе с Джеком возглавляет спасательную экспедицию на самом быстром корабле Британии, в попытке вызволить девушку из плена и заодно отобрать у злодея Черную Жемчужину. Вслед за этой парочкой отправляется амбициозный коммодор Норрингтон, который к тому же числится женихом Элизабет.Однако Уилл не знает, что над Барбоссой висит вечное проклятие, при лунном свете превращающее его с командой в живых скелетов. Проклятье будет снято лишь тогда, когда украденное золото Ацтеков будет возвращено пиратами на старое место.')
         self.assertEqual(m.runtime, 143)
+
+        self.assertEqual(m.rating, 8.339)
+        self.assertEqual(m.rating_imdb, 8.00)
+        self.assertGreaterEqual(m.votes, 327195)
+        self.assertGreaterEqual(m.votes_imdb, 859395)
+
         self.assertEqual(m.tagline, "«Over 3000 Islands of Paradise -- For Some it's A Blessing -- For Others... It's A Curse»")
         # self.assertGreater(len(m.trailers), 2)
         # self.assertGreater(len(m.trailers[0].id), 0)
@@ -235,9 +241,4 @@ class MovieTest(BaseTest):
         self.assertGreaterEqual(len(movies), 1)
 
         m = movies[0]  # The Big Bang Theory Series
-        self.assertGreaterEqual(m.rating, 8.5)
-
-    def test_movie_rating_from_main_page_source(self):
-        m = Movie(id=306084)
-        m.get_content('main_page')
         self.assertGreaterEqual(m.rating, 8.5)

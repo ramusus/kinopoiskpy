@@ -163,6 +163,7 @@ class KinopoiskPage(object):
 
     def prepare_int(self, value):
         value = self.prepare_str(value)
+        value = value.replace(' ', '')
         value = int(value)
         return value
 

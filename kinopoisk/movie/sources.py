@@ -199,6 +199,20 @@ class MovieMainPage(KinopoiskPage):
         if rating:
             instance.rating = float(rating.string)
 
+        block_rating = content_info.find('div', attrs={'id': 'block_rating'})
+        if block_rating:
+            div1 = block_rating.find('div', attrs={'class': 'div1'})
+            if div1:
+                rating_count = div1.find('span', attrs={'class': 'ratingCount'})
+                if rating_count:
+                    instance.votes = self.prepare_int(rating_count.text)
+                div_rating = div1.find_next('div')
+                if div_rating:
+                    imdb = re.findall(r'^IMDb: ([0-9\.]+) \(([0-9 ]+)\)$', div_rating.text)
+                    if imdb:
+                        instance.rating_imdb = float(imdb[0][0])
+                        instance.votes_imdb = self.prepare_int(imdb[0][1])
+
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         if len(trailers):
             instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
