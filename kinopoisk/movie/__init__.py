@@ -189,8 +189,7 @@ class MoviePremiersManager(Manager):
         content_soup = BeautifulSoup(content, 'lxml')
         instances = []
         for premier in content_soup.findAll('div', {'class': 'premier_item'}):
-            instance = self.kinopoisk_object()
-            instance.parse('premier_link', premier)
+            instance = self.kinopoisk_object.get_parsed('premier_link', premier)
             instances += [instance]
 
         return instances

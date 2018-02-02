@@ -36,9 +36,8 @@ class Manager(object):
         # request is redirected to main page of object
         if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
             instance = self.kinopoisk_object()
-            source_instance = instance.get_source_instance('main_page')
-            source_instance.request = self.request
-            source_instance.parse(instance, content)
+            instance.get_source_instance(
+                'main_page', instance=instance, content=content, request=self.request).parse()
             return [instance]
         else:
             # <h2 class="textorangebig" style="font:100 18px">К сожалению, сервер недоступен...</h2>
@@ -55,8 +54,7 @@ class Manager(object):
                     raise ValueError('No objects found in search results by request "%s"' % response.url)
                 instances = []
                 for result in results:
-                    instance = self.kinopoisk_object()
-                    instance.parse('link', str(result))
+                    instance = self.kinopoisk_object.get_parsed('link', str(result))
                     if instance.id:
                         instances += [instance]
                 return instances
@@ -99,10 +97,19 @@ class KinopoiskObject(object):
         pass
 
     def parse(self, name, content):
-        self.get_source_instance(name).parse(self, content)
+        """Parse using registered parser `name` and content"""
+        self.get_source_instance(name, instance=self, content=content).parse()
 
     def get_content(self, name):
-        self.get_source_instance(name).get(self)
+        """Populate instance with data from source `name`"""
+        self.get_source_instance(name, instance=self).get()
+
+    @classmethod
+    def get_parsed(cls, name, content):
+        """Initialize, parse and return instance"""
+        instance = cls()
+        instance.parse(name, content)
+        return instance
 
     def register_source(self, name, class_name):
         try:
@@ -128,12 +135,11 @@ class KinopoiskObject(object):
         if name not in self._sources:
             self._sources += [name]
 
-    def get_source_instance(self, name):
+    def get_source_instance(self, name, **kwargs):
         class_name = self._source_classes.get(name)
         if not class_name:
             raise ValueError('There is no source with name "%s"' % name)
-        instance = class_name()
-        instance.content_name = name
+        instance = class_name(name, **kwargs)
         return instance
 
 
@@ -147,11 +153,29 @@ class KinopoiskImage(KinopoiskObject):
 
 
 class KinopoiskPage(object):
-    content_name = None
+    content = None
 
-    def __init__(self):
+    def __init__(self, source_name, instance, content=None, request=None):
         import requests
-        self.request = requests.Session()
+        self.request = request or requests.Session()
+        self.source_name = source_name
+        self.instance = instance
+        if content is not None:
+            self.content = content
+
+    @property
+    def element(self):
+        return self.content
+
+    @property
+    def xpath(self):
+        raise NotImplementedError()
+
+    def extract(self, name):
+        if name in self.xpath:
+            return self.element.xpath(self.xpath[name])[0]
+        else:
+            raise ValueError("Xpath element with name `{}` is not configured".format(name))
 
     def prepare_str(self, value):
         # BS4 specific replacements
@@ -207,17 +231,17 @@ class KinopoiskPage(object):
             content = content[start:end]
         return content
 
-    def get(self, instance):
-        if instance.id:
-            response = self.request.get(instance.get_url(self.content_name), headers=HEADERS)
+    def get(self):
+        if self.instance.id:
+            response = self.request.get(self.instance.get_url(self.source_name), headers=HEADERS)
             response.connection.close()
-            content = response.content.decode('windows-1251', 'ignore')
+            self.content = response.content.decode('windows-1251', 'ignore')
             # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
-            self.parse(instance, content)
+            self.parse()
             return
         raise NotImplementedError('This method must be implemented in subclass')
 
-    def parse(self, instance, content):
+    def parse(self):
         raise NotImplementedError('You must implement KinopoiskPage.parse() method')
 
 
@@ -227,8 +251,8 @@ class KinopoiskImagesPage(KinopoiskPage):
     """
     field_name = None
 
-    def get(self, instance, page=1):
-        response = self.request.get(instance.get_url(self.content_name, postfix='page/{}/'.format(page)),
+    def get(self, page=1):
+        response = self.request.get(self.instance.get_url(self.source_name, postfix='page/{}/'.format(page)),
                                     headers=HEADERS)
         response.connection.close()
         content = response.content.decode('windows-1251', 'ignore')
@@ -243,21 +267,22 @@ class KinopoiskImagesPage(KinopoiskPage):
         soup_content = BeautifulSoup(content, 'lxml')
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
-            self.parse(instance, str(table[0]))
+            self.content = str(table[0])
+            self.parse()
             # may be there is more pages?
-            if len(getattr(instance, self.field_name)) % 21 == 0:
+            if len(getattr(self.instance, self.field_name)) % 21 == 0:
                 try:
-                    self.get(instance, page + 1)
+                    self.get(page + 1)
                 except ValueError:
                     return
         else:
-            raise ValueError('Parse error. Do not found posters for movie %s' % (instance.get_url('posters')))
+            raise ValueError('Parse error. Do not found posters for movie %s' % (self.instance.get_url('posters')))
 
-    def parse(self, instance, content):
-        urls = getattr(instance, self.field_name, [])
+    def parse(self,):
+        urls = getattr(self.instance, self.field_name, [])
 
         from bs4 import BeautifulSoup
-        links = BeautifulSoup(content, 'lxml').findAll('a')
+        links = BeautifulSoup(self.content, 'lxml').findAll('a')
         for link in links:
 
             img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
@@ -272,5 +297,5 @@ class KinopoiskImagesPage(KinopoiskPage):
                 if img_url not in urls:
                     urls.append(img_url)
 
-        setattr(instance, self.field_name, urls)
-        instance.set_source(self.content_name)
+        setattr(self.instance, self.field_name, urls)
+        self.instance.set_source(self.source_name)
