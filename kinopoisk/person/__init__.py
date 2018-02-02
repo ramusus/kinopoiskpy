@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 
-from .sources import PersonLink, PersonShortLink, PersonMainPage, PersonPhotosPage
+from .sources import PersonLink, PersonShortLink, PersonMainPage, PersonPhotosPage, PersonRoleLink
 from ..utils import KinopoiskObject, Manager
 
 
@@ -18,6 +18,7 @@ class Person(KinopoiskObject):
 
         self.year_birth = None
 
+        self.career = {}
         self.photos = []
 
     def __init__(self, *args, **kwargs):
@@ -37,6 +38,22 @@ class Person(KinopoiskObject):
         if self.year_birth:
             repr += ', {}'.format(self.year_birth)
         return repr
+
+
+@python_2_unicode_compatible
+class Role(KinopoiskObject):
+    """
+    Person Role Class
+    """
+    def set_defaults(self):
+        self.name = ''
+        self.movie = None
+
+    def __init__(self, *args, **kwargs):
+        super(Role, self).__init__(*args, **kwargs)
+
+        self.register_source('role_link', PersonRoleLink)
+
 
 
 class PersonManager(Manager):

@@ -5,10 +5,30 @@ Sources for Person
 from __future__ import unicode_literals
 
 import re
-
 from builtins import str
+from lxml import html
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage, HEADERS
+
+
+class PersonRoleLink(KinopoiskPage):
+    """
+    Parser person role info from career list
+    """
+
+    def parse(self, instance, element):
+        from kinopoisk.movie import Movie
+        note = element.xpath('.//span[@class="role"]/text()')[0].strip().split('...')
+        role_name = None
+        if len(note) > 1:
+            role_name = self.prepare_str(note[1]).replace(', озвучка', '').replace('; короткометражка', '')
+        movie = Movie()
+        movie.parse('career_link', element)
+
+        instance.name = role_name
+        instance.movie = movie
+
+        instance.set_source('role_link')
 
 
 class PersonShortLink(KinopoiskPage):
@@ -76,6 +96,17 @@ class PersonMainPage(KinopoiskPage):
                     value)
                 if year_birth:
                     instance.year_birth = self.prepare_int(year_birth[0])
+
+        # movies
+        from kinopoisk.person import Role
+        tree = html.fromstring(content)
+        for element in tree.xpath('//div[@class="personPageItems"]/div[@class="item"]'):
+            type = [t.get('data-work-type') for t in element.iterancestors()][0]
+            role = Role()
+            role.parse('role_link', element)
+
+            instance.career.setdefault(type, [])
+            instance.career[type].append(role)
 
         if instance.id:
             token = re.findall(r'xsrftoken = \'([^\']+)\'', content)

@@ -13,6 +13,39 @@ from dateutil import parser
 from ..utils import KinopoiskPage, KinopoiskImagesPage
 
 
+class MovieCareerLink(KinopoiskPage):
+    """
+    Parser movie info from person career links
+    """
+
+    def parse(self, instance, element):
+        instance.id = element.get('data-fid')
+        instance.imdb_rating = element.get('data-imdbr')
+        instance.imdb_votes = element.get('data-imdbv')
+
+        try:
+            instance.rating = float(element.xpath('.//div[@class="rating kp"]/a/text()')[0])
+            instance.votes = self.prepare_int(element.xpath('.//div[@class="rating kp"]/span/text()')[0])
+        except IndexError:
+            pass
+
+        link = element.xpath('.//span[@class="name"]/a/text()')[0]
+        role = element.xpath('.//span[@class="role"]/text()')[0].strip().split('...')
+        title, year = re.findall(r'^(.+?)(?: \(.*([0-9]{4})\))?$', link)[0]
+        if role[0] == '':
+            title = ''
+            title_en = title
+        else:
+            title_en = role[0]
+
+        instance.title = self.prepare_str(title)
+        instance.title_en = self.prepare_str(title_en)
+        if year:
+            instance.year = self.prepare_int(year)
+
+        instance.set_source('career_link')
+
+
 class MoviePremierLink(KinopoiskPage):
     """
     Parser movie info from premiers links
@@ -210,8 +243,8 @@ class MovieMainPage(KinopoiskPage):
                 if div_rating:
                     imdb = re.findall(r'^IMDb: ([0-9\.]+) \(([0-9 ]+)\)$', div_rating.text)
                     if imdb:
-                        instance.rating_imdb = float(imdb[0][0])
-                        instance.votes_imdb = self.prepare_int(imdb[0][1])
+                        instance.imdb_rating = float(imdb[0][0])
+                        instance.imdb_votes = self.prepare_int(imdb[0][1])
 
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', content)
         if len(trailers):

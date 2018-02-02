@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 from bs4 import BeautifulSoup
 
-from .sources import MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries
+from .sources import (
+    MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieCareerLink)
 from ..utils import KinopoiskObject, Manager, HEADERS
 
 
@@ -39,9 +40,9 @@ class Movie(KinopoiskObject):
         self.audience = []
 
         self.rating = None
-        self.rating_imdb = None
         self.votes = None
-        self.votes_imdb = None
+        self.imdb_rating = None
+        self.imdb_votes = None
         self.runtime = None
         self.release = None
 
@@ -57,6 +58,7 @@ class Movie(KinopoiskObject):
 
         self.register_source('link', MovieLink)
         self.register_source('premier_link', MoviePremierLink)
+        self.register_source('career_link', MovieCareerLink)
         self.register_source('main_page', MovieMainPage)
         self.register_source('posters', MoviePostersPage)
         self.register_source('trailers', MovieTrailersPage)

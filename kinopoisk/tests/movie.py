@@ -107,9 +107,9 @@ class MovieTest(BaseTest):
         self.assertEqual(m.runtime, 143)
 
         self.assertEqual(m.rating, 8.339)
-        self.assertEqual(m.rating_imdb, 8.00)
+        self.assertEqual(m.imdb_rating, 8.00)
         self.assertGreaterEqual(m.votes, 327195)
-        self.assertGreaterEqual(m.votes_imdb, 859395)
+        self.assertGreaterEqual(m.imdb_votes, 859395)
 
         self.assertEqual(m.tagline, "«Over 3000 Islands of Paradise -- For Some it's A Blessing -- For Others... It's A Curse»")
         # self.assertGreater(len(m.trailers), 2)
