@@ -51,9 +51,9 @@ class PersonLink(KinopoiskPage):
     Parser person info from links
     """
     xpath = {
-        'link': '//p[@class="name"]/a',
-        'years': '//span[@class="year"]/text()',
-        'name': '//span[@class="gray"]/text()',
+        'link': './/p[@class="name"]/a',
+        'years': './/span[@class="year"]/text()',
+        'name': './/span[@class="gray"]/text()',
     }
 
     def parse(self):

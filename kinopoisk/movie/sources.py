@@ -126,6 +126,7 @@ class MovieLink(KinopoiskPage):
         rating = content_soup.find('div', attrs={'class': re.compile('^rating')})
         if rating:
             self.instance.rating = float(rating['title'].split(' ')[0])
+            self.instance.votes = self.prepare_int(rating['title'].split(' ')[1][1:-1])
 
         self.instance.set_source('link')
 

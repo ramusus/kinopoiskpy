@@ -24,6 +24,8 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title, 'Без цензуры')
         self.assertEqual(m.title_en, 'Redacted')
         self.assertEqual(m.runtime, 90)
+        self.assertEqual(m.rating, 6.120)
+        self.assertGreaterEqual(m.votes, 1760)
 
         # self.assertEqual(len(m.trailers), 1)
         # self.assertEqual(m.trailers[0].id, 't12964')
