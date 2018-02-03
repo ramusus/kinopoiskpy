@@ -19,6 +19,9 @@ class MovieCareerLink(KinopoiskPage):
     Parser movie info from person career links
     """
     xpath = {
+        'id': './/@data-fid',
+        'imdb_rating': './/@data-imdbr',
+        'imdb_votes': './/@data-imdbv',
         'rating': './/div[@class="rating kp"]/a/text()',
         'votes': './/div[@class="rating kp"]/span/text()',
         'link': './/span[@class="name"]/a/text()',
@@ -26,10 +29,10 @@ class MovieCareerLink(KinopoiskPage):
     }
 
     def parse(self):
-        self.instance.id = self.element.get('data-fid')
+        self.instance.id = self.extract('id')
         try:
-            self.instance.imdb_rating = float(self.element.get('data-imdbr'))
-            self.instance.imdb_votes = int(self.element.get('data-imdbv'))
+            self.instance.imdb_rating = float(self.extract('imdb_rating'))
+            self.instance.imdb_votes = int(self.extract('imdb_votes'))
         except (ValueError, TypeError):
             pass
 
@@ -97,23 +100,25 @@ class MovieLink(KinopoiskPage):
     Parser movie info from links
     """
     xpath = {
-        'link': './/p[@class="name"]/a',
+        'id': './/p[@class="name"]/a/@href',
+        'title': './/p[@class="name"]/a/text()',
         'years': './/p[@class="name"]/span[@class="year"]/text()',
         'name': './/span[@class="gray"]/text()',
-        'rating': './/div[starts-with(@class, "rating")]',
+        'rating': './/div[starts-with(@class, "rating")]/@title',
     }
 
     def parse(self):
         self.content = html.fromstring(self.content)
 
-        link = self.extract('link')[0]
+        id = self.extract('id')
+        title = self.extract('title')
         years = self.extract('years')
         name = self.extract('name')
         rating = self.extract('rating')
 
-        self.instance.id = self.prepare_int(link.get('href').split('/')[2].split('-')[-1])
-        self.instance.title = self.prepare_str(link.text.replace('(сериал)', ''))
-        self.instance.series = '(сериал)' in link.text
+        self.instance.id = self.prepare_int(id.split('/')[2].split('-')[-1])
+        self.instance.title = self.prepare_str(title.replace('(сериал)', ''))
+        self.instance.series = '(сериал)' in title
 
         if years:
             self.instance.year = self.prepare_int(years[:4])
@@ -126,7 +131,7 @@ class MovieLink(KinopoiskPage):
             self.instance.title_en = self.prepare_str(name)
 
         if rating:
-            rating = rating[0].get('title').split(' ')
+            rating = rating.split(' ')
             self.instance.rating = float(rating[0])
             self.instance.votes = self.prepare_int(rating[1][1:-1])
 

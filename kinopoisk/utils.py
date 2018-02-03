@@ -175,7 +175,7 @@ class KinopoiskPage(object):
         if name in self.xpath:
             xpath = self.xpath[name]
             elements = self.element.xpath(xpath)
-            if xpath[-7:] == '/text()':
+            if xpath[-7:] == '/text()' or '/@' in xpath:
                 return elements[0] if elements else ''
             else:
                 return elements
