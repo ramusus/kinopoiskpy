@@ -9,6 +9,7 @@ import re
 import simplejson as json
 from bs4 import BeautifulSoup, Tag
 from dateutil import parser
+from lxml import html
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage
 
@@ -95,38 +96,39 @@ class MovieLink(KinopoiskPage):
     """
     Parser movie info from links
     """
+    xpath = {
+        'link': './/p[@class="name"]/a',
+        'years': './/p[@class="name"]/span[@class="year"]/text()',
+        'name': './/span[@class="gray"]/text()',
+        'rating': './/div[starts-with(@class, "rating")]',
+    }
 
     def parse(self):
-        content_soup = BeautifulSoup(self.content, 'lxml')
+        self.content = html.fromstring(self.content)
 
-        link = content_soup.find('p', {'class': 'name'})
-        if link:
-            link = link.find('a')
-            if link:
-                self.instance.id = self.prepare_int(link['data-id'])
-                self.instance.title = self.prepare_str(link.text)
-                self.instance.series = '(сериал)' in self.instance.title
+        link = self.extract('link')[0]
+        years = self.extract('years')
+        name = self.extract('name')
+        rating = self.extract('rating')
 
-        year = content_soup.find('p', {'class': 'name'})
-        if year:
-            year = year.find('span', {'class': 'year'})
-            if year:
-                # '1998 &ndash; 2009'
-                self.instance.year = self.prepare_int(year.text[:4])
+        self.instance.id = self.prepare_int(link.get('href').split('/')[2].split('-')[-1])
+        self.instance.title = self.prepare_str(link.text.replace('(сериал)', ''))
+        self.instance.series = '(сериал)' in link.text
 
-        otitle = content_soup.find('span', {'class': 'gray'})
-        if otitle:
-            if 'мин' in otitle.text:
-                values = otitle.text.split(', ')
-                self.instance.runtime = self.prepare_int(values[-1].split(' ')[0])
-                self.instance.title_en = self.prepare_str(', '.join(values[:-1]))
-            else:
-                self.instance.title_en = self.prepare_str(otitle.text)
+        if years:
+            self.instance.year = self.prepare_int(years[:4])
 
-        rating = content_soup.find('div', attrs={'class': re.compile('^rating')})
+        if 'мин' in name:
+            values = name.split(', ')
+            self.instance.runtime = self.prepare_int(values[-1].split(' ')[0])
+            self.instance.title_en = self.prepare_str(', '.join(values[:-1]))
+        else:
+            self.instance.title_en = self.prepare_str(name)
+
         if rating:
-            self.instance.rating = float(rating['title'].split(' ')[0])
-            self.instance.votes = self.prepare_int(rating['title'].split(' ')[1][1:-1])
+            rating = rating[0].get('title').split(' ')
+            self.instance.rating = float(rating[0])
+            self.instance.votes = self.prepare_int(rating[1][1:-1])
 
         self.instance.set_source('link')
 
