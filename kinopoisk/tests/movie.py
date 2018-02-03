@@ -23,9 +23,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.year, 2007)
         self.assertEqual(m.title, 'Без цензуры')
         self.assertEqual(m.title_en, 'Redacted')
-        # self.assertEqual(m.plot, 'В центре картины  -  небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
         self.assertEqual(m.runtime, 90)
-        # self.assertEqual(m.tagline, '"Фильм, запрещенный к прокату во многих странах"')
 
         # self.assertEqual(len(m.trailers), 1)
         # self.assertEqual(m.trailers[0].id, 't12964')
@@ -58,8 +56,8 @@ class MovieTest(BaseTest):
         Test of movie manager, movie obtain by id (not via search)
         """
         m = Movie(id=278229)
-        m.get_content("main_page")
-        # m.get_content("trailers")
+        m.get_content('main_page')
+        # m.get_content('trailers')
 
         self.assertEqual(m.id, 278229)
         self.assertEqual(m.year, 2007)
@@ -79,7 +77,7 @@ class MovieTest(BaseTest):
 
     def test_movie_main_page_id_746251(self):
         m = Movie(id=746251)
-        m.get_content("main_page")
+        m.get_content('main_page')
         self.assertEqual(m.year, None)
         self.assertEqual(m.title, 'Ловкость')
 
@@ -96,8 +94,8 @@ class MovieTest(BaseTest):
         Test of movie manager, movie obtain by id (not via search)
         """
         m = Movie(id=4374)
-        m.get_content("main_page")
-        # m.get_content("trailers")
+        m.get_content('main_page')
+        # m.get_content('trailers')
 
         self.assertEqual(m.id, 4374)
         self.assertEqual(m.year, 2003)
@@ -141,8 +139,8 @@ class MovieTest(BaseTest):
         Test of movie manager, movie obtain by id (not via search)
         """
         m = Movie(id=258687)
-        m.get_content("main_page")
-        # m.get_content("trailers")
+        m.get_content('main_page')
+        # m.get_content('trailers')
 
         self.assertEqual(m.id, 258687)
         self.assertEqual(m.year, 2014)
@@ -150,7 +148,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title_en, 'Interstellar')
         self.assertEqual(m.plot, 'Когда засуха приводит человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и переселить человечество на другую планету.')
         self.assertEqual(m.runtime, 169)
-        self.assertEqual(m.tagline, "«Следующий шаг человечества станет величайшим»")
+        self.assertEqual(m.tagline, '«Следующий шаг человечества станет величайшим»')
 
         # self.assertGreater(len(m.trailers), 65)
         # self.assertEqual(m.trailers[0].id, 't211201')
@@ -172,8 +170,8 @@ class MovieTest(BaseTest):
 
     def test_movie_by_id_1552(self):
         m = Movie(id=1552)
-        m.get_content("main_page")
-        # m.get_content("trailers")
+        m.get_content('main_page')
+        # m.get_content('trailers')
 
         self.assertEqual(m.profit_russia, 41000)
         self.assertEqual(m.budget, 10000000)

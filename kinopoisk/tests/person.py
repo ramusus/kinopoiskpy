@@ -27,6 +27,11 @@ class PersonTest(BaseTest):
         self.assertEqual(p.year_birth, 1953)
         self.assertEqual(p.name_en, 'John Malkovich')
 
+        p = persons[4]
+        self.assertEqual(p.name, 'Др. Марк Малкович III')
+        self.assertEqual(p.year_birth, 1930)
+        self.assertEqual(p.year_death, 2010)
+
     def test_person_main_page_source(self):
         p = Person(id=6245)
         p.get_content('main_page')

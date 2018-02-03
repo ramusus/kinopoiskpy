@@ -35,7 +35,7 @@ class MovieCareerLink(KinopoiskPage):
         try:
             self.instance.rating = float(self.extract('rating'))
             self.instance.votes = self.prepare_int(self.extract('votes'))
-        except IndexError:
+        except (ValueError, TypeError):
             pass
 
         link = self.extract('link')

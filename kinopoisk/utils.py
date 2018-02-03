@@ -173,7 +173,12 @@ class KinopoiskPage(object):
 
     def extract(self, name):
         if name in self.xpath:
-            return self.element.xpath(self.xpath[name])[0]
+            xpath = self.xpath[name]
+            elements = self.element.xpath(xpath)
+            if xpath[-7:] == '/text()':
+                return elements[0] if elements else ''
+            else:
+                return elements
         else:
             raise ValueError("Xpath element with name `{}` is not configured".format(name))
 
@@ -195,8 +200,8 @@ class KinopoiskPage(object):
         value = self.prepare_str(value).strip()
         if not value:
             return None
-        months = [u"января", u"февраля", u"марта", u"апреля", u"мая", u"июня",
-                  u"июля", u"августа", u"сентября", u"октября", u"ноября", u"декабря"]
+        months = ["января", "февраля", "марта", "апреля", "мая", "июня",
+                  "июля", "августа", "сентября", "октября", "ноября", "декабря"]
         for i, month in enumerate(months, start=1):
             if month in value:
                 value = value.replace(month, '%02d' % i)

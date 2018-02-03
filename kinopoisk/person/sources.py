@@ -25,10 +25,9 @@ class PersonRoleLink(KinopoiskPage):
         role_name = None
         if len(note) > 1:
             role_name = self.prepare_str(note[1]).replace(', озвучка', '').replace('; короткометражка', '')
-        movie = Movie.get_parsed('career_link', self.content)
 
         self.instance.name = role_name
-        self.instance.movie = movie
+        self.instance.movie = Movie.get_parsed('career_link', self.content)
 
         self.instance.set_source('role_link')
 
@@ -51,20 +50,27 @@ class PersonLink(KinopoiskPage):
     """
     Parser person info from links
     """
+    xpath = {
+        'link': '//p[@class="name"]/a',
+        'years': '//span[@class="year"]/text()',
+        'name': '//span[@class="gray"]/text()',
+    }
 
     def parse(self):
-        link = re.compile(r'<p class="name"><a[^>]+href="/name/(\d+)/[^"]*">(.+?)</a>').findall(self.content)
-        if link:
-            self.instance.id = self.prepare_int(link[0][0])
-            self.instance.name = self.prepare_str(link[0][1])
+        self.content = html.fromstring(self.content)
 
-        year = re.compile(r'<span class="year">(\d{4})</span>').findall(self.content)
-        if year:
-            self.instance.year_birth = self.prepare_int(year[0])
+        link = self.extract('link')[0]
+        years = self.extract('years')
+        name = self.extract('name')
 
-        otitle = re.compile(r'<span class="gray">(.*?)</span>').findall(self.content)
-        if otitle:
-            self.instance.name_en = self.prepare_str(otitle[0])
+        self.instance.id = self.prepare_int(link.get('href').split('/')[2])
+        self.instance.name = self.prepare_str(link.text)
+        self.instance.name_en = self.prepare_str(name)
+        if years:
+            years = years.split(' \u2013 ')
+            self.instance.year_birth = self.prepare_int(years[0])
+            if len(years) > 1:
+                self.instance.year_death = self.prepare_int(years[1])
 
         self.instance.set_source('link')
 
@@ -74,6 +80,9 @@ class PersonMainPage(KinopoiskPage):
     Parser of main person page
     """
     url = '/name/{id}/'
+    xpath = {
+        'movies': '//div[@class="personPageItems"]/div[@class="item"]',
+    }
 
     def parse(self):
 
@@ -99,16 +108,6 @@ class PersonMainPage(KinopoiskPage):
                 if year_birth:
                     self.instance.year_birth = self.prepare_int(year_birth[0])
 
-        # movies
-        from kinopoisk.person import Role
-        tree = html.fromstring(self.content)
-        for element in tree.xpath('//div[@class="personPageItems"]/div[@class="item"]'):
-            type = [t.get('data-work-type') for t in element.iterancestors()][0]
-            role = Role.get_parsed('role_link', element)
-
-            self.instance.career.setdefault(type, [])
-            self.instance.career[type].append(role)
-
         if self.instance.id:
             token = re.findall(r'xsrftoken = \'([^\']+)\'', self.content)
             obj_type = re.findall(r'objType: \'([^\']+)\'', self.content)
@@ -118,6 +117,14 @@ class PersonMainPage(KinopoiskPage):
                 if response.content:
                     self.instance.information = response.content.decode('windows-1251', 'ignore').replace(
                         ' class="trivia"', '')
+
+        # movies
+        from kinopoisk.person import Role
+        self.content = html.fromstring(self.content)
+        for element in self.extract('movies'):
+            type = [t.get('data-work-type') for t in element.iterancestors()][0]
+            self.instance.career.setdefault(type, [])
+            self.instance.career[type].append(Role.get_parsed('role_link', element))
 
         self.instance.set_source('main_page')
 
