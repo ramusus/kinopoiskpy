@@ -53,7 +53,6 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            flake8 .
             coverage run --source=kinopoisk -m kinopoisk.tests.__init__
 
       - store_artifacts:
