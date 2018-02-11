@@ -55,7 +55,6 @@ class Role(KinopoiskObject):
         self.register_source('role_link', PersonRoleLink)
 
 
-
 class PersonManager(Manager):
     """
     Person manager

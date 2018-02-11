@@ -5,6 +5,7 @@ Sources for Person
 from __future__ import unicode_literals
 
 import re
+
 from builtins import str
 from lxml import html
 
@@ -112,7 +113,8 @@ class PersonMainPage(KinopoiskPage):
             token = re.findall(r'xsrftoken = \'([^\']+)\'', self.content)
             obj_type = re.findall(r'objType: \'([^\']+)\'', self.content)
             if token and obj_type:
-                response = self.request.get(self.instance.get_url('info', token=token[0], type=obj_type[0]), headers=HEADERS)
+                response = self.request.get(self.instance.get_url('info', token=token[0], type=obj_type[0]),
+                                            headers=HEADERS)
                 response.connection.close()
                 if response.content:
                     self.instance.information = response.content.decode('windows-1251', 'ignore').replace(
