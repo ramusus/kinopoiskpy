@@ -33,7 +33,6 @@ jobs:
           command: |
             python -m venv venv
             . venv/bin/activate
-            pip install -r requirements.txt
             pip install flake8
             pip install pylint
             pip install coveralls
