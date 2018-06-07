@@ -46,27 +46,29 @@ class PersonTest(BaseTest):
         self.assertGreaterEqual(len(p.career['producer']), 7)
         self.assertGreaterEqual(len(p.career['director']), 3)
         self.assertGreaterEqual(len(p.career['writer']), 1)
-        self.assertGreaterEqual(len(p.career['hrono_titr_male']), 12)
+        self.assertGreaterEqual(len(p.career['hrono_titr_male']), 11)
         self.assertGreaterEqual(len(p.career['himself']), 124)
 
-        self.assertEqual(p.career['actor'][0].movie.title, 'Потаскун')
-        self.assertEqual(p.career['actor'][0].movie.title_en, 'The Libertine')
+        self.assertEqual(p.career['actor'][0].movie.title, 'Человек-невидимка')
+        self.assertEqual(p.career['actor'][0].movie.title_en, 'The Invisible Man')
+        self.assertEqual(p.career['actor'][0].name, 'Dr. Griffin')
 
-        self.assertEqual(p.career['actor'][1].movie.title, 'Человек-невидимка')
-        self.assertEqual(p.career['actor'][1].movie.title_en, 'The Invisible Man')
-        self.assertEqual(p.career['actor'][1].name, 'Dr. Griffin')
+        self.assertEqual(p.career['actor'][1].movie.title, 'Ричард прощается')
+        self.assertEqual(p.career['actor'][1].movie.year, 2018)
+        self.assertEqual(p.career['actor'][1].movie.title_en, 'Richard Says Goodbye')
 
         self.assertEqual(p.career['actor'][4].movie.title, 'Шерлок Гномс')
-        self.assertEqual(p.career['actor'][4].movie.title_en, 'Gnomeo & Juliet: Sherlock Gnomes')
+        self.assertEqual(p.career['actor'][4].movie.title_en, 'Sherlock Gnomes')
         self.assertEqual(p.career['actor'][4].movie.year, 2018)
         self.assertEqual(p.career['actor'][4].name, 'Sherlock Gnomes')  # voice
 
-        self.assertGreaterEqual(p.career['actor'][6].movie.rating, 6.82)
-        self.assertGreaterEqual(p.career['actor'][6].movie.votes, 42661)
-        self.assertGreaterEqual(p.career['actor'][6].movie.imdb_rating, 6.70)
-        self.assertGreaterEqual(p.career['actor'][6].movie.imdb_votes, 70581)
+        self.assertEqual(p.career['actor'][5].movie.title_en, 'Murder on the Orient Express')
+        self.assertAlmostEqual(p.career['actor'][5].movie.rating, 6.68)
+        self.assertGreaterEqual(p.career['actor'][5].movie.votes, 64162)
+        self.assertAlmostEqual(p.career['actor'][5].movie.imdb_rating, 6.6)
+        self.assertGreaterEqual(p.career['actor'][5].movie.imdb_votes, 70581)
 
-        self.assertEqual(p.career['actor'][7].name, 'Abel')  # short
+        self.assertEqual(p.career['actor'][6].name, 'Abel')  # short
 
     def test_person_photos_page_source(self):
         p = Person(id=8217)

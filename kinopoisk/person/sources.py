@@ -83,24 +83,13 @@ class PersonMainPage(KinopoiskPage):
     url = '/name/{id}/'
     xpath = {
         'movies': '//div[@class="personPageItems"]/div[@class="item"]',
+        'id': '//link[@rel="canonical"]/@href',
+        'name': '//h1[@class="moviename-big"][@itemprop="name"]/text()',
+        'name_en': '//span[@itemprop="alternateName"]/text()',
     }
 
     def parse(self):
-
-        person_id = re.compile(r"<link rel=\"canonical\" href=\"https?://www.kinopoisk.ru/name/(\d+)/\" />").findall(
-            self.content)
-        if person_id:
-            self.instance.id = self.prepare_int(person_id[0])
-
-        name = re.compile(r'<h1 class="moviename-big" itemprop="name">(.+?)</h1>').findall(self.content)
-        if name:
-            self.instance.name = self.prepare_str(name[0])
-
-        name_en = re.compile(r'<span itemprop="alternateName">([A-Z]\'?[- a-zA-Z]+)</span>').findall(self.content)
-        if name_en:
-            self.instance.name_en = self.prepare_str(name_en[0])
-
-        content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>').findall(
+        content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>', re.S).findall(
             self.content)
         for name, value in content_info:
             if str(name) == 'дата рождения':
@@ -120,9 +109,18 @@ class PersonMainPage(KinopoiskPage):
                     self.instance.information = response.content.decode('windows-1251', 'ignore').replace(
                         ' class="trivia"', '')
 
+        self.content = html.fromstring(self.content)
+
+        person_id = re.compile(r".+/name/(\d+)/").findall(self.extract('id'))[0]
+        name = self.extract('name')
+        name_en = self.extract('name_en')
+
+        self.instance.id = self.prepare_int(person_id)
+        self.instance.name = self.prepare_str(name)
+        self.instance.name_en = self.prepare_str(name_en)
+
         # movies
         from kinopoisk.person import Role
-        self.content = html.fromstring(self.content)
         for element in self.extract('movies'):
             type = [t.get('data-work-type') for t in element.iterancestors()][0]
             self.instance.career.setdefault(type, [])

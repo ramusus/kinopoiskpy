@@ -24,7 +24,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title, 'Без цензуры')
         self.assertEqual(m.title_en, 'Redacted')
         self.assertEqual(m.runtime, 90)
-        self.assertEqual(m.rating, 6.120)
+        self.assertEqual(m.rating, 6.126)
         self.assertGreaterEqual(m.votes, 1760)
 
         # self.assertEqual(len(m.trailers), 1)
@@ -106,7 +106,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.plot, 'Жизнь харизматичного авантюриста, капитана Джека Воробья, полная увлекательных приключений, резко меняется, когда его заклятый враг — капитан Барбосса — похищает корабль Джека, Черную Жемчужину, а затем нападает на Порт Ройал и крадет прекрасную дочь губернатора, Элизабет Свонн.Друг детства Элизабет, Уилл Тернер, вместе с Джеком возглавляет спасательную экспедицию на самом быстром корабле Британии, в попытке вызволить девушку из плена и заодно отобрать у злодея Черную Жемчужину. Вслед за этой парочкой отправляется амбициозный коммодор Норрингтон, который к тому же числится женихом Элизабет.Однако Уилл не знает, что над Барбоссой висит вечное проклятие, при лунном свете превращающее его с командой в живых скелетов. Проклятье будет снято лишь тогда, когда украденное золото Ацтеков будет возвращено пиратами на старое место.')
         self.assertEqual(m.runtime, 143)
 
-        self.assertEqual(m.rating, 8.339)
+        self.assertEqual(m.rating, 8.338)
         self.assertEqual(m.imdb_rating, 8.00)
         self.assertGreaterEqual(m.votes, 327195)
         self.assertGreaterEqual(m.imdb_votes, 859395)
@@ -159,7 +159,7 @@ class MovieTest(BaseTest):
         # self.assertEqual(m.trailers[0].dom, 'tr')
 
         self.assertEqual(m.genres, ['фантастика', 'драма', 'приключения'])
-        self.assertEqual(m.countries, ['США', 'Великобритания', 'Канада', 'Исландия'])
+        self.assertEqual(m.countries, ['США', 'Великобритания'])
         self.assertGreaterEqual(m.profit_usa, 158445319)
         self.assertGreaterEqual(m.profit_russia, 24110578)
         self.assertGreaterEqual(m.profit_world, 592845319)
@@ -210,7 +210,7 @@ class MovieTest(BaseTest):
         self.assertEqual(f.year, 2010)
         e = m.seasons[0].episodes[5]
         self.assertEqual(e.title, 'Витамин D')
-        self.assertEqual(e.release_date, datetime(2009, 10, 7).date())
+        self.assertEqual(e.release_date, datetime(2010, 11, 20).date())
 
     def test_movie_series_search_killing(self):
         # It will false someday as well, we should find some TV series, that announced more series, but
