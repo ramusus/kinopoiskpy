@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import re
+import unicodedata
 
 from builtins import str
 
@@ -47,7 +48,7 @@ class Manager(object):
                 '<div style="height: 40px"></div>')]
             if content_results:
                 from bs4 import BeautifulSoup  # import here for successful installing via pip
-                soup_results = BeautifulSoup(content_results, 'lxml')
+                soup_results = BeautifulSoup(content_results, 'html.parser')
                 # <div class="element width_2">
                 results = soup_results.findAll('div', attrs={'class': re.compile('element')})
                 if not results:
@@ -171,23 +172,33 @@ class KinopoiskPage(object):
     def xpath(self):
         raise NotImplementedError()
 
-    def extract(self, name):
+    def extract(self, name, to_str=False, to_int=False, to_float=False):
         if name in self.xpath:
             xpath = self.xpath[name]
             elements = self.element.xpath(xpath)
             if xpath[-7:] == '/text()' or '/@' in xpath:
-                return elements[0] if elements else ''
+                value = ' '.join(elements) if elements else ''
             else:
-                return elements
+                value = elements
+            if value:
+                if to_str:
+                    value = self.prepare_str(value)
+                if to_int:
+                    value = self.prepare_int(value)
+                if to_float:
+                    value = float(value)
+            return value
         else:
             raise ValueError("Xpath element with name `{}` is not configured".format(name))
 
     def prepare_str(self, value):
-        # BS4 specific replacements
-        value = re.compile(' ').sub(' ', value)
-        value = re.compile('').sub('—', value)
-        # General replacements
-        value = re.compile(r", \.\.\.").sub("", value)
+        # # BS4 specific replacements
+        # value = re.compile(' ').sub(' ', value)
+        # value = re.compile('').sub('—', value)
+        # # General replacements
+        # value = re.compile(r", \.\.\.").sub("", value)
+        value = unicodedata.normalize("NFKC", value)
+        value = restore_windows_1252_characters(value)
         return value.strip()
 
     def prepare_int(self, value):
@@ -269,7 +280,7 @@ class KinopoiskImagesPage(KinopoiskPage):
         content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
 
         from bs4 import BeautifulSoup
-        soup_content = BeautifulSoup(content, 'lxml')
+        soup_content = BeautifulSoup(content, 'html.parser')
         table = soup_content.findAll('table', attrs={'class': re.compile('^fotos')})
         if table:
             self.content = str(table[0])
@@ -287,7 +298,7 @@ class KinopoiskImagesPage(KinopoiskPage):
         urls = getattr(self.instance, self.field_name, [])
 
         from bs4 import BeautifulSoup
-        links = BeautifulSoup(self.content, 'lxml').findAll('a')
+        links = BeautifulSoup(self.content, 'html.parser').findAll('a')
         for link in links:
 
             img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
@@ -296,7 +307,7 @@ class KinopoiskImagesPage(KinopoiskPage):
             response = self.request.get(picture.get_url(), headers=HEADERS)
             response.connection.close()
             content = response.content.decode('windows-1251', 'ignore')
-            img = BeautifulSoup(content, 'lxml').find('img', attrs={'id': 'image'})
+            img = BeautifulSoup(content, 'html.parser').find('img', attrs={'id': 'image'})
             if img:
                 img_url = img['src']
                 if img_url not in urls:
@@ -304,3 +315,19 @@ class KinopoiskImagesPage(KinopoiskPage):
 
         setattr(self.instance, self.field_name, urls)
         self.instance.set_source(self.source_name)
+
+
+def restore_windows_1252_characters(s):
+    """Replace C1 control characters in the Unicode string s by the
+    characters at the corresponding code points in Windows-1252,
+    where possible.
+
+    """
+    import re
+    def to_windows_1252(match):
+        try:
+            return bytes([ord(match.group(0))]).decode('windows-1252')
+        except UnicodeDecodeError:
+            # No character at the corresponding code point: remove it.
+            return ''
+    return re.sub(r'[\u0080-\u0099]', to_windows_1252, s)

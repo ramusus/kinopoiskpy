@@ -30,17 +30,10 @@ class MovieCareerLink(KinopoiskPage):
 
     def parse(self):
         self.instance.id = self.extract('id')
-        try:
-            self.instance.imdb_rating = float(self.extract('imdb_rating'))
-            self.instance.imdb_votes = int(self.extract('imdb_votes'))
-        except (ValueError, TypeError):
-            pass
-
-        try:
-            self.instance.rating = float(self.extract('rating'))
-            self.instance.votes = self.prepare_int(self.extract('votes'))
-        except (ValueError, TypeError):
-            pass
+        self.instance.imdb_rating = self.extract('imdb_rating', to_float=True)
+        self.instance.imdb_votes = self.extract('imdb_votes', to_int=True)
+        self.instance.rating = self.extract('rating', to_float=True)
+        self.instance.votes = self.extract('votes', to_int=True)
 
         link = self.extract('link')
         role = self.extract('role').strip().split('...')
@@ -69,7 +62,7 @@ class MoviePremierLink(KinopoiskPage):
         if isinstance(self.content, Tag):
             premier_soup = self.content
         else:
-            content_soup = BeautifulSoup(self.content, 'lxml')
+            content_soup = BeautifulSoup(self.content, 'html.parser')
             premier_soup = content_soup.find('div', {'class': 'premier_item'})
 
         title_soup = premier_soup.find('span', {'class': 'name_big'}) or premier_soup.find('span', {'class': 'name'})
@@ -100,35 +93,35 @@ class MovieLink(KinopoiskPage):
     Parser movie info from links
     """
     xpath = {
-        'id': './/p[@class="name"]/a/@href',
+        'url': './/p[@class="name"]/a/@href',
         'title': './/p[@class="name"]/a/text()',
         'years': './/p[@class="name"]/span[@class="year"]/text()',
-        'name': './/span[@class="gray"]/text()',
+        'title_en': './/span[@class="gray"][1]/text()',
         'rating': './/div[starts-with(@class, "rating")]/@title',
     }
 
     def parse(self):
         self.content = html.fromstring(self.content)
 
-        id = self.extract('id')
-        title = self.extract('title')
+        url = self.extract('url')
+        title = self.extract('title', to_str=True)
         years = self.extract('years')
-        name = self.extract('name')
+        title_en = self.extract('title_en', to_str=True)
         rating = self.extract('rating')
 
-        self.instance.id = self.prepare_int(id.split('/')[2].split('-')[-1])
-        self.instance.title = self.prepare_str(title.replace('(сериал)', ''))
+        self.instance.id = self.prepare_int(url.split('/')[2].split('-')[-1])
+        self.instance.title = title.replace('(сериал)', '')
         self.instance.series = '(сериал)' in title
 
         if years:
             self.instance.year = self.prepare_int(years[:4])
 
-        if 'мин' in name:
-            values = name.split(', ')
+        if 'мин' in title_en:
+            values = title_en.split(', ')
             self.instance.runtime = self.prepare_int(values[-1].split(' ')[0])
-            self.instance.title_en = self.prepare_str(', '.join(values[:-1]))
+            self.instance.title_en = ', '.join(values[:-1])
         else:
-            self.instance.title_en = self.prepare_str(name)
+            self.instance.title_en = title_en
 
         if rating:
             rating = rating.split(' ')
@@ -142,7 +135,7 @@ class MovieSeries(KinopoiskPage):
     url = '/film/{id}/episodes/'
 
     def parse(self):
-        soup = BeautifulSoup(self.content, 'lxml')
+        soup = BeautifulSoup(self.content, 'html.parser')
         for season in soup.findAll('h1', attrs={'class': 'moviename-big'}):
             if '21px' not in season['style']:
                 continue
@@ -192,26 +185,23 @@ class MovieMainPage(KinopoiskPage):
         'сборы в мире': 'profit_world',
     }
 
+    xpath = {
+        'url': './/meta[@property="og:url"]/@content',
+        'title': './/h1/text()',
+        'title_en': './/span[@itemprop="alternativeHeadline"]/text()',
+        'plot': './/div[@itemprop="description"]/text()',
+        'rating': './/span[@class="rating_ball"]/text()',
+        'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
+        'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
+    }
+
     def parse(self):
 
-        instance_id = re.compile(r'id_film = (\d+);').findall(self.content)
-        if instance_id:
-            self.instance.id = self.prepare_int(instance_id[0])
+        trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', self.content)
+        if len(trailers):
+            self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
-        content_info = BeautifulSoup(self.content, 'lxml')
-        title = content_info.find('h1', {'class': 'moviename-big'})
-        if title:
-            self.instance.title = self.prepare_str(title.text)
-
-        title_en = content_info.find('span', {'itemprop': 'alternativeHeadline'})
-
-        if title_en:
-            self.instance.title_en = self.prepare_str(title_en.text)
-
-        # <div class="brand_words" itemprop="description">
-        plot = content_info.find('div', {'class': 'brand_words', 'itemprop': 'description'})
-        if plot:
-            self.instance.plot = self.prepare_str(plot.text)
+        content_info = BeautifulSoup(self.content, 'html.parser')
 
         table_info = content_info.find('table', {'class': re.compile(r'^info')})
         if table_info:
@@ -245,31 +235,23 @@ class MovieMainPage(KinopoiskPage):
                 elif name in self.main_persons:
                     self.parse_persons(self.main_persons[name], tds[1].contents)
 
-        rating = content_info.find('span', attrs={'class': 'rating_ball'})
-        if rating:
-            self.instance.rating = float(rating.string)
-
-        block_rating = content_info.find('div', attrs={'id': 'block_rating'})
-        if block_rating:
-            div1 = block_rating.find('div', attrs={'class': 'div1'})
-            if div1:
-                rating_count = div1.find('span', attrs={'class': 'ratingCount'})
-                if rating_count:
-                    self.instance.votes = self.prepare_int(rating_count.text)
-                div_rating = div1.find_next('div')
-                if div_rating:
-                    imdb = re.findall(r'^IMDb: ([0-9\.]+) \(([0-9 ]+)\)$', div_rating.text)
-                    if imdb:
-                        self.instance.imdb_rating = float(imdb[0][0])
-                        self.instance.imdb_votes = self.prepare_int(imdb[0][1])
-
-        trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', self.content)
-        if len(trailers):
-            self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
-
         actors = content_info.find('div', {'id': 'actorList'})
         if actors and actors.ul:
             self.parse_persons('actors', [li.a for li in actors.ul.findAll('li')])
+
+        self.content = html.fromstring(self.content)
+
+        self.instance.id = self.prepare_int(self.extract('url').split('/')[-2].split('-')[-1])
+        self.instance.title = self.extract('title', to_str=True)
+        self.instance.title_en = self.extract('title_en', to_str=True)
+        self.instance.plot = self.extract('plot', to_str=True)
+        self.instance.rating = self.extract('rating', to_float=True)
+        self.instance.votes = self.extract('votes', to_int=True)
+
+        imdb = re.findall(r'^IMDb: ([0-9\.]+) \(([0-9 ]+)\)$', self.extract('imdb'))
+        if imdb:
+            self.instance.imdb_rating = float(imdb[0][0])
+            self.instance.imdb_votes = self.prepare_int(imdb[0][1])
 
         self.instance.set_source('main_page')
 

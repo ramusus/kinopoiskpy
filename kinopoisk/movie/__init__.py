@@ -186,7 +186,7 @@ class MoviePremiersManager(Manager):
         response = self.request.get(url, params=params, headers=HEADERS)
         content = response.content.decode('windows-1251', 'ignore')
 
-        content_soup = BeautifulSoup(content, 'lxml')
+        content_soup = BeautifulSoup(content, 'html.parser')
         instances = []
         for premier in content_soup.findAll('div', {'class': 'premier_item'}):
             instance = self.kinopoisk_object.get_parsed('premier_link', premier)

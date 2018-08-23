@@ -54,7 +54,7 @@ class PersonLink(KinopoiskPage):
     xpath = {
         'link': './/p[@class="name"]/a',
         'years': './/span[@class="year"]/text()',
-        'name': './/span[@class="gray"]/text()',
+        'name_en': './/span[@class="gray"][1]/text()',
     }
 
     def parse(self):
@@ -62,11 +62,10 @@ class PersonLink(KinopoiskPage):
 
         link = self.extract('link')[0]
         years = self.extract('years')
-        name = self.extract('name')
 
         self.instance.id = self.prepare_int(link.get('href').split('/')[2])
         self.instance.name = self.prepare_str(link.text)
-        self.instance.name_en = self.prepare_str(name)
+        self.instance.name_en = self.extract('name_en', to_str=True)
         if years:
             years = years.split(' \u2013 ')
             self.instance.year_birth = self.prepare_int(years[0])
@@ -112,12 +111,9 @@ class PersonMainPage(KinopoiskPage):
         self.content = html.fromstring(self.content)
 
         person_id = re.compile(r".+/name/(\d+)/").findall(self.extract('id'))[0]
-        name = self.extract('name')
-        name_en = self.extract('name_en')
-
         self.instance.id = self.prepare_int(person_id)
-        self.instance.name = self.prepare_str(name)
-        self.instance.name_en = self.prepare_str(name_en)
+        self.instance.name = self.extract('name', to_str=True)
+        self.instance.name_en = self.extract('name_en', to_str=True)
 
         # movies
         from kinopoisk.person import Role
