@@ -35,7 +35,7 @@ class MovieCareerLink(KinopoiskPage):
         self.instance.rating = self.extract('rating', to_float=True)
         self.instance.votes = self.extract('votes', to_int=True)
 
-        link = self.extract('link')
+        link = self.extract('link', to_str=True)
         role = self.extract('role').strip().split('...')
         title, year = re.findall(r'^(.+?)(?:\s+\(.*([0-9]{4})\))?$', link, re.M)[0]
         if role[0] == '':

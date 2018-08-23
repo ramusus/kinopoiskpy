@@ -9,7 +9,7 @@ eggs
 parts
 bin
 var
-env
+env*
 sdist
 develop-eggs
 .installed.cfg

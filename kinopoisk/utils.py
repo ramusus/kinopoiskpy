@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import re
+import six
 import unicodedata
 
 from builtins import str
@@ -192,13 +193,15 @@ class KinopoiskPage(object):
             raise ValueError("Xpath element with name `{}` is not configured".format(name))
 
     def prepare_str(self, value):
-        # # BS4 specific replacements
-        # value = re.compile(' ').sub(' ', value)
-        # value = re.compile('').sub('—', value)
-        # # General replacements
-        # value = re.compile(r", \.\.\.").sub("", value)
-        value = unicodedata.normalize("NFKC", value)
-        value = restore_windows_1252_characters(value)
+        if six.PY2:
+            # BS4 specific replacements
+            value = re.compile(' ').sub(' ', value)
+            value = re.compile('').sub('—', value)
+            # General replacements
+            value = re.compile(r", \.\.\.").sub("", value)
+        else:
+            value = unicodedata.normalize("NFKC", value)
+        value = restore_characters(value)
         return value.strip()
 
     def prepare_int(self, value):
@@ -317,15 +320,15 @@ class KinopoiskImagesPage(KinopoiskPage):
         self.instance.set_source(self.source_name)
 
 
-def restore_windows_1252_characters(s):
+def restore_characters(s):
     """Replace C1 control characters in the Unicode string s by the
     characters at the corresponding code points in Windows-1252,
     where possible.
     """
-    def to_windows_1252(match):
+    def restore(match):
         try:
-            return bytes([ord(match.group(0))]).decode('windows-1252')
+            return bytes([ord(match.group(0))]).decode('windows-1251')
         except UnicodeDecodeError:
             # No character at the corresponding code point: remove it.
             return ''
-    return re.sub(r'[\u0080-\u0099]', to_windows_1252, s)
+    return re.sub(r'[\u0080-\u0099]', restore, s)
