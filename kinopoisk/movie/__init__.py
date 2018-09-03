@@ -67,8 +67,8 @@ class Movie(KinopoiskObject):
     def __repr__(self):
         return '{} ({}), {}'.format(self.title, self.title_en, self.year or '-')
 
-    def add_trailer(self, trailer_params):
-        trailer = Trailer(trailer_params)
+    def add_trailer(self, trailer_id):
+        trailer = Trailer(trailer_id)
         if trailer.is_valid and trailer.id not in [tr.id for tr in self.trailers]:
             self.trailers.append(trailer)
 
@@ -80,32 +80,11 @@ class Movie(KinopoiskObject):
 class Trailer(object):
     def set_defaults(self):
         self.id = None
-        self.width = None
-        self.heigth = None
-        self.file = None
-        self.dom = 'tr'
-        self.advsys = 'rutube'
-        self.sbt = ''
-        self.genres = None
-        self.preview_file = None
-        self.preview_width = None
-        self.preview_heigth = None
 
-    def __init__(self, params=None):
+    def __init__(self, id):
         self.set_defaults()
-
-        if params:
-            self.id = params['trailerId'].replace('top', '')
-            self.width = params['trailerW']
-            self.heigth = params['trailerH']
-            self.file = params['trailerFile']
-            self.dom = params['trailerDom']
-            self.advsys = params['trailerAdvsys']
-            self.sbt = params['trailerSbt']
-            self.genres = params['genres']
-            self.preview_file = params['previewFile']
-            self.preview_width = params['previewW']
-            self.preview_heigth = params['previewH']
+        if id:
+            self.id = id
 
     @property
     def is_valid(self):
@@ -114,6 +93,11 @@ class Trailer(object):
         """
         # not youtube video '521689/' (http://www.kinopoisk.ru/film/521689/video/)
         return self.file[-1] != '/'
+
+    @property
+    def file(self):
+        trailer_file = 'gettrailer.php?quality=hd&trailer_id={}'.format(self.id)
+        return trailer_file
 
 
 @python_2_unicode_compatible
