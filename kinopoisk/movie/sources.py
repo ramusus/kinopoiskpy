@@ -295,9 +295,7 @@ class MovieTrailersPage(KinopoiskPage):
 
         for trailer_id in trailers_kinopoisk_urls:
             trailer_id = trailer_id.split('/')[-1:][0]
-            self.instance.add_trailer({
-                'id': trailer_id,
-            })
+            self.instance.add_trailer(trailer_id)
         youtube_urls = list(set(re.findall(r'www.youtube.com/embed/[\d\w]+', self.content)))
         youtube_ids = [youtube_id.split('/')[-1:][0] for youtube_id in youtube_urls]
         self.instance.youtube_ids = youtube_ids

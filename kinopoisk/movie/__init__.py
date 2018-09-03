@@ -67,8 +67,8 @@ class Movie(KinopoiskObject):
     def __repr__(self):
         return '{} ({}), {}'.format(self.title, self.title_en, self.year or '-')
 
-    def add_trailer(self, trailer_params):
-        trailer = Trailer(trailer_params)
+    def add_trailer(self, trailer_id):
+        trailer = Trailer(trailer_id)
         if trailer.is_valid and trailer.id not in [tr.id for tr in self.trailers]:
             self.trailers.append(trailer)
 
@@ -80,14 +80,11 @@ class Movie(KinopoiskObject):
 class Trailer(object):
     def set_defaults(self):
         self.id = None
-        self.file = None
 
-    def __init__(self, params=None):
+    def __init__(self, id):
         self.set_defaults()
-
-        if params:
-            self.id = params.get('id')
-            self.file = self.trailer_file
+        if id:
+            self.id = id
 
     @property
     def is_valid(self):
@@ -98,7 +95,7 @@ class Trailer(object):
         return self.file[-1] != '/'
 
     @property
-    def trailer_file(self):
+    def file(self):
         trailer_file = 'gettrailer.php?quality=hd&trailer_id={}'.format(self.id)
         return trailer_file
 
