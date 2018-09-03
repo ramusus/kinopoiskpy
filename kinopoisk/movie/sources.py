@@ -279,11 +279,29 @@ class MovieTrailersPage(KinopoiskPage):
     Parser of kinopoisk trailers page
     """
     url = '/film/{id}/video/'
+    base_trailer_url = 'gettrailer.php?quality=hd&trailer_id={}'
 
     def parse(self):
-        trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', self.content)
-        for trailer in trailers:
-            self.instance.add_trailer(json.loads(trailer.replace("'", '"')))
+        # Because some films have different URL and ID
+        current_film_url = re.findall(
+            r'href="https://www.kinopoisk.ru/film/.+/video',
+            self.content
+        )
 
-        self.instance.youtube_ids = list(set(re.findall(r'//www.youtube.com/v/(.+)\?', self.content)))
-        self.instance.set_source(self.content_name)
+        current_film_id = current_film_url[0].split('/')[-2:-1][0]
+        trailers_kinopoisk_urls = list(set(
+            re.findall(r'/film/{}/video/\d+'.format(current_film_id),
+                       self.content)
+        ))
+
+        for trailer_id in trailers_kinopoisk_urls:
+            trailer_id = trailer_id.split('/')[-1:][0]
+            pure_trailer_url = self.base_trailer_url.format(trailer_id)
+            self.instance.add_trailer({
+                'id': trailer_id,
+                'file': pure_trailer_url
+            })
+        youtube_urls = list(set(re.findall(r'www.youtube.com/embed/[\d\w]+', self.content)))
+        youtube_ids = [youtube_id.split('/')[-1:][0] for youtube_id in youtube_urls]
+        self.instance.youtube_ids = youtube_ids
+        self.instance.set_source('posters')

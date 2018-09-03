@@ -95,17 +95,17 @@ class Trailer(object):
         self.set_defaults()
 
         if params:
-            self.id = params['trailerId'].replace('top', '')
-            self.width = params['trailerW']
-            self.heigth = params['trailerH']
-            self.file = params['trailerFile']
-            self.dom = params['trailerDom']
-            self.advsys = params['trailerAdvsys']
-            self.sbt = params['trailerSbt']
-            self.genres = params['genres']
-            self.preview_file = params['previewFile']
-            self.preview_width = params['previewW']
-            self.preview_heigth = params['previewH']
+            self.id = params.get('id')
+            self.width = params.get('trailerW')
+            self.heigth = params.get('trailerH')
+            self.file = params.get('file')
+            self.dom = params.get('trailerDom')
+            self.advsys = params.get('trailerAdvsys')
+            self.sbt = params.get('trailerSbt')
+            self.genres = params.get('genres')
+            self.preview_file = params.get('previewFile')
+            self.preview_width = params.get('previewW')
+            self.preview_heigth = params.get('previewH')
 
     @property
     def is_valid(self):
