@@ -75,9 +75,6 @@ class MovieTest(BaseTest):
         self.assertGreater(len(m.trailers), 3)
         self.assertTrue('gettrailer.php?quality=hd&trailer_id=4476' in trailers_files)
         self.assertTrue('4476' in trailers_ids)
-        # self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-170078.mp4')
-        # self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
-        # self.assertEqual(m.trailers[0].dom, 'tr')
         self.assertEqualPersons(m.actors, ['Иззи Диаз', 'Роб Дивейни', 'Ти Джонс', 'Анас Веллман', 'Майк Фигуроа',
                                            'Яналь Кассай', 'Дхиая Калиль', 'Кел О’Нил', 'Дэниэл Стюарт-Шерман',
                                            'Патрик Кэрролл'])
@@ -125,9 +122,6 @@ class MovieTest(BaseTest):
         self.assertGreater(len(m.trailers), 2)
         self.assertTrue('529' in trailers_ids)
         self.assertTrue('gettrailer.php?quality=hd&trailer_id=529' in trailers_files)
-        # self.assertGreater(len(m.trailers[0].file), 0)
-        # self.assertGreater(len(m.trailers[0].preview_file), 0)
-        # self.assertGreater(len(m.trailers[0].dom), 0)
 
         self.assertEqual(m.genres, ['фэнтези', 'боевик', 'приключения'])
         self.assertEqual(m.countries, ['США'])
@@ -171,10 +165,6 @@ class MovieTest(BaseTest):
         self.assertGreater(len(m.trailers), 70)
         self.assertTrue('109352' in trailers_ids)
         self.assertTrue('gettrailer.php?quality=hd&trailer_id=109352'in trailers_files)
-        # self.assertEqual(m.trailers[0].id, 't211201')
-        # self.assertEqual(m.trailers[0].file, '258687/kinopoisk.ru-Interstellar-211201.mp4')
-        # self.assertEqual(m.trailers[0].preview_file, '258687/3_100619.jpg')
-        # self.assertEqual(m.trailers[0].dom, 'tr')
 
         self.assertEqual(m.genres, ['фантастика', 'драма', 'приключения'])
         self.assertEqual(m.countries, ['США', 'Великобритания'])
@@ -214,10 +204,6 @@ class MovieTest(BaseTest):
         self.assertGreater(len(m.trailers), 3)
         self.assertTrue('74666' in trailers_ids)
         self.assertTrue('gettrailer.php?quality=hd&trailer_id=74666' in trailers_files)
-        # for i in range(0, 3):
-        #     self.assertEqual(m.trailers[i].id, 't')
-        #     self.assertGreater(len(m.trailers[i].file), 0)
-        #     self.assertGreater(len(m.trailers[i].preview_file), 0)
         self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
     def test_movie_repr(self):

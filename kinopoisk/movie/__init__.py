@@ -80,32 +80,14 @@ class Movie(KinopoiskObject):
 class Trailer(object):
     def set_defaults(self):
         self.id = None
-        self.width = None
-        self.heigth = None
         self.file = None
-        self.dom = 'tr'
-        self.advsys = 'rutube'
-        self.sbt = ''
-        self.genres = None
-        self.preview_file = None
-        self.preview_width = None
-        self.preview_heigth = None
 
     def __init__(self, params=None):
         self.set_defaults()
 
         if params:
             self.id = params.get('id')
-            self.width = params.get('trailerW')
-            self.heigth = params.get('trailerH')
-            self.file = params.get('file')
-            self.dom = params.get('trailerDom')
-            self.advsys = params.get('trailerAdvsys')
-            self.sbt = params.get('trailerSbt')
-            self.genres = params.get('genres')
-            self.preview_file = params.get('previewFile')
-            self.preview_width = params.get('previewW')
-            self.preview_heigth = params.get('previewH')
+            self.file = self.trailer_file
 
     @property
     def is_valid(self):
@@ -114,6 +96,11 @@ class Trailer(object):
         """
         # not youtube video '521689/' (http://www.kinopoisk.ru/film/521689/video/)
         return self.file[-1] != '/'
+
+    @property
+    def trailer_file(self):
+        trailer_file = 'gettrailer.php?quality=hd&trailer_id={}'.format(self.id)
+        return trailer_file
 
 
 @python_2_unicode_compatible
