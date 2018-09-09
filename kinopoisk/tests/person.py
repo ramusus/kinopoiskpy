@@ -84,6 +84,14 @@ class PersonTest(BaseTest):
         self.assertEqual(p.career['actor'][34].movie.title_en, 'Pirates of the Caribbean: Dead Man\'s Chest')
         self.assertEqual(p.career['actor'][34].movie.year, 2006)
 
+        # endless series
+        self.assertEqual(p.career['actor'][55].name, 'Jack Kahuna Laguna')
+        self.assertEqual(p.career['actor'][55].movie.title, 'Губка Боб квадратные штаны')
+        self.assertEqual(p.career['actor'][55].movie.title_en, 'SpongeBob SquarePants')
+        self.assertEqual(p.career['actor'][55].movie.year, None)
+        self.assertEqual(p.career['actor'][55].movie.series, True)
+        self.assertEqual(p.career['actor'][55].movie.series_years, (1999,))
+
     def test_person_photos_page_source(self):
         p = Person(id=8217)
         p.get_content('photos')

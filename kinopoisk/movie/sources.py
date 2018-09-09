@@ -5,7 +5,6 @@ Sources for Movie
 from __future__ import unicode_literals
 
 import re
-
 import simplejson as json
 from bs4 import BeautifulSoup, Tag
 from dateutil import parser
@@ -37,7 +36,7 @@ class MovieCareerLink(KinopoiskPage):
 
         link = self.extract('link', to_str=True)
         role = self.extract('role').strip().split('...')
-        title, movie_type, year = re.findall(r'^(.+?)(?:\s+\((.*)([0-9]{4})\))?(?: Top250: \d+)?$', link, re.M)[0]
+        title, movie_type, year = re.findall(r'^(.+?)(?:\s+\((.*)([0-9]{4}|\.\.\.)\))?(?: Top250: \d+)?$', link, re.M)[0]
         if role[0] == '':
             title = ''
             title_en = title
@@ -52,8 +51,11 @@ class MovieCareerLink(KinopoiskPage):
         elif self.instance.series:
             series_start = re.findall(r'[0-9]{4}', movie_type)
             if series_start:
-                self.instance.series_years = (self.prepare_int(series_start[0]),
-                                              self.prepare_int(year))
+                start = self.prepare_int(series_start[0])
+                if year != '...':
+                    self.instance.series_years = (start, self.prepare_int(year))
+                else:
+                    self.instance.series_years = (start,)
 
         self.instance.set_source('career_link')
 
