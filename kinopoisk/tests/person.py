@@ -92,6 +92,14 @@ class PersonTest(BaseTest):
         self.assertEqual(p.career['actor'][55].movie.series, True)
         self.assertEqual(p.career['actor'][55].movie.series_years, (1999,))
 
+        # short, no russian title
+        self.assertEqual(p.career['actor'][82].name, 'Pete')
+        self.assertEqual(p.career['actor'][82].movie.title, '')
+        self.assertEqual(p.career['actor'][82].movie.title_en, 'Dummies')
+        self.assertEqual(p.career['actor'][82].movie.year, 1985)
+        self.assertEqual(p.career['actor'][82].movie.rating, None)
+        self.assertEqual(p.career['actor'][82].movie.votes, None)
+
     def test_person_photos_page_source(self):
         p = Person(id=8217)
         p.get_content('photos')

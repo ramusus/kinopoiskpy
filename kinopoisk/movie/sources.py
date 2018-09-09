@@ -38,8 +38,8 @@ class MovieCareerLink(KinopoiskPage):
         role = self.extract('role').strip().split('...')
         title, movie_type, year = re.findall(r'^(.+?)(?:\s+\((.*)([0-9]{4}|\.\.\.)\))?(?: Top250: \d+)?$', link, re.M)[0]
         if role[0] == '':
-            title = ''
             title_en = title
+            title = ''
         else:
             title_en = role[0]
 

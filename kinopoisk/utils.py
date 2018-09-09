@@ -181,13 +181,12 @@ class KinopoiskPage(object):
                 value = ' '.join(elements) if elements else ''
             else:
                 value = elements
-            if value:
-                if to_str:
-                    value = self.prepare_str(value)
-                if to_int:
-                    value = self.prepare_int(value)
-                if to_float:
-                    value = float(value)
+            if to_str:
+                value = self.prepare_str(value)
+            if to_int:
+                value = self.prepare_int(value) if value else None
+            if to_float:
+                value = float(value) if value else None
             return value
         else:
             raise ValueError("Xpath element with name `{}` is not configured".format(name))
