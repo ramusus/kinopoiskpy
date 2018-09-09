@@ -37,7 +37,7 @@ class MovieCareerLink(KinopoiskPage):
 
         link = self.extract('link', to_str=True)
         role = self.extract('role').strip().split('...')
-        title, year = re.findall(r'^(.+?)(?:\s+\(.*([0-9]{4})\))?$', link, re.M)[0]
+        title, movie_type, year = re.findall(r'^(.+?)(?:\s+\((.*)([0-9]{4})\))?(?: Top250: \d+)?$', link, re.M)[0]
         if role[0] == '':
             title = ''
             title_en = title
@@ -46,8 +46,14 @@ class MovieCareerLink(KinopoiskPage):
 
         self.instance.title = self.prepare_str(title)
         self.instance.title_en = self.prepare_str(title_en)
-        if year:
+        self.instance.series = 'сериал' in movie_type
+        if year and not self.instance.series:
             self.instance.year = self.prepare_int(year)
+        elif self.instance.series:
+            series_start = re.findall(r'[0-9]{4}', movie_type)
+            if series_start:
+                self.instance.series_years = (self.prepare_int(series_start[0]),
+                                              self.prepare_int(year))
 
         self.instance.set_source('career_link')
 

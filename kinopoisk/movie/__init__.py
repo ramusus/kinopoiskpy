@@ -51,6 +51,7 @@ class Movie(KinopoiskObject):
         self.youtube_ids = []
 
         self.series = None
+        self.series_years = tuple()
         self.seasons = []
 
     def __init__(self, *args, **kwargs):
