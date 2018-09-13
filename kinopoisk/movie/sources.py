@@ -35,8 +35,13 @@ class MovieCareerLink(KinopoiskPage):
         self.instance.votes = self.extract('votes', to_int=True)
 
         link = self.extract('link', to_str=True)
-        role = self.extract('role').strip().split('...')
+        role = self.extract('role', to_str=True)
         title, movie_type, year = re.findall(r'^(.+?)(?:\s+\((.*)([0-9]{4}|\.\.\.)\))?(?: Top250: \d+)?$', link, re.M)[0]
+
+        role = role.strip().split(' ... ')
+        if len(role) == 1 and role[0][:3] == '...':
+            role = role[0].strip().split('... ')
+
         if role[0] == '':
             title_en = title
             title = ''
