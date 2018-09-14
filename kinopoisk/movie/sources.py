@@ -307,6 +307,7 @@ class MovieCastPage(KinopoiskPage):
             if type_el.tag == 'a':
                 return type_el.attrib['name']
 
+
 class MovieRoleLink(KinopoiskPage):
     """
     Parser of movie role info in movie cast link
