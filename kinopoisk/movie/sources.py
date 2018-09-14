@@ -28,7 +28,7 @@ class MovieCareerLink(KinopoiskPage):
     }
 
     def parse(self):
-        self.instance.id = self.extract('id')
+        self.instance.id = self.extract('id', to_int=True)
         self.instance.imdb_rating = self.extract('imdb_rating', to_float=True)
         self.instance.imdb_votes = self.extract('imdb_votes', to_int=True)
         self.instance.rating = self.extract('rating', to_float=True)
