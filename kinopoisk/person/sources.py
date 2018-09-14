@@ -12,9 +12,27 @@ from lxml import html
 from ..utils import KinopoiskPage, KinopoiskImagesPage, HEADERS
 
 
+class PersonCastLink(KinopoiskPage):
+    """
+    Parser of person info in movie cast link
+    """
+    xpath = {
+        'id': './/p[@type="stars"]/@objid',
+        'name': './/div[@class="name"]/a/text()',
+        'name_en': './/div[@class="name"]/span[@class="gray"]/text()',
+    }
+
+    def parse(self):
+        self.instance.id = self.extract('id', to_int=True)
+        self.instance.name = self.extract('name', to_str=True)
+        self.instance.name_en = re.sub(r'^(.+) \(в титрах:.+\)$', r'\1', self.extract('name_en', to_str=True))
+
+        self.instance.set_source('cast_link')
+
+
 class PersonRoleLink(KinopoiskPage):
     """
-    Parser person role info from career list
+    Parser of person role info from career list
     """
     xpath = {
         'note': './/span[@class="role"]/text()',
@@ -35,7 +53,7 @@ class PersonRoleLink(KinopoiskPage):
 
 class PersonShortLink(KinopoiskPage):
     """
-    Parser person info from short links
+    Parser of person info short link
     """
 
     def parse(self):
@@ -49,7 +67,7 @@ class PersonShortLink(KinopoiskPage):
 
 class PersonLink(KinopoiskPage):
     """
-    Parser person info from links
+    Parser of person info in link
     """
     xpath = {
         'link': './/p[@class="name"]/a',

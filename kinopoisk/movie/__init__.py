@@ -4,7 +4,8 @@ from future.utils import python_2_unicode_compatible
 from bs4 import BeautifulSoup
 
 from .sources import (
-    MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieCareerLink)
+    MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieCareerLink,
+    MovieCastPage, MovieRoleLink)
 from ..utils import KinopoiskObject, Manager, HEADERS
 
 
@@ -31,6 +32,7 @@ class Movie(KinopoiskObject):
         self.art_direction_by = []
         self.editing_by = []
         self.genres = []
+        self.cast = {}
 
         self.budget = None
         self.marketing = None
@@ -61,6 +63,7 @@ class Movie(KinopoiskObject):
         self.register_source('premier_link', MoviePremierLink)
         self.register_source('career_link', MovieCareerLink)
         self.register_source('main_page', MovieMainPage)
+        self.register_source('cast', MovieCastPage)
         self.register_source('posters', MoviePostersPage)
         self.register_source('trailers', MovieTrailersPage)
         self.register_source('series', MovieSeries)
@@ -78,7 +81,25 @@ class Movie(KinopoiskObject):
 
 
 @python_2_unicode_compatible
+class Role(KinopoiskObject):
+    """
+    Movie Role Class
+    """
+    def set_defaults(self):
+        self.name = ''
+        self.person = None
+
+    def __init__(self, *args, **kwargs):
+        super(Role, self).__init__(*args, **kwargs)
+
+        self.register_source('role_link', MovieRoleLink)
+
+
+@python_2_unicode_compatible
 class Trailer(object):
+    """
+    Movie Trailer Class
+    """
     def set_defaults(self):
         self.id = None
 

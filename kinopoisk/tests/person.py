@@ -49,6 +49,7 @@ class PersonTest(BaseTest):
         self.assertGreaterEqual(len(p.career['hrono_titr_male']), 11)
         self.assertGreaterEqual(len(p.career['himself']), 124)
 
+        self.assertEqual(p.career['actor'][0].movie.id, 420454)
         self.assertEqual(p.career['actor'][0].movie.title, 'Человек-невидимка')
         self.assertEqual(p.career['actor'][0].movie.title_en, 'The Invisible Man')
         self.assertEqual(p.career['actor'][0].name, 'Dr. Griffin')

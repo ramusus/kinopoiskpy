@@ -15,7 +15,7 @@ from ..utils import KinopoiskPage, KinopoiskImagesPage
 
 class MovieCareerLink(KinopoiskPage):
     """
-    Parser movie info from person career links
+    Parser of movie info in person career link
     """
     xpath = {
         'id': './/@data-fid',
@@ -67,7 +67,7 @@ class MovieCareerLink(KinopoiskPage):
 
 class MoviePremierLink(KinopoiskPage):
     """
-    Parser movie info from premiers links
+    Parser of movie info from premiers links
     """
 
     def parse(self):
@@ -103,7 +103,7 @@ class MoviePremierLink(KinopoiskPage):
 
 class MovieLink(KinopoiskPage):
     """
-    Parser movie info from links
+    Parser of movie info in link
     """
     xpath = {
         'url': './/p[@class="name"]/a/@href',
@@ -209,7 +209,6 @@ class MovieMainPage(KinopoiskPage):
     }
 
     def parse(self):
-
         trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', self.content)
         if len(trailers):
             self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
@@ -277,6 +276,56 @@ class MovieMainPage(KinopoiskPage):
             if isinstance(link, Tag) and link.text != "...":
                 person = Person.get_parsed('short_link', link.decode())
                 getattr(self.instance, field_name).append(person)
+
+
+class MovieCastPage(KinopoiskPage):
+    """
+    Parser of kinopoisk movie cast page
+    """
+    url = '/film/{id}/cast/'
+
+    xpath = {
+        'persons': '//div[@class="actorInfo"]',
+    }
+
+    def parse(self):
+        self.content = html.fromstring(self.content)
+
+        # persons
+        from kinopoisk.movie import Role
+        for element in self.extract('persons'):
+            type = self.get_type(element)
+            self.instance.cast.setdefault(type, [])
+            self.instance.cast[type].append(Role.get_parsed('role_link', element))
+
+        self.instance.set_source('cast')
+
+    def get_type(self, element):
+        type_el = element.getparent()
+        while True:
+            type_el = type_el.getprevious()
+            if type_el.tag == 'a':
+                return type_el.attrib['name']
+
+class MovieRoleLink(KinopoiskPage):
+    """
+    Parser of movie role info in movie cast link
+    """
+    xpath = {
+        'note': './/div[@class="role"]/text()',
+    }
+
+    def parse(self):
+        from kinopoisk.person import Person
+        note = self.extract('note', to_str=True).split('...')
+        role_name = None
+        if len(note) > 1:
+            role_name = re.sub(r'^(.*),( в титрах не указан.?| озвучка)?$', r'\1', self.prepare_str(note[1]))
+
+        self.instance.name = role_name
+        self.instance.person = Person.get_parsed('cast_link', self.content)
+
+        self.instance.set_source('role_link')
 
 
 class MoviePostersPage(KinopoiskImagesPage):

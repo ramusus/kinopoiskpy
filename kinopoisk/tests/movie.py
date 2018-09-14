@@ -27,12 +27,6 @@ class MovieTest(BaseTest):
         self.assertEqual(m.rating, 6.126)
         self.assertGreaterEqual(m.votes, 1760)
 
-        # self.assertEqual(len(m.trailers), 1)
-        # self.assertEqual(m.trailers[0].id, 't12964')
-        # self.assertEqual(m.trailers[0].file, '278229/kinopoisk.ru-Redacted-22111.flv')
-        # self.assertEqual(m.trailers[0].preview_file, '278229/3_6166.jpg')
-        # self.assertEqual(m.trailers[0].dom, 'tr')
-
     def test_movie_search_manager_pulp_fiction(self):
         movies = Movie.objects.search('pulp fiction')
         self.assertGreater(len(movies), 1)
@@ -205,6 +199,69 @@ class MovieTest(BaseTest):
         self.assertTrue('74666' in trailers_ids)
         self.assertTrue('gettrailer.php?quality=hd&trailer_id=74666' in trailers_files)
         self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
+
+    def test_movie_cast(self):
+        """
+        Test of movie cast source page
+        """
+        m = Movie(id=4220)
+        m.get_content('cast')
+
+        self.assertEqual(len(m.cast), 7)
+        self.assertGreaterEqual(len(m.cast['director']), 1)
+        self.assertGreaterEqual(len(m.cast['actor']), 49)
+        self.assertGreaterEqual(len(m.cast['producer']), 4)
+        self.assertGreaterEqual(len(m.cast['writer']), 3)
+        self.assertGreaterEqual(len(m.cast['operator']), 2)
+        self.assertGreaterEqual(len(m.cast['design']), 1)
+        self.assertGreaterEqual(len(m.cast['editor']), 1)
+
+        self.assertEqual(m.cast['actor'][0].person.id, 8986)
+        self.assertEqual(m.cast['actor'][0].person.name, 'Питер Фонда')
+        self.assertEqual(m.cast['actor'][0].person.name_en, 'Peter Fonda')
+        self.assertEqual(m.cast['actor'][0].name, 'Wyatt')
+
+        # в титрах: ...
+        self.assertEqual(m.cast['actor'][10].person.name, 'Сэнди Браун Уайет')
+        self.assertEqual(m.cast['actor'][10].person.name_en, 'Sandy Brown Wyeth')
+        self.assertEqual(m.cast['actor'][10].name, 'Joanne')
+
+    def test_movie_cast_1(self):
+        """
+        Test of movie cast source page
+        """
+        m = Movie(id=63991)
+        m.get_content('cast')
+
+        self.assertEqual(len(m.cast), 11)
+        self.assertGreaterEqual(len(m.cast['director']), 1)
+        self.assertGreaterEqual(len(m.cast['actor']), 49)
+        self.assertGreaterEqual(len(m.cast['producer']), 4)
+        self.assertGreaterEqual(len(m.cast['voice_director']), 1)
+        self.assertGreaterEqual(len(m.cast['translator']), 1)
+        self.assertGreaterEqual(len(m.cast['voice']), 4)
+        self.assertGreaterEqual(len(m.cast['writer']), 3)
+        self.assertGreaterEqual(len(m.cast['operator']), 1)
+        self.assertGreaterEqual(len(m.cast['composer']), 1)
+        self.assertGreaterEqual(len(m.cast['design']), 1)
+        self.assertGreaterEqual(len(m.cast['editor']), 1)
+
+        # with $
+        self.assertEqual(m.cast['actor'][0].person.id, 6245)
+        self.assertEqual(m.cast['actor'][0].person.name, 'Джонни Депп')
+        self.assertEqual(m.cast['actor'][0].person.name_en, 'Johnny Depp')
+        self.assertEqual(m.cast['actor'][0].name, 'Jack Sparrow')
+
+        # no mention
+        self.assertEqual(m.cast['actor'][16].person.id, 24683)
+        self.assertEqual(m.cast['actor'][16].name, 'Captain Hector Barbossa')
+
+        # voice
+        self.assertEqual(m.cast['actor'][63].person.id, 288908)
+        self.assertEqual(m.cast['actor'][63].name, 'Parrot')
+
+        # with $ and no name
+        self.assertEqual(m.cast['producer'][0].name, '')
 
     def test_movie_repr(self):
         instance = Movie(title='Молчание ягнят', title_en='The Silence of the Lambs', year='1990')

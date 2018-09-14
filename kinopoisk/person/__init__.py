@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 
-from .sources import PersonLink, PersonShortLink, PersonMainPage, PersonPhotosPage, PersonRoleLink
+from .sources import PersonLink, PersonShortLink, PersonMainPage, PersonPhotosPage, PersonRoleLink, PersonCastLink
 from ..utils import KinopoiskObject, Manager
 
 
@@ -25,6 +25,7 @@ class Person(KinopoiskObject):
         super(Person, self).__init__(*args, **kwargs)
 
         self.register_source('link', PersonLink)
+        self.register_source('cast_link', PersonCastLink)
         self.register_source('short_link', PersonShortLink)
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)
