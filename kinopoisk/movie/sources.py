@@ -319,7 +319,7 @@ class MovieRoleLink(KinopoiskPage):
         role_name = None
         if len(note) > 1:
             role_name = re.sub(r'^(.*),( в титрах не указан.?| озвучка)?$', r'\1', self.prepare_str(note[1]))
-            if ', озвучка' in note[1]:
+            if 'озвучка' in note[1]:
                 self.instance.voice = True
 
         self.instance.name = role_name

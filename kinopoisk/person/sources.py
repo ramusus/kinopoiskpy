@@ -38,9 +38,6 @@ class PersonRoleLink(KinopoiskPage):
         'note': './/span[@class="role"]/text()',
     }
 
-    VOICE = ', озвучка'
-    SHORT = '; короткометражка'
-
     def parse(self):
         from kinopoisk.movie import Movie
 
@@ -51,10 +48,10 @@ class PersonRoleLink(KinopoiskPage):
 
         role_name = None
         if len(role) > 1:
-            role_name = self.prepare_str(role[1]).replace(self.VOICE, '').replace(self.SHORT, '')
-            if self.SHORT in role[1]:
+            role_name = self.prepare_str(role[1]).replace(', озвучка', '').replace('; короткометражка', '')
+            if 'короткометражка' in role[1]:
                 self.instance.movie.genres.append('короткометражка')
-            if self.VOICE in role[1]:
+            if 'озвучка' in role[1]:
                 self.instance.voice = True
 
         self.instance.name = role_name
