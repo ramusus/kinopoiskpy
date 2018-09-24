@@ -259,6 +259,7 @@ class MovieTest(BaseTest):
         # voice
         self.assertEqual(m.cast['actor'][63].person.id, 288908)
         self.assertEqual(m.cast['actor'][63].name, 'Parrot')
+        self.assertEqual(m.cast['actor'][63].voice, True)
 
         # with $ and no name
         self.assertEqual(m.cast['producer'][0].name, '')
