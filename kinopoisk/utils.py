@@ -269,6 +269,7 @@ class KinopoiskPage(object):
             role = role[0].strip().split('... ')
         return role
 
+
 class KinopoiskImagesPage(KinopoiskPage):
     """
     Parser of kinopoisk images page
