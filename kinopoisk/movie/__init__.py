@@ -4,8 +4,8 @@ from future.utils import python_2_unicode_compatible
 from bs4 import BeautifulSoup
 
 from .sources import (
-    MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieCareerLink,
-    MovieCastPage, MovieRoleLink)
+    MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage,MovieStillsPage,MovieTrailersPage, MovieSeries,
+    MovieCareerLink, MovieCastPage, MovieRoleLink)
 from ..utils import KinopoiskObject, Manager, HEADERS
 
 
@@ -49,6 +49,7 @@ class Movie(KinopoiskObject):
         self.release = None
 
         self.posters = []
+        self.stills = []
         self.trailers = []
         self.youtube_ids = []
 
@@ -65,6 +66,7 @@ class Movie(KinopoiskObject):
         self.register_source('main_page', MovieMainPage)
         self.register_source('cast', MovieCastPage)
         self.register_source('posters', MoviePostersPage)
+        self.register_source('stills', MovieStillsPage)
         self.register_source('trailers', MovieTrailersPage)
         self.register_source('series', MovieSeries)
 
