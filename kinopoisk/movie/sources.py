@@ -341,7 +341,7 @@ class MovieStillsPage(KinopoiskImagesPage):
     Parser of movie stills page
     """
     url = '/film/{id}/stills/'
-field_name = 'stills'
+    field_name = 'stills'
 
 
 class MovieTrailersPage(KinopoiskPage):
