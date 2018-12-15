@@ -28,7 +28,7 @@ class MovieCareerLink(KinopoiskPage):
     }
 
     def parse(self):
-        self.instance.id = self.extract('id', to_int=True)
+        self.instance.id = self.extract('id')
         self.instance.imdb_rating = self.extract('imdb_rating', to_float=True)
         self.instance.imdb_votes = self.extract('imdb_votes', to_int=True)
         self.instance.rating = self.extract('rating', to_float=True)
@@ -38,7 +38,10 @@ class MovieCareerLink(KinopoiskPage):
         role = self.extract('role', to_str=True)
         title, movie_type, year = re.findall(r'^(.+?)(?:\s+\((.*)([0-9]{4}|\.\.\.)\))?(?: Top250: \d+)?$', link, re.M)[0]
 
-        role = self.split_triple_dots(role)
+        role = role.strip().split(' ... ')
+        if len(role) == 1 and role[0][:3] == '...':
+            role = role[0].strip().split('... ')
+
         if role[0] == '':
             title_en = title
             title = ''
@@ -304,7 +307,6 @@ class MovieCastPage(KinopoiskPage):
             if type_el.tag == 'a':
                 return type_el.attrib['name']
 
-
 class MovieRoleLink(KinopoiskPage):
     """
     Parser of movie role info in movie cast link
@@ -319,8 +321,6 @@ class MovieRoleLink(KinopoiskPage):
         role_name = None
         if len(note) > 1:
             role_name = re.sub(r'^(.*),( в титрах не указан.?| озвучка)?$', r'\1', self.prepare_str(note[1]))
-            if 'озвучка' in note[1]:
-                self.instance.voice = True
 
         self.instance.name = role_name
         self.instance.person = Person.get_parsed('cast_link', self.content)
@@ -334,6 +334,14 @@ class MoviePostersPage(KinopoiskImagesPage):
     """
     url = '/film/{id}/posters/'
     field_name = 'posters'
+
+
+class MovieStillsPage(KinopoiskImagesPage):
+    """
+    Parser of movie posters page
+    """
+    url = '/film/{id}/stills/'
+    field_name = 'stills'
 
 
 class MovieTrailersPage(KinopoiskPage):

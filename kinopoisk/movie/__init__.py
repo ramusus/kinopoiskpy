@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 from .sources import (
     MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieCareerLink,
-    MovieCastPage, MovieRoleLink)
+    MovieCastPage, MovieRoleLink, MovieStillsPage)
 from ..utils import KinopoiskObject, Manager, HEADERS
 
 
@@ -65,6 +65,7 @@ class Movie(KinopoiskObject):
         self.register_source('main_page', MovieMainPage)
         self.register_source('cast', MovieCastPage)
         self.register_source('posters', MoviePostersPage)
+        self.register_source('stills', MovieStillsPage)
         self.register_source('trailers', MovieTrailersPage)
         self.register_source('series', MovieSeries)
 
@@ -88,7 +89,6 @@ class Role(KinopoiskObject):
     def set_defaults(self):
         self.name = ''
         self.person = None
-        self.voice = False
 
     def __init__(self, *args, **kwargs):
         super(Role, self).__init__(*args, **kwargs)
