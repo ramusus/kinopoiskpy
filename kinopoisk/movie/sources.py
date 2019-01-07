@@ -122,7 +122,8 @@ class MovieLink(KinopoiskPage):
         title_en = self.extract('title_en', to_str=True)
         rating = self.extract('rating')
 
-        self.instance.id = self.prepare_int(url.split('/')[2].split('-')[-1])
+        # /level/1/film/ID/sr/1/
+        self.instance.id = self.prepare_int(url.split('/')[4].split('-')[-1])
         self.instance.title = title.replace('(сериал)', '')
         self.instance.series = '(сериал)' in title
 
