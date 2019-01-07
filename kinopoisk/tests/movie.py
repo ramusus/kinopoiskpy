@@ -24,7 +24,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title, 'Без цензуры')
         self.assertEqual(m.title_en, 'Redacted')
         self.assertEqual(m.runtime, 90)
-        self.assertEqual(m.rating, 6.126)
+        self.assertEqual(m.rating, 6.13)
         self.assertGreaterEqual(m.votes, 1760)
 
     def test_movie_search_manager_pulp_fiction(self):
