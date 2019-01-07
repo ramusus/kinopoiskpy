@@ -49,6 +49,7 @@ class Role(KinopoiskObject):
     def set_defaults(self):
         self.name = ''
         self.movie = None
+        self.voice = False
 
     def __init__(self, *args, **kwargs):
         super(Role, self).__init__(*args, **kwargs)

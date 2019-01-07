@@ -38,10 +38,7 @@ class MovieCareerLink(KinopoiskPage):
         role = self.extract('role', to_str=True)
         title, movie_type, year = re.findall(r'^(.+?)(?:\s+\((.*)([0-9]{4}|\.\.\.)\))?(?: Top250: \d+)?$', link, re.M)[0]
 
-        role = role.strip().split(' ... ')
-        if len(role) == 1 and role[0][:3] == '...':
-            role = role[0].strip().split('... ')
-
+        role = self.split_triple_dots(role)
         if role[0] == '':
             title_en = title
             title = ''
@@ -323,6 +320,8 @@ class MovieRoleLink(KinopoiskPage):
         role_name = None
         if len(note) > 1:
             role_name = re.sub(r'^(.*),( в титрах не указан.?| озвучка)?$', r'\1', self.prepare_str(note[1]))
+            if 'озвучка' in note[1]:
+                self.instance.voice = True
 
         self.instance.name = role_name
         self.instance.person = Person.get_parsed('cast_link', self.content)

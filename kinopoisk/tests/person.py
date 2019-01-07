@@ -85,6 +85,11 @@ class PersonTest(BaseTest):
         self.assertEqual(p.career['actor'][34].movie.title_en, 'Pirates of the Caribbean: Dead Man\'s Chest')
         self.assertEqual(p.career['actor'][34].movie.year, 2006)
 
+        # voice and short
+        self.assertEqual(p.career['actor'][35].name, 'Narration')
+        self.assertEqual(p.career['actor'][35].movie.genres, ['короткометражка'])
+        self.assertEqual(p.career['actor'][35].voice, True)
+
         # endless series
         self.assertEqual(p.career['actor'][55].name, 'Jack Kahuna Laguna')
         self.assertEqual(p.career['actor'][55].movie.title, 'Губка Боб квадратные штаны')
@@ -98,8 +103,19 @@ class PersonTest(BaseTest):
         self.assertEqual(p.career['actor'][82].movie.title, '')
         self.assertEqual(p.career['actor'][82].movie.title_en, 'Dummies')
         self.assertEqual(p.career['actor'][82].movie.year, 1985)
+        self.assertEqual(p.career['actor'][82].movie.genres, ['короткометражка'])
         self.assertEqual(p.career['actor'][82].movie.rating, None)
         self.assertEqual(p.career['actor'][82].movie.votes, None)
+
+    def test_person_cast_special_case(self):
+        p = Person(id=9843)
+        p.get_content('main_page')
+
+        # ... in movie title
+        self.assertEqual(p.career['actor'][137].name, None)
+        self.assertEqual(p.career['actor'][137].movie.title, 'Тарзан и Джейн возвращены... как будто')
+        self.assertEqual(p.career['actor'][137].movie.title_en, 'Tarzan and Jane Regained... Sort of')
+        self.assertEqual(p.career['actor'][137].movie.year, 1964)
 
     def test_person_photos_page_source(self):
         p = Person(id=8217)

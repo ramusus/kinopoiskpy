@@ -262,6 +262,13 @@ class KinopoiskPage(object):
     def parse(self):
         raise NotImplementedError('You must implement KinopoiskPage.parse() method')
 
+    def split_triple_dots(self, role):
+        role = role.strip().split(' ... ')
+        # if no original title and role starts with '... '
+        if len(role) == 1 and role[0][:3] == '...':
+            role = role[0].strip().split('... ')
+        return role
+
 
 class KinopoiskImagesPage(KinopoiskPage):
     """
