@@ -34,7 +34,7 @@ class Manager(object):
         url, params = self.get_url_with_params(query)
         response = self.request.get(url, params=params, headers=HEADERS)
         response.connection.close()
-        content = response.content.decode('windows-1251', 'ignore')
+        content = response.content.decode(response.encoding, 'ignore')
         # request is redirected to main page of object
         if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
             instance = self.kinopoisk_object()
@@ -253,7 +253,7 @@ class KinopoiskPage(object):
         if self.instance.id:
             response = self.request.get(self.instance.get_url(self.source_name), headers=HEADERS)
             response.connection.close()
-            self.content = response.content.decode('windows-1251', 'ignore')
+            self.content = response.content.decode(response.encoding, 'ignore')
             # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
             self.parse()
             return
@@ -280,7 +280,7 @@ class KinopoiskImagesPage(KinopoiskPage):
         response = self.request.get(self.instance.get_url(self.source_name, postfix='page/{}/'.format(page)),
                                     headers=HEADERS)
         response.connection.close()
-        content = response.content.decode('windows-1251', 'ignore')
+        content = response.content.decode(response.encoding, 'ignore')
 
         # header with sign 'No posters'
         if re.findall(r'<h1 class="main_title">', content):
@@ -315,7 +315,7 @@ class KinopoiskImagesPage(KinopoiskPage):
 
             response = self.request.get(picture.get_url(), headers=HEADERS)
             response.connection.close()
-            content = response.content.decode('windows-1251', 'ignore')
+            content = response.content.decode(response.encoding, 'ignore')
             img = BeautifulSoup(content, 'html.parser').find('img', attrs={'id': 'image'})
             if img:
                 img_url = img['src']
