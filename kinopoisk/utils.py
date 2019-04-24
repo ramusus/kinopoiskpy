@@ -328,12 +328,12 @@ class KinopoiskImagesPage(KinopoiskPage):
 
 def restore_characters(s):
     """Replace C1 control characters in the Unicode string s by the
-    characters at the corresponding code points in Windows-1252,
+    characters at the corresponding code points in utf-8,
     where possible.
     """
     def restore(match):
         try:
-            return bytes([ord(match.group(0))]).decode('windows-1251')
+            return bytes([ord(match.group(0))]).decode('utf-8')
         except UnicodeDecodeError:
             # No character at the corresponding code point: remove it.
             return ''

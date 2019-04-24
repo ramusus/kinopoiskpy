@@ -131,7 +131,7 @@ class PersonMainPage(KinopoiskPage):
                                             headers=HEADERS)
                 response.connection.close()
                 if response.content:
-                    self.instance.information = response.content.decode('windows-1251', 'ignore').replace(
+                    self.instance.information = response.content.decode(response.encoding, 'ignore').replace(
                         ' class="trivia"', '')
 
         self.content = html.fromstring(self.content)
