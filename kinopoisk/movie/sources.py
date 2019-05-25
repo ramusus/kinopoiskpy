@@ -203,7 +203,7 @@ class MovieMainPage(KinopoiskPage):
         'plot': './/div[@itemprop="description"]/text()',
         'rating': './/span[@class="rating_ball"]/text()',
         'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
-        'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
+        'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
     }
 
     def parse(self):
