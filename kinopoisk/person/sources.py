@@ -126,8 +126,7 @@ class PersonMainPage(KinopoiskPage):
             token = re.findall(r'xsrftoken = \'([^\']+)\'', self.content)
             obj_type = re.findall(r'objType: \'([^\']+)\'', self.content)
             if token and obj_type:
-                content = self.request.get_content(self.instance.get_url('info', token=token[0], type=obj_type[0]),
-                                                   encoding='windows-1251')
+                content = self.request.get_content(self.instance.get_url('info', token=token[0], type=obj_type[0]))
                 if content:
                     self.instance.information = content.replace(' class="trivia"', '')
 

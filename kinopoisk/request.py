@@ -28,9 +28,8 @@ class Request(object):
         return response
 
     def get_content(self, *args, **kwargs):
-        encoding = kwargs.pop('encoding', 'utf-8')
         response = self.get(*args, **kwargs)
-        content = response.content.decode(encoding)
+        content = response.content.decode(response.encoding)
         self.raise_for_errors(content)
         return content
 
