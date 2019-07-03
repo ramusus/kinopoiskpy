@@ -198,7 +198,7 @@ class MovieMainPage(KinopoiskPage):
 
     xpath = {
         'url': './/meta[@property="og:url"]/@content',
-        'title': './/h1/text()',
+        'title': './/h1/span/text()',
         'title_en': './/span[@itemprop="alternativeHeadline"]/text()',
         'plot': './/div[@itemprop="description"]/text()',
         'rating': './/span[@class="rating_ball"]/text()',
@@ -238,7 +238,7 @@ class MovieMainPage(KinopoiskPage):
                 elif name == 'жанр':
                     genres = value.split(', ')
                     for genre in genres:
-                        if genre != '...\nслова\n':
+                        if genre.strip() != '... слова':
                             self.instance.genres.append(self.prepare_str(genre))
                 elif name in self.main_profits:
                     self.parse_main_profit(self.main_profits[name], tds)
@@ -344,16 +344,8 @@ class MovieTrailersPage(KinopoiskPage):
     url = '/film/{id}/video/'
 
     def parse(self):
-        # Because some films have different URL and ID
-        current_film_url = re.findall(
-            r'href="https://www.kinopoisk.ru/film/.+/video',
-            self.content
-        )
-
-        current_film_id = current_film_url[0].split('/')[-2:-1][0]
         trailers_kinopoisk_urls = list(set(
-            re.findall(r'/film/{}/video/\d+'.format(current_film_id),
-                       self.content)
+            re.findall(r'/film/{}/video/\d+'.format(self.instance.id), self.content)
         ))
 
         for trailer_id in trailers_kinopoisk_urls:

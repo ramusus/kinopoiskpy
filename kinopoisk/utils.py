@@ -7,19 +7,7 @@ import unicodedata
 
 from builtins import str
 
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (X11; U; Linux i686; ru; rv:1.9.1.8) Gecko/20100214 Linux Mint/8 (Helena) Firefox/'
-                  '3.5.8',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'Accept-Language': 'ru,en-us;q=0.7,en;q=0.3',
-    'Accept-Encoding': 'deflate',
-    'Accept-Charset': 'windows-1251,utf-8;q=0.7,*;q=0.7',
-    'Keep-Alive': '300',
-    'Connection': 'keep-alive',
-    'Referer': 'http://www.kinopoisk.ru/',
-    'Cookie': 'users_info[check_sh_bool]=none; search_last_date=2010-02-19; search_last_month=2010-02;'
-              '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
-}
+from .request import Request
 
 
 class Manager(object):
@@ -27,14 +15,13 @@ class Manager(object):
     search_url = None
 
     def __init__(self):
-        import requests
-        self.request = requests.Session()
+        self.request = Request()
 
     def search(self, query):
         url, params = self.get_url_with_params(query)
-        response = self.request.get(url, params=params, headers=HEADERS)
-        response.connection.close()
-        content = response.content.decode('windows-1251', 'ignore')
+        response = self.request.get(url, params=params)
+        content = response.content.decode('utf-8')
+        self.request.raise_for_errors(content)
         # request is redirected to main page of object
         if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
             instance = self.kinopoisk_object()
@@ -158,8 +145,7 @@ class KinopoiskPage(object):
     content = None
 
     def __init__(self, source_name, instance, content=None, request=None):
-        import requests
-        self.request = request or requests.Session()
+        self.request = request or Request()
         self.source_name = source_name
         self.instance = instance
         if content is not None:
@@ -251,10 +237,7 @@ class KinopoiskPage(object):
 
     def get(self):
         if self.instance.id:
-            response = self.request.get(self.instance.get_url(self.source_name), headers=HEADERS)
-            response.connection.close()
-            self.content = response.content.decode('windows-1251', 'ignore')
-            # content = content[content.find('<div style="padding-left: 20px">'):content.find('        </td></tr>')]
+            self.content = self.request.get_content(self.instance.get_url(self.source_name))
             self.parse()
             return
         raise NotImplementedError('This method must be implemented in subclass')
@@ -277,10 +260,7 @@ class KinopoiskImagesPage(KinopoiskPage):
     field_name = None
 
     def get(self, page=1):
-        response = self.request.get(self.instance.get_url(self.source_name, postfix='page/{}/'.format(page)),
-                                    headers=HEADERS)
-        response.connection.close()
-        content = response.content.decode('windows-1251', 'ignore')
+        content = self.request.get_content(self.instance.get_url(self.source_name, postfix='page/{}/'.format(page)))
 
         # header with sign 'No posters'
         if re.findall(r'<h1 class="main_title">', content):
@@ -313,9 +293,7 @@ class KinopoiskImagesPage(KinopoiskPage):
             img_id = re.compile(r'/picture/(\d+)/').findall(link['href'])
             picture = KinopoiskImage(int(img_id[0]))
 
-            response = self.request.get(picture.get_url(), headers=HEADERS)
-            response.connection.close()
-            content = response.content.decode('windows-1251', 'ignore')
+            content = self.request.get_content(picture.get_url())
             img = BeautifulSoup(content, 'html.parser').find('img', attrs={'id': 'image'})
             if img:
                 img_url = img['src']

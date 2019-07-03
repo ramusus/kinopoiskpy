@@ -49,63 +49,66 @@ class PersonTest(BaseTest):
         self.assertGreaterEqual(len(p.career['hrono_titr_male']), 11)
         self.assertGreaterEqual(len(p.career['himself']), 124)
 
-        self.assertEqual(p.career['actor'][0].movie.id, 420454)
-        self.assertEqual(p.career['actor'][0].movie.title, 'Человек-невидимка')
-        self.assertEqual(p.career['actor'][0].movie.title_en, 'The Invisible Man')
-        self.assertEqual(p.career['actor'][0].name, 'Dr. Griffin')
+        role = p.career['actor'][6]
+        self.assertEqual(role.movie.title, 'Шерлок Гномс')
+        self.assertEqual(role.movie.title_en, 'Sherlock Gnomes')
+        self.assertEqual(role.movie.year, 2018)
+        self.assertEqual(role.name, 'Sherlock Gnomes')  # voice
+        self.assertEqual(role.voice, True)
 
-        self.assertEqual(p.career['actor'][1].movie.title, 'Ричард прощается')
-        self.assertEqual(p.career['actor'][1].movie.year, 2018)
-        self.assertEqual(p.career['actor'][1].movie.title_en, 'Richard Says Goodbye')
+        role = p.career['actor'][8]
+        self.assertEqual(role.movie.title_en, 'Murder on the Orient Express')
+        self.assertAlmostEqual(role.movie.rating, 6.67)
+        self.assertGreaterEqual(role.movie.votes, 64162)
+        self.assertAlmostEqual(role.movie.imdb_rating, 6.5)
+        self.assertGreaterEqual(role.movie.imdb_votes, 70581)
 
-        self.assertEqual(p.career['actor'][4].movie.title, 'Шерлок Гномс')
-        self.assertEqual(p.career['actor'][4].movie.title_en, 'Sherlock Gnomes')
-        self.assertEqual(p.career['actor'][4].movie.year, 2018)
-        self.assertEqual(p.career['actor'][4].name, 'Sherlock Gnomes')  # voice
-
-        self.assertEqual(p.career['actor'][5].movie.title_en, 'Murder on the Orient Express')
-        self.assertAlmostEqual(p.career['actor'][5].movie.rating, 6.68)
-        self.assertGreaterEqual(p.career['actor'][5].movie.votes, 64162)
-        self.assertAlmostEqual(p.career['actor'][5].movie.imdb_rating, 6.6)
-        self.assertGreaterEqual(p.career['actor'][5].movie.imdb_votes, 70581)
-
-        self.assertEqual(p.career['actor'][6].name, 'Abel')  # short
+        self.assertEqual(p.career['actor'][9].name, 'Abel')  # short
 
         # series
-        self.assertEqual(p.career['actor'][22].name, 'Johnny Depp')
-        self.assertEqual(p.career['actor'][22].movie.title, 'Жизнь так коротка')
-        self.assertEqual(p.career['actor'][22].movie.title_en, 'Life\'s Too Short')
-        self.assertEqual(p.career['actor'][22].movie.year, None)
-        self.assertEqual(p.career['actor'][22].movie.series, True)
-        self.assertEqual(p.career['actor'][22].movie.series_years, (2011, 2013))
+        role = p.career['actor'][26]
+        self.assertEqual(role.name, 'Johnny Depp')
+        self.assertEqual(role.movie.title, 'Жизнь так коротка')
+        self.assertEqual(role.movie.title_en, 'Life\'s Too Short')
+        self.assertEqual(role.movie.year, None)
+        self.assertEqual(role.movie.series, True)
+        self.assertEqual(role.movie.series_years, (2011, 2013))
 
         # top + budget
-        self.assertEqual(p.career['actor'][34].name, 'Jack Sparrow')
-        self.assertEqual(p.career['actor'][34].movie.title, 'Пираты Карибского моря: Сундук мертвеца')
-        self.assertEqual(p.career['actor'][34].movie.title_en, 'Pirates of the Caribbean: Dead Man\'s Chest')
-        self.assertEqual(p.career['actor'][34].movie.year, 2006)
+        role = p.career['actor'][37]
+        self.assertEqual(role.name, 'Jack Sparrow')
+        self.assertEqual(role.movie.title, 'Пираты Карибского моря: Сундук мертвеца')
+        self.assertEqual(role.movie.title_en, 'Pirates of the Caribbean: Dead Man\'s Chest')
+        self.assertEqual(role.movie.year, 2006)
 
-        # voice and short
-        self.assertEqual(p.career['actor'][35].name, 'Narration')
-        self.assertEqual(p.career['actor'][35].movie.genres, ['короткометражка'])
-        self.assertEqual(p.career['actor'][35].voice, True)
+        # voice
+        role = p.career['actor'][38]
+        self.assertEqual(role.name, 'Narration')
+        self.assertEqual(role.voice, True)
+
+        # short
+        role = p.career['actor'][41]
+        self.assertEqual(role.movie.genres, ['короткометражка'])
+
 
         # endless series
-        self.assertEqual(p.career['actor'][55].name, 'Jack Kahuna Laguna')
-        self.assertEqual(p.career['actor'][55].movie.title, 'Губка Боб квадратные штаны')
-        self.assertEqual(p.career['actor'][55].movie.title_en, 'SpongeBob SquarePants')
-        self.assertEqual(p.career['actor'][55].movie.year, None)
-        self.assertEqual(p.career['actor'][55].movie.series, True)
-        self.assertEqual(p.career['actor'][55].movie.series_years, (1999,))
+        role = p.career['actor'][57]
+        self.assertEqual(role.name, 'Jack Kahuna Laguna')
+        self.assertEqual(role.movie.title, 'Губка Боб квадратные штаны')
+        self.assertEqual(role.movie.title_en, 'SpongeBob SquarePants')
+        self.assertEqual(role.movie.year, None)
+        self.assertEqual(role.movie.series, True)
+        self.assertEqual(role.movie.series_years, (1999,))
 
         # short, no russian title
-        self.assertEqual(p.career['actor'][82].name, 'Pete')
-        self.assertEqual(p.career['actor'][82].movie.title, '')
-        self.assertEqual(p.career['actor'][82].movie.title_en, 'Dummies')
-        self.assertEqual(p.career['actor'][82].movie.year, 1985)
-        self.assertEqual(p.career['actor'][82].movie.genres, ['короткометражка'])
-        self.assertEqual(p.career['actor'][82].movie.rating, None)
-        self.assertEqual(p.career['actor'][82].movie.votes, None)
+        role = p.career['actor'][84]
+        self.assertEqual(role.name, 'Pete')
+        self.assertEqual(role.movie.title, '')
+        self.assertEqual(role.movie.title_en, 'Dummies')
+        self.assertEqual(role.movie.year, 1985)
+        self.assertEqual(role.movie.genres, ['короткометражка'])
+        self.assertEqual(role.movie.rating, None)
+        self.assertEqual(role.movie.votes, None)
 
     def test_person_cast_special_case(self):
         p = Person(id=9843)

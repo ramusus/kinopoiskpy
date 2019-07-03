@@ -9,7 +9,7 @@ import re
 from builtins import str
 from lxml import html
 
-from ..utils import KinopoiskPage, KinopoiskImagesPage, HEADERS
+from ..utils import KinopoiskPage, KinopoiskImagesPage
 
 
 class PersonCastLink(KinopoiskPage):
@@ -118,8 +118,7 @@ class PersonMainPage(KinopoiskPage):
             self.content)
         for name, value in content_info:
             if str(name) == 'дата рождения':
-                year_birth = re.compile(r'<a href="/lists/m_act%5Bbirthday%5D%5Byear%5D/\d{4}/">(\d{4})</a>').findall(
-                    value)
+                year_birth = re.compile(r' <a href="/lists/m_act\[birthday\]\[year\]/\d{4}/">(\d{4})</a>').findall(value)
                 if year_birth:
                     self.instance.year_birth = self.prepare_int(year_birth[0])
 
@@ -127,12 +126,10 @@ class PersonMainPage(KinopoiskPage):
             token = re.findall(r'xsrftoken = \'([^\']+)\'', self.content)
             obj_type = re.findall(r'objType: \'([^\']+)\'', self.content)
             if token and obj_type:
-                response = self.request.get(self.instance.get_url('info', token=token[0], type=obj_type[0]),
-                                            headers=HEADERS)
-                response.connection.close()
-                if response.content:
-                    self.instance.information = response.content.decode('windows-1251', 'ignore').replace(
-                        ' class="trivia"', '')
+                content = self.request.get_content(self.instance.get_url('info', token=token[0], type=obj_type[0]),
+                                           encoding='windows-1251')
+                if content:
+                    self.instance.information = content.replace(' class="trivia"', '')
 
         self.content = html.fromstring(self.content)
 
