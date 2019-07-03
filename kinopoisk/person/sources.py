@@ -127,7 +127,7 @@ class PersonMainPage(KinopoiskPage):
             obj_type = re.findall(r'objType: \'([^\']+)\'', self.content)
             if token and obj_type:
                 content = self.request.get_content(self.instance.get_url('info', token=token[0], type=obj_type[0]),
-                                           encoding='windows-1251')
+                                                   encoding='windows-1251')
                 if content:
                     self.instance.information = content.replace(' class="trivia"', '')
 
