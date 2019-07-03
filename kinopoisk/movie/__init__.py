@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from .sources import (
     MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieCareerLink,
     MovieCastPage, MovieRoleLink)
-from ..utils import KinopoiskObject, Manager, HEADERS
+from ..utils import KinopoiskObject, Manager
 
 
 @python_2_unicode_compatible
@@ -190,8 +190,7 @@ class MoviePremiersManager(Manager):
 
     def all(self):
         url, params = self.get_url_with_params()
-        response = self.request.get(url, params=params, headers=HEADERS)
-        content = response.content.decode('windows-1251', 'ignore')
+        content = self.request.get_content(url, params=params)
 
         content_soup = BeautifulSoup(content, 'html.parser')
         instances = []

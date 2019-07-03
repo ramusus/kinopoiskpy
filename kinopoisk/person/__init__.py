@@ -30,7 +30,7 @@ class Person(KinopoiskObject):
         self.register_source('main_page', PersonMainPage)
         self.register_source('photos', PersonPhotosPage)
 
-        self.set_url('info', '/handler_info.php?token={token}&obj_type={type}&obj_id={id}')
+        self.set_url('info', '/handler_get_trivia_list.php?token={token}&obj_type={type}&obj_id={id}')
 
     def __repr__(self):
         repr = self.name
