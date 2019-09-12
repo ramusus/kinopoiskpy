@@ -17,12 +17,18 @@ class Request(object):
                   '                                        PHPSESSID=b6df76a958983da150476d9cfa0aab18',
     }
 
+    proxies = {
+    'http': 'http://login:pass@ip:port',
+    'https': 'https://login:pass@ip:port'
+    }
+    
     def __init__(self):
         import requests
         self.session = requests.Session()
 
     def get(self, *args, **kwargs):
         kwargs['headers'] = self.headers
+        kwargs['proxies'] = self.proxies
         response = self.session.get(*args, **kwargs)
         response.connection.close()
         return response
