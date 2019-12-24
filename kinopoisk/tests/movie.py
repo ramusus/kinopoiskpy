@@ -317,6 +317,3 @@ class MovieTest(BaseTest):
         m.get_content('similar_movies')
 
         self.assertTrue(m.similar_movies)  # Check that the list is not empty
-
-        for movie in m.similar_movies:
-            self.assertTrue(movie > 0)  # Check here that movie is integer ID
