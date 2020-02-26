@@ -73,6 +73,55 @@ class MovieTest(BaseTest):
                                            'Яналь Кассай', 'Дхиая Калиль', 'Кел О’Нил', 'Дэниэл Стюарт-Шерман',
                                            'Патрик Кэрролл'])
 
+    def test_movie_main_page_id_6877(self):
+        """
+                Test of movie manager, movie obtain by id (not via search)
+                """
+        m = Movie(id=6877)
+        m.get_content('main_page')
+        # m.get_content('trailers')
+
+        # trailers_ids = [trailer.id for trailer in m.trailers]
+        # trailers_files = [trailer.file for trailer in m.trailers]
+
+        self.assertEqual(m.id, 6877)
+        self.assertEqual(m.year, 2004)
+        self.assertEqual(m.title, 'Терминал')
+        self.assertEqual(m.title_en, 'The Terminal')
+        self.assertEqual(m.plot,
+                         'Фильм рассказывает историю Виктора Наворски, отправившегося в Нью-Йорк из Восточной Европы. Пока Виктор летел в самолете, на его родине произошел государственный переворот. Оказавшись в международном аэропорту имени Джона Кеннеди с паспортом ниоткуда, он не имеет права въехать в Соединенные Штаты и должен коротать свои дни и ночи на скамейках у выхода 67, пока война в его родной стране не закончится. Тянутся недели и месяцы, и Виктор обнаруживает, что небольшой мирок терминала может быть наполнен абсурдом, щедростью, амбициями, развлечениями, желанием сохранить свой статус, интуитивной прозорливостью и даже любовью к очаровательной стюардессе Амелии. Виктору удается завоевать симпатии всех, кроме одного человека — чиновника аэропорта Фрэнка Диксона, который считает его бюрократической ошибкой, проблемой, которую он не может контролировать, но от которой жаждет избавиться.')
+        self.assertEqual(m.runtime, 124)
+
+        self.assertEqual(m.rating, 8.069)
+        self.assertEqual(m.imdb_rating, 7.30)
+        self.assertGreaterEqual(m.votes, 214662)
+        self.assertGreaterEqual(m.imdb_votes, 381282)
+
+        self.assertEqual(m.tagline, "«Жизнь - это ожидание»")
+        # self.assertEqual(len(m.trailers), 4)
+        # self.assertTrue('529' in trailers_ids)
+        # self.assertTrue('gettrailer.php?quality=hd&trailer_id=529' in trailers_files)
+
+        self.assertEqual(m.genres, ['драма', 'мелодрама', 'комедия'])
+        self.assertEqual(m.countries, ['США'])
+        self.assertGreaterEqual(m.budget, 60000000)
+        self.assertGreaterEqual(m.marketing, 35000000)
+        self.assertGreaterEqual(m.profit_usa, 77872883)
+        self.assertGreaterEqual(m.profit_russia, 1880000)
+        self.assertGreaterEqual(m.profit_world, 218685607)
+
+        self.assertEqualPersons(m.actors,
+                                ['Том Хэнкс', 'Кэтрин Зета-Джонс', 'Стэнли Туччи', 'Чи МакБрайд',
+                                 'Диего Луна', 'Бэрри Шебака Хенли', 'Кумар Паллана', 'Зои Салдана',
+                                 'Эдди Джонс', 'Джуд Чикколелла'])
+        self.assertEqualPersons(m.directors, ['Стивен Спилберг'])
+        self.assertEqualPersons(m.screenwriters, ['Саша Джерваси', 'Джефф Натансон', 'Эндрю Никкол'])
+        self.assertEqualPersons(m.producers, ['Лори МакДональд', 'Уолтер Ф. Паркс', 'Стивен Спилберг'])
+        self.assertEqualPersons(m.operators, ['Януш Камински'])
+        self.assertEqualPersons(m.composers, ['Джон Уильямс'])
+        self.assertEqualPersons(m.art_direction_by, ['Алекс Макдауэлл', 'Кристофер Бериэн-Мор', 'Брэд Рикер'])
+        self.assertEqualPersons(m.editing_by, ['Майкл Кан'])
+
     def test_movie_main_page_id_746251(self):
         m = Movie(id=746251)
         m.get_content('main_page')
