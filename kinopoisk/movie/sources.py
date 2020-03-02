@@ -204,10 +204,16 @@ class MovieMainPage(KinopoiskPage):
         'rating': './/span[@class="rating_ball"]/text()',
         'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
         'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
+        'imdb2': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
+    }
+
+    regex = {
+        'trailers': re.compile(r'GetTrailerPreview\(([^)]+)\)'),
+        'imdb': re.compile(r'^IMDb: ([0-9.]+) \(([0-9 ]+)\)$'),
     }
 
     def parse(self):
-        trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', self.content)
+        trailers = self.regex['trailers'].findall(self.content)
         if len(trailers):
             self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
@@ -258,7 +264,9 @@ class MovieMainPage(KinopoiskPage):
         self.instance.rating = self.extract('rating', to_float=True)
         self.instance.votes = self.extract('votes', to_int=True)
 
-        imdb = re.findall(r'^IMDb: ([0-9\.]+) \(([0-9 ]+)\)$', self.extract('imdb'))
+        imdb = self.regex['imdb'].findall(self.extract('imdb'))
+        if not imdb:
+            imdb = self.regex['imdb'].findall(self.extract('imdb2'))
         if imdb:
             self.instance.imdb_rating = float(imdb[0][0])
             self.instance.imdb_votes = self.prepare_int(imdb[0][1])

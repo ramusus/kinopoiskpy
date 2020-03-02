@@ -67,22 +67,22 @@ class MovieTest(BaseTest):
         self.assertEqual(m.runtime, 90)
         self.assertEqual(m.tagline, '«Фильм, запрещенный к прокату во многих странах»')
         self.assertGreater(len(m.trailers), 3)
-        self.assertTrue('gettrailer.php?quality=hd&trailer_id=4476' in trailers_files)
-        self.assertTrue('4476' in trailers_ids)
+        self.assertIn('gettrailer.php?quality=hd&trailer_id=4476', trailers_files)
+        self.assertIn('4476', trailers_ids)
         self.assertEqualPersons(m.actors, ['Иззи Диаз', 'Роб Дивейни', 'Ти Джонс', 'Анас Веллман', 'Майк Фигуроа',
                                            'Яналь Кассай', 'Дхиая Калиль', 'Кел О’Нил', 'Дэниэл Стюарт-Шерман',
                                            'Патрик Кэрролл'])
 
     def test_movie_main_page_id_6877(self):
         """
-                Test of movie manager, movie obtain by id (not via search)
-                """
+        Test of movie manager, movie obtain by id (not via search)
+        """
         m = Movie(id=6877)
         m.get_content('main_page')
-        # m.get_content('trailers')
+        m.get_content('trailers')
 
-        # trailers_ids = [trailer.id for trailer in m.trailers]
-        # trailers_files = [trailer.file for trailer in m.trailers]
+        trailers_ids = [trailer.id for trailer in m.trailers]
+        trailers_files = [trailer.file for trailer in m.trailers]
 
         self.assertEqual(m.id, 6877)
         self.assertEqual(m.year, 2004)
@@ -98,9 +98,9 @@ class MovieTest(BaseTest):
         self.assertGreaterEqual(m.imdb_votes, 381282)
 
         self.assertEqual(m.tagline, "«Жизнь - это ожидание»")
-        # self.assertEqual(len(m.trailers), 4)
-        # self.assertTrue('529' in trailers_ids)
-        # self.assertTrue('gettrailer.php?quality=hd&trailer_id=529' in trailers_files)
+        self.assertEqual(len(m.trailers), 4)
+        self.assertIn('506', trailers_ids)
+        self.assertIn('gettrailer.php?quality=hd&trailer_id=506', trailers_files)
 
         self.assertEqual(m.genres, ['драма', 'мелодрама', 'комедия'])
         self.assertEqual(m.countries, ['США'])
@@ -121,6 +121,48 @@ class MovieTest(BaseTest):
         self.assertEqualPersons(m.composers, ['Джон Уильямс'])
         self.assertEqualPersons(m.art_direction_by, ['Алекс Макдауэлл', 'Кристофер Бериэн-Мор', 'Брэд Рикер'])
         self.assertEqualPersons(m.editing_by, ['Майкл Кан'])
+
+    def test_movie_main_page_id_1005878(self):
+        """
+        Test of movie manager, movie obtain by id (not via search)
+        """
+        m = Movie(id=1005878)
+        m.get_content('main_page')
+
+        self.assertEqual(m.id, 1005878)
+        self.assertEqual(m.year, 2019)
+        self.assertEqual(m.title, 'Король Лев')
+        self.assertEqual(m.title_en, 'The Lion King')
+        self.assertEqual(m.plot,
+                         'История об отважном львенке по имени Симба. Знакомые с детства герои взрослеют, влюбляются, познают себя и окружающий мир, совершают ошибки и делают правильный выбор.')
+        self.assertEqual(m.runtime, 118)
+
+        self.assertEqual(m.rating, 7.158)
+        self.assertEqual(m.imdb_rating, 6.90)
+        self.assertGreaterEqual(m.votes, 60604)
+        self.assertGreaterEqual(m.imdb_votes, 169531)
+
+        self.assertEqual(m.tagline, "«The King Has Returned»")
+
+        self.assertEqual(m.genres, ['мультфильм', 'мюзикл', 'драма', 'приключения', 'семейный'])
+        self.assertEqual(m.countries, ['США'])
+        self.assertGreaterEqual(m.budget, 260000000)
+        self.assertIsNone(m.marketing)
+        self.assertGreaterEqual(m.profit_usa, 543638043)
+        self.assertGreaterEqual(m.profit_russia, 47106883)
+        self.assertGreaterEqual(m.profit_world, 1656943394)
+
+        self.assertEqualPersons(m.actors,
+                                ['Джеймс Эрл Джонс', 'Дональд Гловер', 'Чиветель Эджиофор', 'Джон Оливер',
+                                 'Джон Кани', 'Элфри Вудард', 'Джейдон Маккрэри', 'Шахади Райт Джозеф',
+                                 'Пенни Джонсон', 'Кигэн-Майкл Ки'])
+        self.assertEqualPersons(m.directors, ['Джон Фавро'])
+        self.assertEqualPersons(m.screenwriters, ['Джефф Натансон', 'Ирен Меччи', 'Джонатан Робертс'])
+        self.assertEqualPersons(m.producers, ['Джон Бартники', 'Дэбби Босси', 'Джон Фавро'])
+        self.assertEqualPersons(m.operators, ['Калеб Дешанель'])
+        self.assertEqualPersons(m.composers, ['Ханс Циммер'])
+        self.assertEqualPersons(m.art_direction_by, ['Джеймс Чинланд', 'Влад Бина'])
+        self.assertEqualPersons(m.editing_by, ['Адам Герстл', 'Марк Ливолси'])
 
     def test_movie_main_page_id_746251(self):
         m = Movie(id=746251)
