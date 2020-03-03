@@ -203,7 +203,8 @@ class MovieMainPage(KinopoiskPage):
         'plot': './/div[@itemprop="description"]/text()',
         'rating': './/span[@class="rating_ball"]/text()',
         'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
-        'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[position()>last()-1]/text()',
+        'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
+        'imdb2': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
     }
 
     regex = {
@@ -264,6 +265,8 @@ class MovieMainPage(KinopoiskPage):
         self.instance.votes = self.extract('votes', to_int=True)
 
         imdb = self.regex['imdb'].findall(self.extract('imdb'))
+        if not imdb:
+            imdb = self.regex['imdb'].findall(self.extract('imdb2'))
         if imdb:
             self.instance.imdb_rating = float(imdb[0][0])
             self.instance.imdb_votes = self.prepare_int(imdb[0][1])
