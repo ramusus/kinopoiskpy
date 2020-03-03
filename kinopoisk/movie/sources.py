@@ -355,3 +355,24 @@ class MovieTrailersPage(KinopoiskPage):
         youtube_ids = [youtube_id.split('/')[-1:][0] for youtube_id in youtube_urls]
         self.instance.youtube_ids = youtube_ids
         self.instance.set_source('trailers')
+
+
+class MovieLikePage(KinopoiskPage):
+    """
+    Parser of kinopoisk movie like page
+    """
+    url = '/film/{id}/like/'
+
+    xpath = {
+        'films': '//a[@class="all" and contains(@href, "film/")]',
+    }
+
+    def parse(self):
+        self.content = html.fromstring(self.content)
+        self.instance.similar_movies = []
+
+        for element in self.extract('films'):
+            element_id = element.get('href').split('/')[-2]
+            self.instance.similar_movies.append(element_id)
+
+        self.instance.set_source('similar_movies')

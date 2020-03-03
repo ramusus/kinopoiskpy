@@ -311,3 +311,9 @@ class MovieTest(BaseTest):
 
         m = movies[0]  # The Big Bang Theory Series
         self.assertGreaterEqual(m.rating, 8.5)
+
+    def test_movie_similar_movies(self):
+        m = Movie(id=195524)  # I Am Legend / Я – легенда
+        m.get_content('similar_movies')
+
+        self.assertTrue(m.similar_movies)  # Check that the list is not empty
