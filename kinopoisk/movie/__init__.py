@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 
 from .sources import (
     MovieLink, MoviePremierLink, MovieMainPage, MoviePostersPage, MovieTrailersPage, MovieSeries, MovieCareerLink,
-    MovieCastPage, MovieRoleLink)
-from ..utils import KinopoiskObject, Manager, HEADERS
+    MovieCastPage, MovieRoleLink, MovieLikePage)
+from ..utils import KinopoiskObject, Manager
 
 
 @python_2_unicode_compatible
@@ -56,6 +56,8 @@ class Movie(KinopoiskObject):
         self.series_years = tuple()
         self.seasons = []
 
+        self.similar_movies = []
+
     def __init__(self, *args, **kwargs):
         super(Movie, self).__init__(*args, **kwargs)
 
@@ -67,6 +69,7 @@ class Movie(KinopoiskObject):
         self.register_source('posters', MoviePostersPage)
         self.register_source('trailers', MovieTrailersPage)
         self.register_source('series', MovieSeries)
+        self.register_source('similar_movies', MovieLikePage)
 
     def __repr__(self):
         return '{} ({}), {}'.format(self.title, self.title_en, self.year or '-')
@@ -190,8 +193,7 @@ class MoviePremiersManager(Manager):
 
     def all(self):
         url, params = self.get_url_with_params()
-        response = self.request.get(url, params=params, headers=HEADERS)
-        content = response.content.decode('windows-1251', 'ignore')
+        content = self.request.get_content(url, params=params)
 
         content_soup = BeautifulSoup(content, 'html.parser')
         instances = []

@@ -198,16 +198,22 @@ class MovieMainPage(KinopoiskPage):
 
     xpath = {
         'url': './/meta[@property="og:url"]/@content',
-        'title': './/h1/text()',
+        'title': './/h1/span/text()',
         'title_en': './/span[@itemprop="alternativeHeadline"]/text()',
         'plot': './/div[@itemprop="description"]/text()',
         'rating': './/span[@class="rating_ball"]/text()',
         'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
         'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
+        'imdb2': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
+    }
+
+    regex = {
+        'trailers': re.compile(r'GetTrailerPreview\(([^)]+)\)'),
+        'imdb': re.compile(r'^IMDb: ([0-9.]+) \(([0-9 ]+)\)$'),
     }
 
     def parse(self):
-        trailers = re.findall(r'GetTrailerPreview\(([^\)]+)\)', self.content)
+        trailers = self.regex['trailers'].findall(self.content)
         if len(trailers):
             self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
@@ -238,7 +244,7 @@ class MovieMainPage(KinopoiskPage):
                 elif name == 'жанр':
                     genres = value.split(', ')
                     for genre in genres:
-                        if genre != '...\nслова\n':
+                        if genre.strip() != '... слова':
                             self.instance.genres.append(self.prepare_str(genre))
                 elif name in self.main_profits:
                     self.parse_main_profit(self.main_profits[name], tds)
@@ -258,7 +264,9 @@ class MovieMainPage(KinopoiskPage):
         self.instance.rating = self.extract('rating', to_float=True)
         self.instance.votes = self.extract('votes', to_int=True)
 
-        imdb = re.findall(r'^IMDb: ([0-9\.]+) \(([0-9 ]+)\)$', self.extract('imdb'))
+        imdb = self.regex['imdb'].findall(self.extract('imdb'))
+        if not imdb:
+            imdb = self.regex['imdb'].findall(self.extract('imdb2'))
         if imdb:
             self.instance.imdb_rating = float(imdb[0][0])
             self.instance.imdb_votes = self.prepare_int(imdb[0][1])
@@ -344,16 +352,8 @@ class MovieTrailersPage(KinopoiskPage):
     url = '/film/{id}/video/'
 
     def parse(self):
-        # Because some films have different URL and ID
-        current_film_url = re.findall(
-            r'href="https://www.kinopoisk.ru/film/.+/video',
-            self.content
-        )
-
-        current_film_id = current_film_url[0].split('/')[-2:-1][0]
         trailers_kinopoisk_urls = list(set(
-            re.findall(r'/film/{}/video/\d+'.format(current_film_id),
-                       self.content)
+            re.findall(r'/film/{}/video/\d+'.format(self.instance.id), self.content)
         ))
 
         for trailer_id in trailers_kinopoisk_urls:
@@ -363,3 +363,24 @@ class MovieTrailersPage(KinopoiskPage):
         youtube_ids = [youtube_id.split('/')[-1:][0] for youtube_id in youtube_urls]
         self.instance.youtube_ids = youtube_ids
         self.instance.set_source('trailers')
+
+
+class MovieLikePage(KinopoiskPage):
+    """
+    Parser of kinopoisk movie like page
+    """
+    url = '/film/{id}/like/'
+
+    xpath = {
+        'films': '//a[@class="all" and contains(@href, "film/")]',
+    }
+
+    def parse(self):
+        self.content = html.fromstring(self.content)
+        self.instance.similar_movies = []
+
+        for element in self.extract('films'):
+            element_id = element.get('href').split('/')[-2]
+            self.instance.similar_movies.append(element_id)
+
+        self.instance.set_source('similar_movies')
