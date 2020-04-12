@@ -173,6 +173,39 @@ class MovieTest(BaseTest):
         self.assertEqual(m.genres, ['драма'])
         self.assertEqual(m.countries, ['США'])
 
+    def test_movie_main_page_id_1111018(self):
+        m = Movie(id=1111018)
+        m.get_content('main_page')
+        self.assertEqual(m.year, 2019)
+        self.assertEqual(m.title, 'Чудотворцы')
+
+        self.assertEqual(m.genres, ['комедия', 'фэнтези', '...слова'])
+        self.assertEqual(m.countries, ['США'])
+
+        self.assertEqual(m.id, 1111018)
+        self.assertEqual(m.title_en, 'Miracle Workers')
+        self.assertEqual(m.plot,
+                         'Небесная канцелярия Бога — масштабный офис с множеством отделов и сотрудников, работающих в атмосфере цейтнота и многозадачности. Есть даже HR и напоминающий службу технической поддержки отдел обработки молитв. Именно его служащие, ангелы Элиза и Крэйг, берутся за спасение Земли, когда приунывший Господь вдруг решает её погубить. Теперь у ангелов есть две недели, чтобы соединить несоединимое — двух одиноких людей в пару — и доказать, что человечество вовсе не безнадежно и достойно существования.')
+        self.assertEqual(m.runtime, 20)
+
+        self.assertEqual(m.rating, 7.6)
+        self.assertEqual(m.imdb_rating, 7.0)
+        self.assertGreaterEqual(m.votes, 47000)
+        self.assertGreaterEqual(m.imdb_votes, 7000)
+        self.assertEqual(m.tagline, "«On the Trillionth Day...God Quit»")
+        self.assertIsNone(m.marketing)
+        self.assertEqualPersons(
+            m.actors,
+            ['Дэниэл Рэдклифф', 'Джеральдин Висванатхан', 'Каран Сони', 'Стив Бушеми', 'Джон Басс',
+            'Лолли Адефоп', 'Саша Компере', 'Питер Серафинович', 'Джэми Деметриу', 'Майк Данстон']
+        )
+        self.assertEqualPersons(m.directors, ['Дэн Шимпф', 'Райан Кейс', 'Морис Мэрэбл'])
+        self.assertEqualPersons(m.screenwriters, ['Саймон Рич', 'Лукас Гарднер', 'Хезер Энн Кэмпбелл'])
+        self.assertEqualPersons(m.producers, ['Лорн Майклз', 'Стив Бушеми', 'Кэти Дженсон'])
+        self.assertEqualPersons(m.operators, ['Блейк МакКлюр', 'Брайан Бёргойн'])
+        self.assertEqualPersons(m.art_direction_by, ['Тодд Джеффри', 'Дэйв Эрроусмит', 'Марисса Легизамон'])
+        self.assertEqualPersons(m.editing_by, ['Роб Барнетт', 'Райан Браун', 'Джессика Брунетто'])
+
     def test_movie_main_page_empty_actors(self):
         m = Movie(id=926005)
         m.get_content('main_page')

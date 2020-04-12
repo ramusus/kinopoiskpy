@@ -66,6 +66,8 @@ class PersonShortLink(KinopoiskPage):
 
     def parse(self):
         link = re.compile(r'<a[^>]+href="/name/(\d+)/">(.+?)</a>').findall(self.content)
+        if not link:
+            link = re.compile(r'<a[^>]+href="/name/(\d+)/"[^>]+>(.+?)</a>').findall(self.content)
         if link:
             self.instance.id = self.prepare_int(link[0][0])
             self.instance.name = self.prepare_str(link[0][1])

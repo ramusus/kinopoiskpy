@@ -114,15 +114,15 @@ class MovieLink(KinopoiskPage):
         self.content = html.fromstring(self.content)
 
         url = self.extract('url')
-        title = self.extract('title', to_str=True)
         years = self.extract('years')
+        title = self.extract('title')
         title_en = self.extract('title_en', to_str=True)
         rating = self.extract('rating')
 
         # /level/1/film/ID/sr/1/
         self.instance.id = self.prepare_int(url.split('/')[4].split('-')[-1])
-        self.instance.title = title.replace('(сериал)', '')
-        self.instance.series = '(сериал)' in title
+        self.instance.title = self.extract_title()
+        self.instance.series = '(сериал)' in title or '( сериал )' in title
 
         if years:
             self.instance.year = self.prepare_int(years[:4])
@@ -191,82 +191,89 @@ class MovieMainPage(KinopoiskPage):
     main_profits = {
         'бюджет': 'budget',
         'маркетинг': 'marketing',
-        'сборы в США': 'profit_usa',
-        'сборы в России': 'profit_russia',
+        'сборы в сша': 'profit_usa',
+        'сборы в россии': 'profit_russia',
         'сборы в мире': 'profit_world',
     }
-
-    xpath = {
-        'url': './/meta[@property="og:url"]/@content',
-        'title': './/h1/span/text()',
-        'title_en': './/span[@itemprop="alternativeHeadline"]/text()',
-        'plot': './/div[@itemprop="description"]/text()',
-        'rating': './/span[@class="rating_ball"]/text()',
-        'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
-        'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
-        'imdb2': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
-    }
-
     regex = {
         'trailers': re.compile(r'GetTrailerPreview\(([^)]+)\)'),
         'imdb': re.compile(r'^IMDb: ([0-9.]+) \(([0-9 ]+)\)$'),
     }
 
+    def __init__(self, source_name, instance, content=None, request=None):
+        super(MovieMainPage, self).__init__(source_name, instance, content, request)
+        self.serial = False
+
+    @property
+    def xpath(self):
+        if self.serial:
+            return {
+                'url': './/meta[@property="og:url"]/@content',
+                'title': './/h1/span/text()',
+                'title_en': './/div[contains(@class, "film-basic-info__title")]/div/span/text()',
+                'plot': './/div[@class="film-synopsis"]/p/text()',
+                'rating': './/span[contains(@class,"film-rating-value")]/text()',
+                'votes': './/div[contains(@class,"film-rating ")]/span[2]/text()',
+                'imdb': './/div[contains(@class," film-sub-rating")]/span[1]/text()[3]',
+                'imdb2': './/div[contains(@class," film-sub-rating")]/span[2]/text()',
+            }
+        else:
+            return {
+                'url': './/meta[@property="og:url"]/@content',
+                'title': './/h1/span/text()',
+                'title_en': './/span[@itemprop="alternativeHeadline"]/text()',
+                'plot': './/div[@itemprop="description"]/text()',
+                'rating': './/span[@class="rating_ball"]/text()',
+                'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
+                'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
+                'imdb2': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
+            }
+
     def parse(self):
-        trailers = self.regex['trailers'].findall(self.content)
-        if len(trailers):
-            self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
         content_info = BeautifulSoup(self.content, 'html.parser')
 
         table_info = content_info.find('table', {'class': re.compile(r'^info')})
         if table_info:
-            for tr in table_info.findAll('tr'):
-                tds = tr.findAll('td')
-                name = tds[0].text
-                value = tds[1].text
-                if value == '-':
-                    continue
+            self.parse_table_info(table_info)
+        else:
+            self.parse_div_table(content_info.find('div', {'class': re.compile(r'film-basic-info')}))
+            self.serial = True
 
-                if name == 'слоган':
-                    self.instance.tagline = self.prepare_str(value)
-                elif name == 'время':
-                    self.instance.runtime = self.prepare_int(value.split(' ')[0])
-                elif name == 'год':
-                    try:
-                        self.instance.year = self.prepare_int(value.split('(')[0])
-                    except ValueError:
-                        pass
-                    self.instance.series = 'сезон' in value
-                elif name == 'страна':
-                    for item in value.split(', '):
-                        self.instance.countries.append(self.prepare_str(item))
-                elif name == 'жанр':
-                    genres = value.split(', ')
-                    for genre in genres:
-                        if genre.strip() != '... слова':
-                            self.instance.genres.append(self.prepare_str(genre))
-                elif name in self.main_profits:
-                    self.parse_main_profit(self.main_profits[name], tds)
-                elif name in self.main_persons:
-                    self.parse_persons(self.main_persons[name], tds[1].contents)
+        trailers = self.regex['trailers'].findall(self.content)
+        if len(trailers):
+            self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
-        actors = content_info.find('div', {'id': 'actorList'})
-        if actors and actors.ul:
-            self.parse_persons('actors', [li.a for li in actors.ul.findAll('li')])
+        self.parse_actors(content_info)
 
         self.content = html.fromstring(self.content)
 
         self.instance.id = self.prepare_int(self.extract('url').split('/')[-2].split('-')[-1])
-        self.instance.title = self.extract('title', to_str=True)
+
+        self.instance.title = self.extract_title()
         self.instance.title_en = self.extract('title_en', to_str=True)
         self.instance.plot = self.extract('plot', to_str=True)
         self.instance.rating = self.extract('rating', to_float=True)
-        self.instance.votes = self.extract('votes', to_int=True)
 
-        imdb = self.regex['imdb'].findall(self.extract('imdb'))
-        if not imdb:
-            imdb = self.regex['imdb'].findall(self.extract('imdb2'))
+        if self.serial:
+            votes = self.extract('votes')
+            num_votes = ''.join([i for i in votes.split(' ')[0] if i in '1234567890'])
+            self.instance.votes = self.prepare_int(num_votes) * self.get_coefficient(votes)
+        else:
+            self.instance.votes = self.extract('votes', to_int=True)
+
+        imdb = []
+        if self.serial:
+            imdb_votes = self.extract('imdb2')
+            num_votes = ''.join([i for i in imdb_votes if i in '1234567890'])
+            imdb = self.extract('imdb')
+            imdb.append(str(self.prepare_int(num_votes) * self.get_coefficient(imdb_votes)))
+            imdb = [imdb]
+
+        else:
+            imdb = self.regex['imdb'].findall(self.extract('imdb'))
+            if not imdb:
+                imdb = self.regex['imdb'].findall(self.extract('imdb2'))
         if imdb:
             self.instance.imdb_rating = float(imdb[0][0])
             self.instance.imdb_votes = self.prepare_int(imdb[0][1])
@@ -274,7 +281,19 @@ class MovieMainPage(KinopoiskPage):
         self.instance.set_source('main_page')
 
     def parse_main_profit(self, field_name, value):
-        setattr(self.instance, field_name, self.find_profit(value[1]))
+        setattr(self.instance, field_name, self.find_profit(value))
+
+    def parse_actors(self, content_info):
+        if self.serial:
+            actors = content_info.find(
+                    'div',
+                    {'class': re.compile(r'film-basic-info__film-crew')}
+            ).find('ul').parent
+        else:
+            actors = content_info.find('div', {'id': 'actorList'})
+
+        if actors and actors.ul:
+            self.parse_persons('actors', [li.a for li in actors.ul.findAll('li')])
 
     def parse_persons(self, field_name, links):
         from kinopoisk.person import Person
@@ -282,6 +301,58 @@ class MovieMainPage(KinopoiskPage):
             if isinstance(link, Tag) and link.text != "...":
                 person = Person.get_parsed('short_link', link.decode())
                 getattr(self.instance, field_name).append(person)
+
+    def parse_div_table(self, div_tabel):
+        if not div_tabel:
+            return
+        rows = div_tabel.findAll('div', {'class': re.compile(r'film-info-table__row')})
+
+        for row in rows:
+            name = row.find('div', {'class': re.compile(r'__title')})
+            value_tds = row.find('div', {'class': re.compile(r'__value')})
+            self.set_value(name.text, value_tds)
+
+    def parse_table_info(self, table_info):
+        for tr in table_info.findAll('tr'):
+            tds = tr.findAll('td')
+            name = tds[0].text
+            value = tds[1]
+            self.set_value(name, value)
+
+    def set_value(self, name, value_tds):
+        value = value_tds.text
+        if value == '-':
+                return
+        name = name.lower()
+
+        if name == 'слоган':
+            self.instance.tagline = self.prepare_str(value)
+        elif name == 'время':
+            self.instance.runtime = self.prepare_int(value.split(' ')[0])
+        elif name in ['год', 'год производства']:
+            try:
+                self.instance.year = self.prepare_int(value.split('(')[0])
+            except ValueError:
+                pass
+            self.instance.series = 'сезон' in value
+        elif name == 'страна':
+            for item in value.split(', '):
+                self.instance.countries.append(self.prepare_str(item))
+        elif name == 'жанр':
+            genres = value.split(', ')
+            for genre in genres:
+                if genre.strip() != '... слова':
+                    self.instance.genres.append(self.prepare_str(genre))
+        elif name in self.main_profits:
+            self.parse_main_profit(self.main_profits[name], value_tds)
+        elif name in self.main_persons:
+            self.parse_persons(self.main_persons[name], value_tds.contents)
+
+    def get_coefficient(self, str_with_coef):
+        if 'K' in str_with_coef:
+            return 1000
+        else:
+            return 1
 
 
 class MovieCastPage(KinopoiskPage):

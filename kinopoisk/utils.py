@@ -235,6 +235,11 @@ class KinopoiskPage(object):
             content = content[start:end]
         return content
 
+    def extract_title(self):
+        title = self.extract('title', to_str=True)
+        title = title.replace('( сериал )', '').replace('(сериал)', '')
+        return title.rstrip()
+
     def get(self):
         if self.instance.id:
             self.content = self.request.get_content(self.instance.get_url(self.source_name))
