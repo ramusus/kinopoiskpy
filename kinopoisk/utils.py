@@ -23,7 +23,8 @@ class Manager(object):
         content = response.content.decode('utf-8')
         self.request.raise_for_errors(content)
         # request is redirected to main page of object
-        if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
+        if len(response.history) and \
+                ('/film/' in response.url or '/name/' in response.url or '/series/' in response.url):
             instance = self.kinopoisk_object()
             instance.get_source_instance(
                 'main_page', instance=instance, content=content, request=self.request).parse()
