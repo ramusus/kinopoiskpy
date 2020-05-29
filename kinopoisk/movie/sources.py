@@ -103,7 +103,7 @@ class MovieLink(KinopoiskPage):
     Parser of movie info in link
     """
     xpath = {
-        'url': './/p[@class="name"]/a/@href',
+        'url': './/p[@class="name"]/a/@data-url',
         'title': './/p[@class="name"]/a/text()',
         'years': './/p[@class="name"]/span[@class="year"]/text()',
         'title_en': './/span[@class="gray"][1]/text()',
