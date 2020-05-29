@@ -120,7 +120,7 @@ class MovieLink(KinopoiskPage):
         rating = self.extract('rating')
 
         # /level/1/film/ID/sr/1/
-        self.instance.id = self.prepare_int(url.split('/')[4].split('-')[-1])
+        self.instance.id = self.prepare_int(url.split('/')[2])
         self.instance.title = self.extract_title()
         self.instance.series = '(сериал)' in title or '( сериал )' in title
 
