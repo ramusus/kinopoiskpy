@@ -418,6 +418,13 @@ class MovieTest(BaseTest):
         self.assertEqual(le.title, 'Эдем')
         # self.assertIsNone(le.release_date)
 
+    def test_movie_series_search_swing(self):
+        movies = Movie.objects.search('Качели')
+        self.assertGreaterEqual(len(movies), 1)
+        m = movies[0]  #  Качели 2008
+        m.get_content('main_page')
+        self.assertEqual(m.title, 'Качели')
+
     def test_movie_series_main_page_kickass(self):
         m = Movie(id=419200)  # Kick-Ass / Пипец
         m.get_content('main_page')
@@ -425,9 +432,11 @@ class MovieTest(BaseTest):
         self.assertRaises(ValueError, m.get_content, ('series',))
 
     def test_movie_series_main_page_bigband(self):
-        m = Movie(id=306084)  # The Big Bang Theory / Теория большого взрыва
+        m_id = 306084
+        m = Movie(id=m_id)  # The Big Bang Theory / Теория большого взрыва
         m.get_content('main_page')
         self.assertTrue(m.series)
+        self.assertEqual(m_id, m.id)
 
     def test_movie_rating_from_search_result(self):
         movies = Movie.objects.search('the big bang theory')
