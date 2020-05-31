@@ -425,6 +425,15 @@ class MovieTest(BaseTest):
         m.get_content('main_page')
         self.assertEqual(m.title, 'Качели')
 
+    def test_movie_series_search_1306638(self):
+        title = 'Мир! Дружба! Жвачка!'
+        movies = Movie.objects.search(title)
+        movies = list(filter(lambda x: x.title == title, movies))
+        self.assertGreaterEqual(len(movies), 1)
+        m = movies[0]
+        m.get_content('main_page')
+        self.assertEqual(m.title, title)
+
     def test_movie_series_main_page_kickass(self):
         m = Movie(id=419200)  # Kick-Ass / Пипец
         m.get_content('main_page')

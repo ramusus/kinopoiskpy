@@ -212,7 +212,7 @@ class MovieMainPage(KinopoiskPage):
                 'title': './/h1/span/text()',
                 'title_en': './/div[contains(@class, "film-basic-info__title")]/div/span/text()',
                 'plot': './/div[@class="film-synopsis"]/p/text()',
-                'rating': './/span[contains(@class,"film-rating-value")]/text()',
+                'rating': '(.//span[contains(@class,"film-rating-value")])[1]/text()',
                 'votes': './/div[contains(@class,"film-rating ")]/span[2]/text()',
                 'imdb': './/div[contains(@class," film-sub-rating")]/span[1]/text()[3]',
                 'imdb2': './/div[contains(@class," film-sub-rating")]/span[2]/text()',
@@ -223,7 +223,7 @@ class MovieMainPage(KinopoiskPage):
                 'title': './/h1/span/text()',
                 'title_en': './/span[@itemprop="alternativeHeadline"]/text()',
                 'plot': './/div[@itemprop="description"]/text()',
-                'rating': './/span[@class="rating_ball"]/text()',
+                'rating': '(.//span[@class="rating_ball"]/text())[1]/text()',
                 'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
                 'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
                 'imdb2': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
@@ -262,14 +262,26 @@ class MovieMainPage(KinopoiskPage):
         else:
             self.instance.votes = self.extract('votes', to_int=True)
 
+        self.set_imdb_data()
+
+        self.instance.set_source('main_page')
+
+    def set_imdb_data(self):
         imdb = []
         if self.serial:
             imdb_votes = self.extract('imdb2')
+            if imdb_votes == '':
+                self.instance.imdb_rating = float(0)
+                self.instance.imdb_votes = 0
+                return
             num_votes = ''.join([i for i in imdb_votes if i in '1234567890'])
             imdb = self.extract('imdb')
+            if not imdb:
+                self.instance.imdb_rating = float(0)
+                self.instance.imdb_votes = num_votes
+                return
             imdb.append(str(self.prepare_int(num_votes) * self.get_coefficient(imdb_votes)))
             imdb = [imdb]
-
         else:
             imdb = self.regex['imdb'].findall(self.extract('imdb'))
             if not imdb:
@@ -277,8 +289,6 @@ class MovieMainPage(KinopoiskPage):
         if imdb:
             self.instance.imdb_rating = float(imdb[0][0])
             self.instance.imdb_votes = self.prepare_int(imdb[0][1])
-
-        self.instance.set_source('main_page')
 
     def parse_main_profit(self, field_name, value):
         setattr(self.instance, field_name, self.find_profit(value))
