@@ -18,7 +18,7 @@ class Manager(object):
         self.request = Request()
 
     def search(self, query):
-        url, params = self.get_url_with_params(query)
+        url, params = self.get_url_with_search_params(query)
         response = self.request.get(url, params=params)
         content = response.content.decode('utf-8')
         self.request.raise_for_errors(content)
@@ -50,7 +50,7 @@ class Manager(object):
 
             raise ValueError('Unknown html layout found by request "%s"' % response.url)
 
-    def get_url_with_params(self, query):
+    def get_url_with_search_params(self, query):
         return 'http://www.kinopoisk.ru/index.php', {'kp_query': query}
 
     def get_first(self, query):
