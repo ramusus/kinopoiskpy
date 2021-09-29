@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from future.utils import python_2_unicode_compatible
 from bs4 import BeautifulSoup
 
 from .sources import (
@@ -9,7 +7,6 @@ from .sources import (
 from ..utils import KinopoiskObject, Manager
 
 
-@python_2_unicode_compatible
 class Movie(KinopoiskObject):
     """
     Movie Class
@@ -83,7 +80,6 @@ class Movie(KinopoiskObject):
         self.seasons.append(SeriesSeason(year, [SeriesEpisode(title, date) for title, date in episodes]))
 
 
-@python_2_unicode_compatible
 class Role(KinopoiskObject):
     """
     Movie Role Class
@@ -99,7 +95,6 @@ class Role(KinopoiskObject):
         self.register_source('role_link', MovieRoleLink)
 
 
-@python_2_unicode_compatible
 class Trailer(object):
     """
     Movie Trailer Class
@@ -126,7 +121,6 @@ class Trailer(object):
         return trailer_file
 
 
-@python_2_unicode_compatible
 class SeriesEpisode(object):
     def set_defaults(self):
         self.title = ''
@@ -142,7 +136,6 @@ class SeriesEpisode(object):
         return '{}, {}'.format(self.title if self.title else '???', self.release_date or '-')
 
 
-@python_2_unicode_compatible
 class SeriesSeason(object):
     def set_defaults(self):
         self.year = None
@@ -164,25 +157,6 @@ class MovieManager(Manager):
     Movie manager
     """
     kinopoisk_object = Movie
-
-    def get_url_with_params(self, query):
-        # http://www.kinopoisk.ru/index.php?level=7&from=forma&result=adv&m_act[from]=forma&m_act[what]=content&m_act[find]=pulp+fiction
-        return ('http://www.kinopoisk.ru/index.php', {
-            'level': 7,
-            'from': 'forma',
-            'result': 'adv',
-            'm_act[from]': 'forma',
-            'm_act[what]': 'content',
-            'm_act[find]': query,
-        })
-        # возвращает не по релевантности, а непонятно как
-        # http://www.kinopoisk.ru/index.php?level=7&ser=a:3:{s:4:"find";s:3:"day";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}&show=all
-        # return ('http://www.kinopoisk.ru/index.php', {
-        #     'level': 7,
-        #     'ser': 'a:3:{s:4:"find";s:%d:"%s";s:4:"what";s:7:"content";s:5:"count";a:1:{s:7:"content";s:3:"113";}}' % (
-        #         len(query), query),
-        #     'show': 'all',
-        # })
 
 
 class MoviePremiersManager(Manager):

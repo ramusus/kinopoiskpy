@@ -8,8 +8,7 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.4
-      - image: circleci/python:3.6.1
+      - image: circleci/python:3.9
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -49,6 +48,7 @@ jobs:
           command: |
             . venv/bin/activate
             flake8 ./kinopoisk
+            rm -R ./kinopoisk/tests/cassettes/  # remove cassettes to run test against real kinopoisk.ru
             coverage run --source=kinopoisk -m kinopoisk.tests
 
       - store_artifacts:

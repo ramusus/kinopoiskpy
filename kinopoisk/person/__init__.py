@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from future.utils import python_2_unicode_compatible
-
 from .sources import PersonLink, PersonShortLink, PersonMainPage, PersonPhotosPage, PersonRoleLink, PersonCastLink
 from ..utils import KinopoiskObject, Manager
 
 
-@python_2_unicode_compatible
 class Person(KinopoiskObject):
     """
-    Person Class
+    Person Classtest_person_cast_special_case
     """
     def set_defaults(self):
         self.name = ''
@@ -41,7 +37,6 @@ class Person(KinopoiskObject):
         return repr
 
 
-@python_2_unicode_compatible
 class Role(KinopoiskObject):
     """
     Person Role Class
@@ -62,18 +57,6 @@ class PersonManager(Manager):
     Person manager
     """
     kinopoisk_object = Person
-
-    def get_url_with_params(self, query):
-        # http://www.kinopoisk.ru/index.php?level=7&from=forma&result=adv&m_act[from]=forma&m_act[what]=content&m_act[find]=pulp+fiction
-        # http://www.kinopoisk.ru/index.php?level=7&from=forma&result=adv&m_act[from]=forma&m_act[what]=actor&m_act[find]=malkovich
-        return ('http://www.kinopoisk.ru/index.php', {
-            'level': 7,
-            'from': 'forma',
-            'result': 'adv',
-            'm_act[from]': 'forma',
-            'm_act[what]': 'actor',
-            'm_act[find]': query,
-        })
 
 
 Person.objects = PersonManager()
