@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 # flake8: noqa: E501
-from __future__ import unicode_literals
-
-from datetime import datetime
+from datetime import datetime, date
 
 from kinopoisk.movie import Movie
 from .base import BaseTest
@@ -15,7 +13,7 @@ class MovieTest(BaseTest):
         self.assertGreaterEqual(len(m.posters), 34)
 
     def test_movie_search_manager_redacted(self):
-        movies = Movie.objects.search('Без цензуры 2007')
+        movies = Movie.objects.search('Без цензуры')
         self.assertGreater(len(movies), 1)
 
         m = movies[0]
@@ -24,7 +22,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title, 'Без цензуры')
         self.assertEqual(m.title_en, 'Redacted')
         self.assertEqual(m.runtime, 90)
-        self.assertEqual(m.rating, 6.134)
+        self.assertEqual(int(m.rating), 6)
         self.assertGreaterEqual(m.votes, 1760)
 
     def test_movie_search_manager_pulp_fiction(self):
@@ -39,7 +37,7 @@ class MovieTest(BaseTest):
 
     def test_movie_search_manager_warcraft(self):
         movies = Movie.objects.search('Варкрафт')
-        self.assertEqual(len(movies), 1)
+        self.assertGreaterEqual(len(movies), 1)
 
         m = movies[0]
         self.assertEqual(m.id, 277328)
@@ -48,9 +46,6 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title_en, 'Warcraft')
 
     def test_movie_main_page_id_278229(self):
-        """
-        Test of movie manager, movie obtain by id (not via search)
-        """
         m = Movie(id=278229)
         m.get_content('main_page')
         m.get_content('trailers')
@@ -63,20 +58,17 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title, 'Без цензуры')
         self.assertEqual(m.title_en, 'Redacted')
         self.assertEqual(m.plot,
-                         'В центре картины — небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
+                         'В центре картины – небольшой отряд американских солдат на контрольно-пропускном пункте в Ираке. Причём восприятие их истории постоянно меняется. Мы видим события глазами самих солдат, представителей СМИ, иракцев и понимаем, как на каждого из них влияет происходящее, их встречи и столкновения друг с другом.')
         self.assertEqual(m.runtime, 90)
         self.assertEqual(m.tagline, '«Фильм, запрещенный к прокату во многих странах»')
         self.assertGreater(len(m.trailers), 3)
         self.assertIn('gettrailer.php?quality=hd&trailer_id=4476', trailers_files)
         self.assertIn('4476', trailers_ids)
-        self.assertEqualPersons(m.actors, ['Иззи Диаз', 'Роб Дивейни', 'Ти Джонс', 'Анас Веллман', 'Майк Фигуроа',
+        self.assertEqualPersons(m.actors, ['Иззи Диаз', 'Роб Дивейни', 'Тай Джонс', 'Анас Веллман', 'Майк Фигуроа',
                                            'Яналь Кассай', 'Дхиая Калиль', 'Кел О’Нил', 'Дэниэл Стюарт-Шерман',
                                            'Патрик Кэрролл'])
 
     def test_movie_main_page_id_6877(self):
-        """
-        Test of movie manager, movie obtain by id (not via search)
-        """
         m = Movie(id=6877)
         m.get_content('main_page')
         m.get_content('trailers')
@@ -92,13 +84,13 @@ class MovieTest(BaseTest):
                          'Фильм рассказывает историю Виктора Наворски, отправившегося в Нью-Йорк из Восточной Европы. Пока Виктор летел в самолете, на его родине произошел государственный переворот. Оказавшись в международном аэропорту имени Джона Кеннеди с паспортом ниоткуда, он не имеет права въехать в Соединенные Штаты и должен коротать свои дни и ночи на скамейках у выхода 67, пока война в его родной стране не закончится. Тянутся недели и месяцы, и Виктор обнаруживает, что небольшой мирок терминала может быть наполнен абсурдом, щедростью, амбициями, развлечениями, желанием сохранить свой статус, интуитивной прозорливостью и даже любовью к очаровательной стюардессе Амелии. Виктору удается завоевать симпатии всех, кроме одного человека — чиновника аэропорта Фрэнка Диксона, который считает его бюрократической ошибкой, проблемой, которую он не может контролировать, но от которой жаждет избавиться.')
         self.assertEqual(m.runtime, 124)
 
-        self.assertEqual(m.rating, 8.069)
-        self.assertEqual(m.imdb_rating, 7.30)
+        self.assertEqual(int(m.rating), 8)
+        self.assertEqual(int(m.imdb_rating), 7)
         self.assertGreaterEqual(m.votes, 214662)
         self.assertGreaterEqual(m.imdb_votes, 381282)
 
         self.assertEqual(m.tagline, "«Жизнь - это ожидание»")
-        self.assertEqual(len(m.trailers), 4)
+        self.assertEqual(len(m.trailers), 3)
         self.assertIn('506', trailers_ids)
         self.assertIn('gettrailer.php?quality=hd&trailer_id=506', trailers_files)
 
@@ -123,9 +115,6 @@ class MovieTest(BaseTest):
         self.assertEqualPersons(m.editing_by, ['Майкл Кан'])
 
     def test_movie_main_page_id_1005878(self):
-        """
-        Test of movie manager, movie obtain by id (not via search)
-        """
         m = Movie(id=1005878)
         m.get_content('main_page')
 
@@ -137,15 +126,15 @@ class MovieTest(BaseTest):
                          'История об отважном львенке по имени Симба. Знакомые с детства герои взрослеют, влюбляются, познают себя и окружающий мир, совершают ошибки и делают правильный выбор.')
         self.assertEqual(m.runtime, 118)
 
-        self.assertEqual(m.rating, 7.158)
-        self.assertEqual(m.imdb_rating, 6.90)
+        self.assertEqual(int(m.rating), 7)
+        self.assertEqual(int(m.imdb_rating), 6)
         self.assertGreaterEqual(m.votes, 60604)
         self.assertGreaterEqual(m.imdb_votes, 169531)
 
         self.assertEqual(m.tagline, "«The King Has Returned»")
 
         self.assertEqual(m.genres, ['мультфильм', 'мюзикл', 'драма', 'приключения', 'семейный'])
-        self.assertEqual(m.countries, ['США'])
+        self.assertEqual(m.countries, ['США', 'Великобритания', 'ЮАР'])
         self.assertGreaterEqual(m.budget, 260000000)
         self.assertIsNone(m.marketing)
         self.assertGreaterEqual(m.profit_usa, 543638043)
@@ -167,11 +156,44 @@ class MovieTest(BaseTest):
     def test_movie_main_page_id_746251(self):
         m = Movie(id=746251)
         m.get_content('main_page')
-        self.assertEqual(m.year, None)
+        self.assertEqual(m.year, 2020)
         self.assertEqual(m.title, 'Ловкость')
 
         self.assertEqual(m.genres, ['драма'])
         self.assertEqual(m.countries, ['США'])
+
+    def test_movie_main_page_id_1111018(self):
+        m = Movie(id=1111018)
+        m.get_content('main_page')
+        self.assertEqual(m.year, 2019)
+        self.assertEqual(m.title, 'Чудотворцы')
+
+        self.assertEqual(m.genres, ['комедия', 'фэнтези'])
+        self.assertEqual(m.countries, ['США'])
+
+        self.assertEqual(m.id, 1111018)
+        self.assertEqual(m.title_en, 'Miracle Workers')
+        self.assertEqual(m.plot,
+                         'Небесная канцелярия Бога — масштабный офис с множеством отделов и сотрудников, работающих в атмосфере цейтнота и многозадачности. Есть даже HR и напоминающий службу технической поддержки отдел обработки молитв. Именно его служащие, ангелы Элиза и Крэйг, берутся за спасение Земли, когда приунывший Господь вдруг решает её погубить. Теперь у ангелов есть две недели, чтобы соединить несоединимое — двух одиноких людей в пару — и доказать, что человечество вовсе не безнадежно и достойно существования.')
+        self.assertEqual(m.runtime, 20)
+
+        self.assertEqual(int(m.rating), 7)
+        self.assertEqual(int(m.imdb_rating), 7)
+        self.assertGreaterEqual(m.votes, 47000)
+        self.assertGreaterEqual(m.imdb_votes, 7000)
+        self.assertEqual(m.tagline, "«On the Trillionth Day...God Quit»")
+        self.assertIsNone(m.marketing)
+        self.assertEqualPersons(
+            m.actors,
+            ['Дэниэл Рэдклифф', 'Джеральдин Вишванатан', 'Каран Сони', 'Джон Басс', 'Стив Бушеми',
+             'Лолли Адефопе', 'Мэри Энн МакГарри', 'Тэмми Дальстром', 'Ламонт Томпсон', 'Саша Компере']
+        )
+        self.assertEqualPersons(m.directors, ['Дэн Шимпф', 'Стив Бушеми', 'Эндрю ДеЯнг'])
+        self.assertEqualPersons(m.screenwriters, ['Саймон Рич', 'Зик Николсон', 'Georgie Aldaco'])
+        self.assertEqualPersons(m.producers, ['Дэн Мирк', 'Саймон Рич', 'Роберт Падник'])
+        self.assertEqualPersons(m.operators, ['Блейк МакКлюр', 'Брайан Бёргойн'])
+        self.assertEqualPersons(m.art_direction_by, ['Тодд Джеффри', 'Мария Ребман Казо', 'Дэйв Эрроусмит'])
+        self.assertEqualPersons(m.editing_by, ['Роб Барнетт', 'Тайчи Эрскин', 'Памела Марч'])
 
     def test_movie_main_page_empty_actors(self):
         m = Movie(id=926005)
@@ -179,9 +201,6 @@ class MovieTest(BaseTest):
         self.assertEqual(m.actors, [])
 
     def test_movie_main_page_id_4374(self):
-        """
-        Test of movie manager, movie obtain by id (not via search)
-        """
         m = Movie(id=4374)
         m.get_content('main_page')
         m.get_content('trailers')
@@ -194,16 +213,16 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title, 'Пираты Карибского моря: Проклятие Черной жемчужины')
         self.assertEqual(m.title_en, 'Pirates of the Caribbean: The Curse of the Black Pearl')
         self.assertEqual(m.plot,
-                         'Жизнь харизматичного авантюриста, капитана Джека Воробья, полная увлекательных приключений, резко меняется, когда его заклятый враг — капитан Барбосса — похищает корабль Джека, Черную Жемчужину, а затем нападает на Порт Ройал и крадет прекрасную дочь губернатора, Элизабет Свонн. Друг детства Элизабет, Уилл Тернер, вместе с Джеком возглавляет спасательную экспедицию на самом быстром корабле Британии, в попытке вызволить девушку из плена и заодно отобрать у злодея Черную Жемчужину. Вслед за этой парочкой отправляется амбициозный коммодор Норрингтон, который к тому же числится женихом Элизабет. Однако Уилл не знает, что над Барбоссой висит вечное проклятие, при лунном свете превращающее его с командой в живых скелетов. Проклятье будет снято лишь тогда, когда украденное золото Ацтеков будет возвращено пиратами на старое место.')
+                         'Жизнь харизматичного авантюриста, капитана Джека Воробья, полная увлекательных приключений, резко меняется, когда его заклятый враг капитан Барбосса похищает корабль Джека Черную Жемчужину а затем нападает на Порт Ройал и крадет прекрасную дочь губернатора Элизабет Свонн. Друг детства Элизабет Уилл Тернер вместе с Джеком возглавляет спасательную экспедицию на самом быстром корабле Британии, чтобы вызволить девушку и заодно отобрать у злодея Черную Жемчужину. Вслед за этой парочкой отправляется амбициозный коммодор Норрингтон, который к тому же числится женихом Элизабет. Однако Уилл не знает, что над Барбоссой висит вечное проклятие, при лунном свете превращающее его с командой в живых скелетов. Проклятье будет снято лишь тогда, когда украденное золото Ацтеков будет возвращено пиратами на старое место.')
         self.assertEqual(m.runtime, 143)
 
-        self.assertEqual(m.rating, 8.335)
-        self.assertEqual(m.imdb_rating, 8.00)
+        self.assertEqual(int(m.rating), 8)
+        self.assertEqual(int(m.imdb_rating), 8)
         self.assertGreaterEqual(m.votes, 327195)
         self.assertGreaterEqual(m.imdb_votes, 859395)
 
         self.assertEqual(m.tagline,
-                         "«Over 3000 Islands of Paradise -- For Some it's A Blessing -- For Others... It's A Curse»")
+                         "«Over 3000 islands of paradise. For some it’s a blessing. For others... It’s A Curse»")
         self.assertGreater(len(m.trailers), 2)
         self.assertTrue('529' in trailers_ids)
         self.assertTrue('gettrailer.php?quality=hd&trailer_id=529' in trailers_files)
@@ -228,9 +247,6 @@ class MovieTest(BaseTest):
         self.assertEqualPersons(m.editing_by, ['Стивен Е. Ривкин', 'Артур Шмидт', 'Крэйг Вуд'])
 
     def test_movie_main_page_id_258687(self):
-        """
-        Test of movie manager, movie obtain by id (not via search)
-        """
         m = Movie(id=258687)
         m.get_content('main_page')
         m.get_content('trailers')
@@ -243,7 +259,7 @@ class MovieTest(BaseTest):
         self.assertEqual(m.title, 'Интерстеллар')
         self.assertEqual(m.title_en, 'Interstellar')
         self.assertEqual(m.plot,
-                         'Когда засуха приводит человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и переселить человечество на другую планету.')
+                         'Когда засуха, пыльные бури и вымирание растений приводят человечество к продовольственному кризису, коллектив исследователей и учёных отправляется сквозь червоточину (которая предположительно соединяет области пространства-времени через большое расстояние) в путешествие, чтобы превзойти прежние ограничения для космических путешествий человека и найти планету с подходящими для человечества условиями.')
         self.assertEqual(m.runtime, 169)
         self.assertEqual(m.tagline, '«Следующий шаг человечества станет величайшим»')
 
@@ -252,7 +268,7 @@ class MovieTest(BaseTest):
         self.assertTrue('gettrailer.php?quality=hd&trailer_id=109352'in trailers_files)
 
         self.assertEqual(m.genres, ['фантастика', 'драма', 'приключения'])
-        self.assertEqual(m.countries, ['США', 'Великобритания', 'Канада'])
+        self.assertEqual(m.countries, ['Великобритания', 'Канада', 'США'])
         self.assertGreaterEqual(m.profit_usa, 158445319)
         self.assertGreaterEqual(m.profit_russia, 24110578)
         self.assertGreaterEqual(m.profit_world, 592845319)
@@ -266,19 +282,15 @@ class MovieTest(BaseTest):
     def test_movie_by_id_1552(self):
         m = Movie(id=1552)
         m.get_content('main_page')
-        # m.get_content('trailers')
 
         self.assertEqual(m.profit_russia, 41000)
         self.assertEqual(m.budget, 10000000)
 
     def test_movie_trailers(self):
-        """
-        Test of movie trailers source page
-        """
         m = Movie(id=521689)
         m.get_content('trailers')
 
-        self.assertGreaterEqual(len(m.trailers), 11)
+        self.assertGreaterEqual(len(m.trailers), 10)
         trailers_ids = [trailer.id for trailer in m.trailers]
         trailers_files = [trailer.file for trailer in m.trailers]
 
@@ -290,9 +302,6 @@ class MovieTest(BaseTest):
         self.assertEqual(m.youtube_ids, ['e4f5keHX_ks'])
 
     def test_movie_cast(self):
-        """
-        Test of movie cast source page
-        """
         m = Movie(id=4220)
         m.get_content('cast')
 
@@ -316,9 +325,6 @@ class MovieTest(BaseTest):
         self.assertEqual(m.cast['actor'][13].name, 'Joanne')
 
     def test_movie_cast_1(self):
-        """
-        Test of movie cast source page
-        """
         m = Movie(id=63991)
         m.get_content('cast')
 
@@ -370,20 +376,7 @@ class MovieTest(BaseTest):
         self.assertEqual(f.year, 2010)
         e = m.seasons[0].episodes[5]
         self.assertEqual(e.title, 'Витамин D')
-        self.assertEqual(e.release_date, datetime(2010, 11, 20).date())
-
-    def test_movie_series_search_killing(self):
-        # It will false someday as well, we should find some TV series, that announced more series, but
-        # stop showing them in some moment. At that moment, I can't find any.
-        movies = Movie.objects.search('the killing')
-        self.assertGreaterEqual(len(movies), 1)
-        m = movies[0]  # The Killing / Убийство
-        self.assertTrue(m.series)
-        m.get_content('series')
-        ls = m.seasons[-1]
-        le = ls.episodes[-1]
-        self.assertEqual(le.title, 'Эдем')
-        # self.assertIsNone(le.release_date)
+        self.assertEqual(e.release_date, date(2010, 11, 20))
 
     def test_movie_series_main_page_kickass(self):
         m = Movie(id=419200)  # Kick-Ass / Пипец
@@ -392,9 +385,11 @@ class MovieTest(BaseTest):
         self.assertRaises(ValueError, m.get_content, ('series',))
 
     def test_movie_series_main_page_bigband(self):
-        m = Movie(id=306084)  # The Big Bang Theory / Теория большого взрыва
+        m_id = 306084
+        m = Movie(id=m_id)  # The Big Bang Theory / Теория большого взрыва
         m.get_content('main_page')
         self.assertTrue(m.series)
+        self.assertEqual(m.id, m_id)
 
     def test_movie_rating_from_search_result(self):
         movies = Movie.objects.search('the big bang theory')
@@ -407,4 +402,4 @@ class MovieTest(BaseTest):
         m = Movie(id=195524)  # I Am Legend / Я – легенда
         m.get_content('similar_movies')
 
-        self.assertTrue(m.similar_movies)  # Check that the list is not empty
+        self.assertEqual(len(m.similar_movies), 24)

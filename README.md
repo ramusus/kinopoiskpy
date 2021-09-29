@@ -1,6 +1,9 @@
 # Kinopoiskpy
 
-[![PyPI version](https://img.shields.io/pypi/v/kinopoiskpy.svg)](https://pypi.python.org/pypi/kinopoiskpy) [![Circle CI](https://circleci.com/gh/ramusus/kinopoiskpy/tree/master.svg?style=shield)](https://circleci.com/gh/ramusus/kinopoiskpy) [![Build Status](https://img.shields.io/travis/ramusus/kinopoiskpy.svg?branch=master)](https://travis-ci.org/ramusus/kinopoiskpy) [![Coverage Status](https://coveralls.io/repos/ramusus/kinopoiskpy/badge.svg?branch=master)](https://coveralls.io/r/ramusus/kinopoiskpy)
+[![PyPI version](https://img.shields.io/pypi/v/kinopoiskpy.svg)](https://pypi.python.org/pypi/kinopoiskpy) 
+[![Circle CI](https://circleci.com/gh/ramusus/kinopoiskpy/tree/master.svg?style=shield)](https://circleci.com/gh/ramusus/kinopoiskpy)
+[![Coverage Status](https://coveralls.io/repos/ramusus/kinopoiskpy/badge.svg?branch=master)](https://coveralls.io/r/ramusus/kinopoiskpy)
+[![Build Status](https://img.shields.io/travis/ramusus/kinopoiskpy.svg?branch=master)](https://travis-ci.org/ramusus/kinopoiskpy) [![Coverage Status](https://coveralls.io/repos/ramusus/kinopoiskpy/badge.svg?branch=master)](https://coveralls.io/r/ramusus/kinopoiskpy)
 
 This package is pythonic API to kinopoisk.ru website.
 
@@ -64,6 +67,18 @@ Get content of person by ID:
     >>> person.get_content('photos')
     >>> len(person.photos) > 10
     True
+
+## Testing
+
+By default, all communication with kinopoisk.ru is recorded in special files called cassettes (see vcrpy-unittest). To reproduce real requests to kinopoisk.ru just delete directory `kinopoisk/tests/cassettes/` with all it's content.
+
+Run all tests:
+
+    $ python -W ignore -m kinopoisk.tests
+
+Run particular test:
+
+    $ python -W ignore -m kinopoisk.tests -v MovieTest.test_movie_cast
 
 ## Contributors
 

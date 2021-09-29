@@ -2,11 +2,8 @@
 """
 Sources for Person
 """
-from __future__ import unicode_literals
-
 import re
 
-from builtins import str
 from lxml import html
 
 from ..utils import KinopoiskPage, KinopoiskImagesPage
@@ -65,7 +62,7 @@ class PersonShortLink(KinopoiskPage):
     """
 
     def parse(self):
-        link = re.compile(r'<a[^>]+href="/name/(\d+)/">(.+?)</a>').findall(self.content)
+        link = re.compile(r'<a[^>]+href="/name/(\d+)/"[^>]*>(.+?)</a>').findall(self.content)
         if link:
             self.instance.id = self.prepare_int(link[0][0])
             self.instance.name = self.prepare_str(link[0][1])
@@ -107,21 +104,14 @@ class PersonMainPage(KinopoiskPage):
     """
     url = '/name/{id}/'
     xpath = {
-        'movies': '//div[@class="personPageItems"]/div[@class="item"]',
+        'movies': '//nav[contains(@class, "styles_tabsNavigation__3vC4c")]//button',
         'id': '//link[@rel="canonical"]/@href',
-        'name': '//h1[@class="moviename-big"][@itemprop="name"]/text()',
-        'name_en': '//span[@itemprop="alternateName"]/text()',
+        'name': '//h1[contains(@class, "styles_primaryName__1bsl8")]/text()',
+        'name_en': '//div[contains(@class, "styles_secondaryName__2vbhb")]/text()',
+        'year_birth': '//a[contains(@href, "/lists/m_act%5Bbirthday%5D%5Byear%5D/")]/text()',
     }
 
     def parse(self):
-        content_info = re.compile(r'<tr\s*>\s*<td class="type">(.+?)</td>\s*<td[^>]*>(.+?)</td>\s*</tr>', re.S).findall(
-            self.content)
-        for name, value in content_info:
-            if str(name) == 'дата рождения':
-                year_birth = re.compile(r' <a href="/lists/m_act\[birthday\]\[year\]/\d{4}/">(\d{4})</a>').findall(value)
-                if year_birth:
-                    self.instance.year_birth = self.prepare_int(year_birth[0])
-
         if self.instance.id:
             token = re.findall(r'xsrftoken = \'([^\']+)\'', self.content)
             obj_type = re.findall(r'objType: \'([^\']+)\'', self.content)
@@ -136,11 +126,12 @@ class PersonMainPage(KinopoiskPage):
         self.instance.id = self.prepare_int(person_id)
         self.instance.name = self.extract('name', to_str=True)
         self.instance.name_en = self.extract('name_en', to_str=True)
+        self.instance.year_birth = self.extract('year_birth', to_int=True)
 
         # movies
         from kinopoisk.person import Role
         for element in self.extract('movies'):
-            type = [t.get('data-work-type') for t in element.iterancestors()][0]
+            type = element.find
             self.instance.career.setdefault(type, [])
             self.instance.career[type].append(Role.get_parsed('role_link', element))
 

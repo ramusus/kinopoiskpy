@@ -2,8 +2,6 @@
 """
 Sources for Movie
 """
-from __future__ import unicode_literals
-
 import re
 import simplejson as json
 from bs4 import BeautifulSoup, Tag
@@ -103,7 +101,7 @@ class MovieLink(KinopoiskPage):
     Parser of movie info in link
     """
     xpath = {
-        'url': './/p[@class="name"]/a/@href',
+        'url': './/p[@class="name"]/a/@data-url',
         'title': './/p[@class="name"]/a/text()',
         'years': './/p[@class="name"]/span[@class="year"]/text()',
         'title_en': './/span[@class="gray"][1]/text()',
@@ -114,15 +112,13 @@ class MovieLink(KinopoiskPage):
         self.content = html.fromstring(self.content)
 
         url = self.extract('url')
-        title = self.extract('title', to_str=True)
         years = self.extract('years')
         title_en = self.extract('title_en', to_str=True)
         rating = self.extract('rating')
 
-        # /level/1/film/ID/sr/1/
-        self.instance.id = self.prepare_int(url.split('/')[4].split('-')[-1])
-        self.instance.title = title.replace('(сериал)', '')
-        self.instance.series = '(сериал)' in title
+        self.instance.id = self.prepare_int(url.split('/')[2])
+        self.instance.title = self.extract_title()
+        self.instance.series = 'сериал' in self.extract('title')
 
         if years:
             self.instance.year = self.prepare_int(years[:4])
@@ -161,7 +157,7 @@ class MovieSeries(KinopoiskPage):
                     continue
 
                 raw_date = tr.find('td', attrs={'width': '20%'}).string
-                if raw_date.strip().count('\xa0') == 2:
+                if raw_date.strip().count(' ') == 2:
                     normalized_date = self.prepare_date(raw_date)
                 else:
                     normalized_date = raw_date
@@ -191,20 +187,20 @@ class MovieMainPage(KinopoiskPage):
     main_profits = {
         'бюджет': 'budget',
         'маркетинг': 'marketing',
-        'сборы в США': 'profit_usa',
-        'сборы в России': 'profit_russia',
+        'сборы в сша': 'profit_usa',
+        'сборы в россии': 'profit_russia',
         'сборы в мире': 'profit_world',
     }
 
     xpath = {
         'url': './/meta[@property="og:url"]/@content',
         'title': './/h1/span/text()',
-        'title_en': './/span[@itemprop="alternativeHeadline"]/text()',
-        'plot': './/div[@itemprop="description"]/text()',
-        'rating': './/span[@class="rating_ball"]/text()',
-        'votes': './/div[@id="block_rating"]//div[@class="div1"]//span[@class="ratingCount"]/text()',
-        'imdb': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()]/text()',
-        'imdb2': './/div[@id="block_rating"]//div[@class="block_2"]//div[last()-1]/text()',
+        'title_en': './/span[@class="styles_originalTitle__19q6I"]/text()',
+        'plot': './/p[@class="styles_paragraph__2Otvx"]/text()',
+        'rating': '(.//span[contains(@class,"film-rating-value")])[1]/text()',
+        'votes': '(.//span[@class="styles_count__3hSWL"])[2]/text()',
+        'imdb': './/div[contains(@class," film-sub-rating")]/span[1]/text()[3]',
+        'imdb2': './/div[contains(@class," film-sub-rating")]/span[2]/text()',
     }
 
     regex = {
@@ -213,68 +209,58 @@ class MovieMainPage(KinopoiskPage):
     }
 
     def parse(self):
+        content_info = BeautifulSoup(self.content, 'html.parser')
+
+        table_info = content_info.find('div', {'data-test-id': 'encyclopedic-table'})
+        if table_info:
+            self.parse_table_info(table_info)
+
         trailers = self.regex['trailers'].findall(self.content)
         if len(trailers):
             self.instance.add_trailer(json.loads(trailers[0].replace("'", '"')))
 
-        content_info = BeautifulSoup(self.content, 'html.parser')
-
-        table_info = content_info.find('table', {'class': re.compile(r'^info')})
-        if table_info:
-            for tr in table_info.findAll('tr'):
-                tds = tr.findAll('td')
-                name = tds[0].text
-                value = tds[1].text
-                if value == '-':
-                    continue
-
-                if name == 'слоган':
-                    self.instance.tagline = self.prepare_str(value)
-                elif name == 'время':
-                    self.instance.runtime = self.prepare_int(value.split(' ')[0])
-                elif name == 'год':
-                    try:
-                        self.instance.year = self.prepare_int(value.split('(')[0])
-                    except ValueError:
-                        pass
-                    self.instance.series = 'сезон' in value
-                elif name == 'страна':
-                    for item in value.split(', '):
-                        self.instance.countries.append(self.prepare_str(item))
-                elif name == 'жанр':
-                    genres = value.split(', ')
-                    for genre in genres:
-                        if genre.strip() != '... слова':
-                            self.instance.genres.append(self.prepare_str(genre))
-                elif name in self.main_profits:
-                    self.parse_main_profit(self.main_profits[name], tds)
-                elif name in self.main_persons:
-                    self.parse_persons(self.main_persons[name], tds[1].contents)
-
-        actors = content_info.find('div', {'id': 'actorList'})
-        if actors and actors.ul:
-            self.parse_persons('actors', [li.a for li in actors.ul.findAll('li')])
+        self.parse_actors(content_info)
 
         self.content = html.fromstring(self.content)
 
         self.instance.id = self.prepare_int(self.extract('url').split('/')[-2].split('-')[-1])
-        self.instance.title = self.extract('title', to_str=True)
+        self.instance.title = self.extract_title()
         self.instance.title_en = self.extract('title_en', to_str=True)
         self.instance.plot = self.extract('plot', to_str=True)
-        self.instance.rating = self.extract('rating', to_float=True)
-        self.instance.votes = self.extract('votes', to_int=True)
+        self.instance.plot = re.sub(r'\s+', ' ', self.instance.plot)
+        try:
+            self.instance.rating = self.extract('rating', to_float=True)
+        except ValueError:
+            # https://www.kinopoisk.ru/film/926005/
+            # ValueError: could not convert string to float: '98%'
+            pass
 
-        imdb = self.regex['imdb'].findall(self.extract('imdb'))
-        if not imdb:
-            imdb = self.regex['imdb'].findall(self.extract('imdb2'))
-        if imdb:
-            self.instance.imdb_rating = float(imdb[0][0])
-            self.instance.imdb_votes = self.prepare_int(imdb[0][1])
+        self.instance.votes = self.extract('votes', to_int=True)
+        self.instance.imdb_rating = self.extract('imdb', to_float=True)
+        imdb_votes = self.extract('imdb2')
+        if imdb_votes:
+            if 'K' in imdb_votes:
+                imdb_votes = imdb_votes.replace('K', '') * 100000
+            self.instance.imdb_votes = self.prepare_int(imdb_votes)
 
         self.instance.set_source('main_page')
 
+    def parse_table_info(self, table_info):
+        for row in table_info.findChildren('div', recursive=False):
+            pairs = row.findChildren('div')
+            name = pairs[0].text
+            value = pairs[1]
+            self.set_value(name, value)
+
     def parse_main_profit(self, field_name, value):
-        setattr(self.instance, field_name, self.find_profit(value[1]))
+        setattr(self.instance, field_name, self.find_profit(value))
+
+    def parse_actors(self, content_info):
+        container = content_info.find('div', {'class': re.compile(r'film-crew')}).find('ul')
+        if container:
+            actors = container.parent
+            if actors and actors.ul:
+                self.parse_persons('actors', [li.a for li in actors.ul.findAll('li')])
 
     def parse_persons(self, field_name, links):
         from kinopoisk.person import Person
@@ -282,6 +268,35 @@ class MovieMainPage(KinopoiskPage):
             if isinstance(link, Tag) and link.text != "...":
                 person = Person.get_parsed('short_link', link.decode())
                 getattr(self.instance, field_name).append(person)
+
+    def set_value(self, name, value_tds):
+        value = value_tds.text
+        if value == '-':
+            return
+        name = name.lower()
+
+        if name == 'слоган':
+            self.instance.tagline = self.prepare_str(value)
+        elif name == 'время':
+            if value != '—':
+                self.instance.runtime = self.prepare_int(value.split(' ')[0])
+        elif name in ['год', 'год производства']:
+            try:
+                self.instance.year = self.prepare_int(value.split('(')[0])
+            except ValueError:
+                pass
+            self.instance.series = 'сезон' in value
+        elif name == 'страна':
+            for item in value.split(', '):
+                self.instance.countries.append(self.prepare_str(item))
+        elif name == 'жанр':
+            genres = value.split(', ')
+            for genre in genres:
+                self.instance.genres.append(self.prepare_str(genre.replace('слова', '')))
+        elif name in self.main_profits:
+            self.parse_main_profit(self.main_profits[name], value_tds)
+        elif name in self.main_persons:
+            self.parse_persons(self.main_persons[name], value_tds.contents)
 
 
 class MovieCastPage(KinopoiskPage):
@@ -351,17 +366,21 @@ class MovieTrailersPage(KinopoiskPage):
     """
     url = '/film/{id}/video/'
 
-    def parse(self):
-        trailers_kinopoisk_urls = list(set(
-            re.findall(r'/film/{}/video/\d+'.format(self.instance.id), self.content)
-        ))
+    xpath = {
+        'trailers': '//a[@class="all" and contains(@href, "film/")]',
+    }
 
-        for trailer_id in trailers_kinopoisk_urls:
-            trailer_id = trailer_id.split('/')[-1:][0]
-            self.instance.add_trailer(trailer_id)
+    def parse(self):
         youtube_urls = list(set(re.findall(r'www.youtube.com/embed/[\d\w]+', self.content)))
         youtube_ids = [youtube_id.split('/')[-1:][0] for youtube_id in youtube_urls]
         self.instance.youtube_ids = youtube_ids
+
+        self.content = html.fromstring(self.content)
+
+        for element in self.extract('trailers'):
+            element_id = element.get('href').split('/')[-2]
+            self.instance.add_trailer(element_id)
+
         self.instance.set_source('trailers')
 
 

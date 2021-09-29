@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
 import six
 import unicodedata
@@ -23,7 +21,8 @@ class Manager(object):
         content = response.content.decode('utf-8')
         self.request.raise_for_errors(content)
         # request is redirected to main page of object
-        if len(response.history) and ('/film/' in response.url or '/name/' in response.url):
+        if (len(response.history) and
+                ('/film/' in response.url or '/name/' in response.url or '/series/' in response.url)):
             instance = self.kinopoisk_object()
             instance.get_source_instance(
                 'main_page', instance=instance, content=content, request=self.request).parse()
@@ -165,13 +164,15 @@ class KinopoiskPage(object):
             elements = self.element.xpath(xpath)
             if xpath[-7:] == '/text()' or '/@' in xpath:
                 value = ' '.join(elements) if elements else ''
+            elif re.search(r'\[\d+\]$', xpath) and len(elements) > 0:
+                value = elements[0]
             else:
                 value = elements
             if to_str:
                 value = self.prepare_str(value)
             if to_int:
                 value = self.prepare_int(value) if value else None
-            if to_float:
+            if to_float and value != '–':
                 value = float(value) if value else None
             return value
         else:
@@ -234,6 +235,12 @@ class KinopoiskPage(object):
         if start != -1 and end != -1:
             content = content[start:end]
         return content
+
+    def extract_title(self):
+        title = self.extract('title', to_str=True)
+        title = re.sub(r'^(.+) \(\d{4}\)$', r'\1', title)
+        title = re.sub(r'^(.+) \( *сериал *\)$', r'\1', title)
+        return title.rstrip()
 
     def get(self):
         if self.instance.id:
