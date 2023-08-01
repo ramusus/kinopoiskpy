@@ -116,7 +116,10 @@ class MovieLink(KinopoiskPage):
         title_en = self.extract('title_en', to_str=True)
         rating = self.extract('rating')
 
-        self.instance.id = self.prepare_int(url.split('/')[2])
+        if 'afisha' not in url:
+            self.instance.id = self.prepare_int(url.split('/')[2])
+        else:
+            pass
         self.instance.title = self.extract_title()
         self.instance.series = 'сериал' in self.extract('title')
 
