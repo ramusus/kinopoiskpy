@@ -121,7 +121,10 @@ class MovieLink(KinopoiskPage):
         self.instance.series = 'сериал' in self.extract('title')
 
         if years:
-            self.instance.year = self.prepare_int(years[:4])
+            year = years[:4]
+            if years[-3:len(years)] == '...':
+                year = str(datetime.datetime.now().year)
+            self.instance.year = self.prepare_int(year)
 
         if 'мин' in title_en:
             values = title_en.split(', ')
