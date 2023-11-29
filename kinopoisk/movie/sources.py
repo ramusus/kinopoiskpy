@@ -122,7 +122,7 @@ class MovieLink(KinopoiskPage):
 
         if years:
             year = years[:4]
-            if years[-3:len(years)] == '...':
+            if years == ' – ...':
                 year = str(datetime.datetime.now().year)
             self.instance.year = self.prepare_int(year)
 
